@@ -1,0 +1,22 @@
+# Environment variables
+.env
+
+# Node modules
+node_modules/
+npm-debug.log*
+
+# Docker
+.docker/
+
+# Analysis outputs (user data)
+workspace/analysis/*
+workspace/uploads/*
+!workspace/analysis/.gitkeep
+!workspace/uploads/.gitkeep
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
