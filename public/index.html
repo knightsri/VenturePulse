@@ -26,6 +26,12 @@
                 <div class="card">
                     <h2>New Analysis</h2>
                     
+                    <!-- Run Analysis Button at Top -->
+                    <button class="btn-primary" onclick="runAnalysis()" style="width: 100%; margin-bottom: 20px;">🔬 Run Analysis</button>
+                    
+                    <div id="analysisStatus" class="status-box" style="display:none; margin-bottom: 20px;"></div>
+                    
+                    <!-- Form Fields -->
                     <div class="form-group">
                         <label>Project Name</label>
                         <input type="text" id="projectName" placeholder="My Startup Idea">
@@ -65,10 +71,6 @@
                             <option value="">Loading...</option>
                         </select>
                     </div>
-
-                    <button class="btn-primary" onclick="runAnalysis()">🔬 Run Analysis</button>
-                    
-                    <div id="analysisStatus" class="status-box" style="display:none;"></div>
                 </div>
             </section>
 

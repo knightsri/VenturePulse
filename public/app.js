@@ -135,16 +135,26 @@ function loadPromptsTab() {
 function loadHistoryTab() {
     console.log('Loading history tab...');
     fetch('/api/analysis')
-        .then(function(r) { return r.json(); })
+        .then(function(r) { 
+            console.log('History response status:', r.status);
+            return r.json(); 
+        })
         .then(function(analyses) {
+            console.log('History data received:', analyses);
+            console.log('Number of analyses:', analyses.length);
+            
             var list = document.getElementById('historyList');
             if (analyses.length === 0) {
                 list.innerHTML = '<p>No analyses yet. Create your first one!</p>';
             } else {
                 list.innerHTML = analyses.map(function(a) {
+                    console.log('Processing analysis:', a);
                     return '<div class="analysis-item"><div><strong>' + a.name + '</strong><br><small>' + new Date(a.created).toLocaleString() + ' • ' + (a.size/1024).toFixed(1) + ' KB</small></div><div class="item-actions"><button onclick="viewAnalysis(\'' + a.filename + '\')">View</button><button onclick="downloadAnalysis(\'' + a.filename + '\')">Download</button><button onclick="deleteAnalysis(\'' + a.filename + '\')">Delete</button></div></div>';
                 }).join('');
             }
+        })
+        .catch(function(e) {
+            console.error('History error:', e);
         });
 }
 

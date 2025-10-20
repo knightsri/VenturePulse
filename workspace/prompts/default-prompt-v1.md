@@ -235,4 +235,32 @@ Create a comprehensive 9-tab report that serves as both strategic analysis and e
 
 **The ultimate test:** Would a seasoned entrepreneur or investor use this report to make funding and development decisions?
 
+
+---
+
+
+# CRITICAL OUTPUT REQUIREMENTS:
+
+You MUST respond with ONLY valid HTML code. Your ENTIRE response must be a single, complete HTML document.
+
+- Do NOT wrap your response in markdown code blocks (no ```html or ```)
+- Do NOT include any explanatory text before or after the HTML
+- Do NOT use markdown syntax anywhere in your response
+- Your first line must be: <!DOCTYPE html>
+- Your last line must be: </html>
+
+Example of CORRECT output:
+<!DOCTYPE html>
+<html>
+...your full HTML here...
+</html>
+
+Example of INCORRECT output:
+```html
+<!DOCTYPE html>
+...
+```
+
+IMPORTANT: If you include anything other than pure HTML, the output will fail. Start directly with <!DOCTYPE html> and end with </html>.
+
 ---

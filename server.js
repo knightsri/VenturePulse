@@ -146,7 +146,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5242880 },
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
     const allowed = ['.txt', '.md', '.pdf', '.docx'];
     const ext = path.extname(file.originalname).toLowerCase();
@@ -257,7 +257,7 @@ app.get('/api/analysis', async (req, res) => {
           return {
             filename: f,
             name: f.replace('.html', ''),
-            created: stats.birthtime,
+            created: stats.mtime,  // Keep as Date object for sorting
             size: stats.size
           };
         })
@@ -308,79 +308,119 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
   }
 });
 
+
 app.post('/api/analyze', async (req, res) => {
   try {
-    const { promptContent, projectContent, projectName } = req.body;
+    const { promptContent, projectContent, projectName, provider, model } = req.body;
     
     if (!process.env.API_KEY) {
-      return res.status(400).json({ error: 'API_KEY not configured' });
+      return res.status(400).json({ error: 'API_KEY not configured in .env file' });
     }
     
+    console.log('🔬 Starting analysis:', {
+      provider,
+      model,
+      projectName,
+      promptLength: promptContent.length,
+      projectLength: projectContent.length
+    });
+    
+    // Load provider config
     const settings = JSON.parse(await fs.readFile('/workspace/config/settings.json', 'utf-8'));
-    const provider = process.env.MODEL_PROVIDER || 'anthropic';
     const providerConfig = settings.providers[provider];
     
-    // Prepare the analysis request
+    if (!providerConfig) {
+      return res.status(400).json({ error: `Unknown provider: ${provider}` });
+    }
+    
+    // Build full prompt
     const fullPrompt = `${promptContent}\n\n## Project to Analyze:\n\n${projectContent}`;
     
-    // Call LLM API (implementation depends on provider)
-    let response;
+    let analysisHtml;
     
+    // Call appropriate API based on provider
     if (provider === 'anthropic') {
-      response = await axios.post(
+      // Anthropic native API
+      const response = await axios.post(
         providerConfig.endpoint,
         {
-          model: process.env.DEFAULT_MODEL || 'claude-sonnet-4',
-          max_tokens: 16000,
-          messages: [{ role: 'user', content: fullPrompt }]
-        },
-        {
-          headers: {
-            'x-api-key': process.env.API_KEY,
-            'anthropic-version': '2023-06-01',
-            'content-type': 'application/json'
-          }
-        }
-      );
-      var analysisHtml = response.data.content[0].text;
-    } else {
-      // Generic OpenAI-compatible API
-      response = await axios.post(
-        providerConfig.endpoint,
-        {
-          model: process.env.DEFAULT_MODEL,
+          model: model,
           messages: [{ role: 'user', content: fullPrompt }],
           max_tokens: 16000
         },
         {
           headers: {
             'Authorization': `Bearer ${process.env.API_KEY}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://venturepulse.local',
+            'X-Title': 'VenturePulse'
+          },
+          timeout: 300000  // 5 minutes timeout
+        }
+      );
+      analysisHtml = response.data.content[0].text;
+
+      // Strip markdown code blocks if present
+      analysisHtml = analysisHtml.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
+
+      
+    } else {
+      // OpenAI-compatible API (OpenAI, OpenRouter, Google, xAI, DeepSeek, Mistral, Groq)
+      const response = await axios.post(
+        providerConfig.endpoint,
+        {
+          model: model,
+          messages: [{ role: 'user', content: fullPrompt }],
+          max_tokens: 16000
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${process.env.API_KEY}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://venturepulse.local',
+            'X-Title': 'VenturePulse'
           }
         }
       );
-      var analysisHtml = response.data.choices[0].message.content;
+      analysisHtml = response.data.choices[0].message.content;
+      
+      // Strip markdown code blocks if present
+      analysisHtml = analysisHtml.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
     }
     
-    // Save analysis
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `${projectName.replace(/[^a-z0-9]/gi, '-')}-${timestamp}.html`;
+    console.log('✅ LLM response received, length:', analysisHtml.length);
+    
+    // Save analysis to file
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+    const sanitizedName = projectName.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+    const filename = `${sanitizedName}-${timestamp}.html`;
     const filepath = path.join('/workspace/analysis', filename);
     
     await fs.writeFile(filepath, analysisHtml);
+    console.log('💾 Analysis saved:', filename);
     
     res.json({ 
       success: true, 
       filename,
-      preview: analysisHtml.substring(0, 500)
+      provider,
+      model,
+      size: analysisHtml.length
     });
     
   } catch (error) {
-    console.error('Analysis error:', error.response?.data || error.message);
-    res.status(500).json({ 
-      error: error.response?.data?.error?.message || error.message 
+    console.error('❌ Analysis error:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
     });
-  }
+    
+    res.status(500).json({ 
+      error: error.response?.data?.error?.message || error.message,
+      details: error.code || 'Unknown error'
+    });
+}
 });
 
 // Start server

@@ -29,10 +29,17 @@
         "anthropic/claude-haiku-4.5",
         "openai/gpt-4o",
         "openai/o3",
-        "google/gemini-2.0-flash-exp",
-        "x-ai/grok-2-1212",
-        "deepseek/deepseek-chat",
-        "qwen/qwen-2.5-72b-instruct"
+        "openai/gpt-oss-120b",
+        "openai/gpt-5",
+        "google/gemini-2.5-flash",
+        "google/gemini-2.5-pro",
+        "x-ai/grok-4-fast",
+        "deepseek/deepseek-chat-v3-0324",
+        "tngtech/deepseek-r1t2-chimera:free",
+        "deepseek/deepseek-chat-v3.1",
+        "qwen/qwen-2.5-72b-instruct",
+        "qwen/qwen3-235b-a22b-2507",
+        "qwen/qwen3-235b-a22b-thinking-2507"
       ]
     },
     "google": {
