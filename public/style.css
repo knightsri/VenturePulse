@@ -1,0 +1,256 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+header p {
+    font-size: 1.2em;
+    opacity: 0.9;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.tab {
+    flex: 1;
+    padding: 12px 24px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.tab:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+}
+
+.tab.active {
+    background: white;
+    color: #667eea;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.card h2 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.file-upload {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.file-upload input[type="file"] {
+    flex: 1;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: #5568d3;
+}
+
+.status-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f0f0f0;
+    border-left: 4px solid #667eea;
+}
+
+.status-box.error {
+    background: #fee;
+    border-left-color: #e53e3e;
+    color: #c53030;
+}
+
+.status-box.success {
+    background: #efe;
+    border-left-color: #38a169;
+    color: #2f855a;
+}
+
+.analysis-item,
+.prompt-item {
+    background: #f9f9f9;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.analysis-item:hover,
+.prompt-item:hover {
+    background: #f0f0f0;
+}
+
+.item-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.item-actions button {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.config-item {
+    margin: 15px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.config-item strong {
+    color: #667eea;
+    display: block;
+    margin-bottom: 5px;
+}
+
+small {
+    color: #666;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .tabs {
+        flex-direction: column;
+    }
+    
+    header h1 {
+        font-size: 2em;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+}
