@@ -1,0 +1,267 @@
+
+```html
+<style>
+  .section-container {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border-radius: 12px;
+  }
+  h2 {
+    color: #2C3E50;
+    border-bottom: 3px solid #3498DB;
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .matrix-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  .quadrant {
+    border: 1px solid #ECF0F1;
+    padding: 1.5rem;
+    border-radius: 8px;
+    min-height: 300px;
+  }
+  .quadrant h3 {
+    margin-top: 0;
+    color: #2C3E50;
+  }
+  .phase-1 { background: #E8F6F3; border-color: #1ABC9C; }
+  .phase-2 { background: #FEF9E7; border-color: #F1C40F; }
+  .phase-3 { background: #EBF5FB; border-color: #3498DB; }
+  .feature-list {
+    list-style: none;
+    padding-left: 0;
+  }
+  .feature-item {
+    padding: 8px 12px;
+    margin: 6px 0;
+    border-radius: 20px;
+    font-size: 0.9em;
+    display: inline-block;
+  }
+  .phase-1 .feature-item { background: #1ABC9C30; border: 1px solid #1ABC9C; }
+  .phase-2 .feature-item { background: #F1C40F30; border: 1px solid #F1C40F; }
+  .phase-3 .feature-item { background: #3498DB30; border: 1px solid #3498DB; }
+  .timeline-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+  }
+  .timeline-table th {
+    background: #3498DB;
+    color: white;
+    padding: 12px;
+    text-align: left;
+  }
+  .timeline-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ECF0F1;
+  }
+  .tech-stack {
+    display: flex;
+    gap: 1.5rem;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+  }
+  .tech-card {
+    flex: 1;
+    min-width: 200px;
+    padding: 1.5rem;
+    background: #F8F9FA;
+    border-radius: 8px;
+    border-left: 4px solid #3498DB;
+  }
+  .cost-badge {
+    background: #E74C3C;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-left: 8px;
+  }
+  .highlight {
+    background: #FFF9C4;
+    padding: 2px 4px;
+    border-radius: 3px;
+  }
+</style>
+
+<div class="section-container">
+  <h2>MVP Roadmap & Feature Prioritization</h2>
+
+  <!-- Value vs Effort Matrix -->
+  <h3>Feature Prioritization Matrix</h3>
+  <div class="matrix-container">
+    <div class="quadrant phase-1">
+      <h3>Phase 1: Core MVP (High Value/Low Effort)</h3>
+      <ul class="feature-list">
+        <li class="feature-item">Basic AI meal plan generator (7-day)</li>
+        <li class="feature-item">Dietary restriction filtering</li>
+        <li class="feature-item">Simple grocery list generator</li>
+        <li class="feature-item">Core recipe database (Spoonacular API)</li>
+        <li class="feature-item">Basic user profile/preferences</li>
+        <li class="feature-item">Web app interface (Next.js)</li>
+        <li class="feature-item">Email signup/login (Supabase Auth)</li>
+      </ul>
+    </div>
+
+    <div class="quadrant phase-2">
+      <h3>Phase 2: Engagement Features (High Value/Medium Effort)</h3>
+      <ul class="feature-list">
+        <li class="feature-item">Mobile app (React Native)</li>
+        <li class="feature-item">Grocery store section organization</li>
+        <li class="feature-item">Meal prep time estimates</li>
+        <li class="feature-item">Nutritional tracking dashboard</li>
+        <li class="feature-item">Leftover optimization engine</li>
+        <li class="feature-item">Integration with Instacart API</li>
+        <li class="feature-item">Recipe rating system</li>
+      </ul>
+    </div>
+
+    <div class="quadrant phase-3">
+      <h3>Phase 3: Premium Features (High Value/High Effort)</h3>
+      <ul class="feature-list">
+        <li class="feature-item">Fridge inventory photo recognition</li>
+        <li class="feature-item">Personalized health insights</li>
+        <li class="feature-item">Family meal plan sharing</li>
+        <li class="feature-item">Voice assistant integration</li>
+        <li class="feature-item">Meal prep scheduling</li>
+        <li class="feature-item">Advanced waste analytics</li>
+      </ul>
+    </div>
+
+    <div class="quadrant">
+      <h3>Future Consideration (Low Priority)</h3>
+      <ul class="feature-list">
+        <li class="feature-item">Social sharing features</li>
+        <li class="feature-item">Augmented reality cooking guides</li>
+        <li class="feature-item">Smart kitchen device integration</li>
+        <li class="feature-item">Meal plan marketplace</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Phased Roadmap -->
+  <h3>Development Roadmap</h3>
+  <div class="roadmap">
+    <div class="phase-card phase-1">
+      <h4>🚀 Phase 1: Core MVP (Weeks 1-8)</h4>
+      <p><strong>Objective:</strong> Launch functional web app demonstrating core AI meal planning capability with basic personalization and grocery list features. Target 500 beta users for validation.</p>
+      <p><strong>Success Metrics:</strong></p>
+      <ul>
+        <li>80% meal plan generation success rate (user-rated)</li>
+        <li>40% reduction in estimated food waste vs control group</li>
+        <li>2.5 min average session duration</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-2">
+      <h4>📈 Phase 2: Engagement Expansion (Weeks 9-16)</h4>
+      <p><strong>Objective:</strong> Add mobile experience and engagement features to improve retention, including nutritional tracking and grocery integration. Launch premium subscriptions.</p>
+      <p><strong>Success Metrics:</strong></p>
+      <ul>
+        <li>15% conversion to paid plans</li>
+        <li>55% weekly active user retention</li>
+        <li>4.2/5 average app store rating</li>
+      </ul>
+    </div>
+
+    <div class="phase-card phase-3">
+      <h4>💎 Phase 3: Premium & Partnerships (Weeks 17-24)</h4>
+      <p><strong>Objective:</strong> Implement advanced AI features and establish grocery/health partnerships. Expand to family plans and enterprise wellness programs.</p>
+      <p><strong>Success Metrics:</strong></p>
+      <ul>
+        <li>2+ grocery chain partnerships</li>
+        <li>$10,000 MRR</li>
+        <li>30% revenue from B2B channels</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- AI/Low-Code Implementation -->
+  <h3>AI & Low-Code Implementation Strategy</h3>
+  <div class="tech-stack">
+    <div class="tech-card">
+      <h4>🧠 AI Components</h4>
+      <ul>
+        <li>OpenAI GPT-4 ($0.06/1K tokens) <span class="cost-badge">$200/mo</span></li>
+        <li>Spoonacular API ($0.01/call) <span class="cost-badge">$150/mo</span></li>
+        <li>Custom fine-tuning on recipe data</li>
+        <li>Validation layer for recipe safety</li>
+      </ul>
+    </div>
+
+    <div class="tech-card">
+      <h4>⚡ Low-Code Backend</h4>
+      <ul>
+        <li>Supabase (Auth + DB) <span class="cost-badge">$25/mo</span></li>
+        <li>Vercel Hosting <span class="cost-badge">$20/mo</span></li>
+        <li>Stripe Payments <span class="cost-badge">2.9% + $0.30</span></li>
+        <li>OneSignal Notifications <span class="cost-badge">Free Tier</span></li>
+      </ul>
+    </div>
+
+    <div class="tech-card">
+      <h4>🔐 Safety Measures</h4>
+      <ul>
+        <li>Banned ingredient combinations list</li>
+        <li>Human recipe review (5% sampling)</li>
+        <li>$1M liability insurance <span class="cost-badge">$500/yr</span></li>
+        <li>Allergy warning system</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Development Timeline -->
+  <h3>Development Timeline</h3>
+  <table class="timeline-table">
+    <tr>
+      <th>Milestone</th>
+      <th>Features</th>
+      <th>Timeline</th>
+      <th>Cost</th>
+    </tr>
+    <tr>
+      <td><strong>MVP Launch</strong></td>
+      <td>Core AI planner + web UI + basic grocery lists</td>
+      <td>Weeks 1-8</td>
+      <td>$7,500</td>
+    </tr>
+    <tr>
+      <td><strong>Mobile Launch</strong></td>
+      <td>iOS/Android apps + premium subscriptions</td>
+      <td>Weeks 9-12</td>
+      <td>$15,000</td>
+    </tr>
+    <tr>
+      <td><strong>Engagement Phase</strong></td>
+      <td>Nutrition tracking + Instacart integration</td>
+      <td>Weeks 13-16</td>
+      <td>$8,000</td>
+    </tr>
+    <tr>
+      <td><strong>Scale Phase</strong></td>
+      <td>Family plans + B2B partnerships</td>
+      <td>Weeks 17-24</td>
+      <td>$20,000</td>
+    </tr>
+  </table>
+
+  <div style="background: #E3F2FD; padding: 1.5rem; border-radius: 8px; margin-top: 2rem;">
+    <h4>💡 Strategic Recommendations</h4>
+    <ul>
+      <li>Prioritize <span class="highlight">ingredient optimization algorithm</span> development - this is core differentiation</li>
+      <li>Use <span class="highlight">Supabase Edge Functions</span> for AI calls to reduce latency</li>
+      <li>Implement <span class="highlight">progressive web app</span> features for mobile-like experience before native apps</li>
+      <li>Budget <span class="highlight">$3,000</span> for initial recipe validation by nutritionists</li>
+    </ul>
+  </div>
+</div>
+```

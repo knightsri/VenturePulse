@@ -1,0 +1,320 @@
+```html
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 1200px; margin: 20px auto; padding: 30px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);">
+
+    <h1 style="color: #2c3e50; text-align: center; margin-bottom: 30px; font-size: 2.5em;">Section 03: Technical Feasibility & AI/Low-Code Architecture</h1>
+    <p style="text-align: center; color: #555; font-size: 1.1em; margin-bottom: 40px;">Assessing the technical achievability of SmartPlate using modern AI, APIs, and low-code platforms.</p>
+
+    <!-- Technical Achievability Assessment -->
+    <div style="margin-bottom: 50px; background-color: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 5px solid #3498db;">
+        <h2 style="color: #34495e; margin-bottom: 20px; font-size: 1.8em;">1. Technical Achievability Assessment</h2>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <div style="flex: 1;">
+                <p style="font-size: 1.1em; line-height: 1.6; color: #444;">
+                    SmartPlate's core concept is highly achievable with the proposed AI/low-code stack. The reliance on established APIs (OpenAI GPT-4, Spoonacular, USDA, Stripe) significantly de-risks development and accelerates time-to-market. The "do more with less" philosophy is perfectly aligned with leveraging these robust external services.
+                </p>
+                <ul style="list-style-type: disc; margin-left: 20px; color: #444;">
+                    <li style="margin-bottom: 8px;"><strong>GPT-4:</strong> Capable of sophisticated natural language understanding and generation required for personalized meal plans and adaptation.</li>
+                    <li style="margin-bottom: 8px;"><strong>Spoonacular/USDA:</strong> Provide vast, structured data for recipes and nutrition, eliminating the need for custom data collection.</li>
+                    <li style="margin-bottom: 8px;"><strong>Supabase/Vercel:</strong> Offer scalable, serverless infrastructure, reducing operational overhead and speeding up deployment.</li>
+                </ul>
+            </div>
+            <div style="width: 250px; text-align: center; margin-left: 30px;">
+                <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#2ecc71 0% 90%, #e0e0e0 90% 100%); display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                    <span style="font-size: 2.5em; font-weight: bold; color: #2c3e50;">90%</span>
+                </div>
+                <p style="font-weight: bold; color: #34495e;">Feasibility Score</p>
+                <p style="font-size: 0.9em; color: #666;">High confidence due to mature API ecosystem.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI/Low-Code Architecture Diagram -->
+    <div style="margin-bottom: 50px; background-color: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 5px solid #e67e22;">
+        <h2 style="color: #34495e; margin-bottom: 20px; font-size: 1.8em;">2. AI/Low-Code Architecture</h2>
+        <p style="font-size: 1.1em; line-height: 1.6; color: #444; margin-bottom: 25px;">
+            The architecture is designed for agility, scalability, and cost-effectiveness, heavily leveraging managed services and AI APIs.
+        </p>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 25px;">
+            <!-- Layer 1: User Interface -->
+            <div style="width: 90%; background-color: #ecf0f1; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border: 1px solid #bdc3c7;">
+                <h3 style="color: #2c3e50; margin-bottom: 8px; font-size: 1.3em;">Presentation Layer (Frontend)</h3>
+                <p style="margin: 0; color: #555;"><strong>React / Next.js</strong> (Web-first, Vercel Deployment)</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;">User Interaction, UI/UX, Mobile Responsive</p>
+            </div>
+
+            <div style="font-size: 2em; color: #95a5a6;">&#8595;</div>
+
+            <!-- Layer 2: API Gateway / Backend for Frontend -->
+            <div style="width: 90%; background-color: #dbe4eb; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border: 1px solid #aeb6bf;">
+                <h3 style="color: #2c3e50; margin-bottom: 8px; font-size: 1.3em;">Application Logic Layer (Backend)</h3>
+                <p style="margin: 0; color: #555;"><strong>Supabase Edge Functions</strong> (Postgres, Auth, Realtime)</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;">API Endpoints, User Management, Data Orchestration</p>
+            </div>
+
+            <div style="font-size: 2em; color: #95a5a6;">&#8595;</div>
+
+            <!-- Layer 3: Core Services & AI -->
+            <div style="width: 90%; display: flex; justify-content: space-around; gap: 20px;">
+                <div style="flex: 1; background-color: #e0f2f7; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border: 1px solid #aed6f1;">
+                    <h4 style="color: #2c3e50; margin-bottom: 8px; font-size: 1.2em;">AI Core</h4>
+                    <p style="margin: 0; color: #555;"><strong>OpenAI GPT-4 API</strong></p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;">Meal Plan Generation, Adaptation, Personalization</p>
+                </div>
+                <div style="flex: 1; background-color: #e0f7ed; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border: 1px solid #a9dfbf;">
+                    <h4 style="color: #2c3e50; margin-bottom: 8px; font-size: 1.2em;">Data & Integrations</h4>
+                    <p style="margin: 0; color: #555;"><strong>Spoonacular API</strong> (Recipes), <strong>USDA API</strong> (Nutrition)</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;">External Data Sources, Recipe Search, Nutritional Facts</p>
+                </div>
+            </div>
+
+            <div style="font-size: 2em; color: #95a5a6;">&#8595;</div>
+
+            <!-- Layer 4: Auxiliary Services -->
+            <div style="width: 90%; display: flex; justify-content: space-around; gap: 20px;">
+                <div style="flex: 1; background-color: #fdf2e9; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border: 1px solid #f5cba7;">
+                    <h4 style="color: #2c3e50; margin-bottom: 8px; font-size: 1.2em;">Payments</h4>
+                    <p style="margin: 0; color: #555;"><strong>Stripe API</strong></p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;">Subscription Management, Secure Transactions</p>
+                </div>
+                <div style="flex: 1; background-color: #fdedec; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; border: 1px solid #f2d7d5;">
+                    <h4 style="color: #2c3e50; margin-bottom: 8px; font-size: 1.2em;">Notifications</h4>
+                    <p style="margin: 0; color: #555;"><strong>OneSignal</strong></p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;">Push Notifications, In-App Messaging</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Implementation Complexity Analysis -->
+    <div style="margin-bottom: 50px; background-color: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 5px solid #27ae60;">
+        <h2 style="color: #34495e; margin-bottom: 20px; font-size: 1.8em;">3. Implementation Complexity Analysis</h2>
+        <p style="font-size: 1.1em; line-height: 1.6; color: #444; margin-bottom: 25px;">
+            An MVP can be achieved with relatively low effort due to the chosen stack. Complexity rises with advanced personalization and real-time adaptation.
+        </p>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead style="background-color: #3498db; color: white;">
+                <tr>
+                    <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd;">Feature</th>
+                    <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd;">Effort Level (Weeks)</th>
+                    <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd;">Key Dependencies</th>
+                    <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd;">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background-color: #f2f2f2;">
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">User Auth & Preferences</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">1-2</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Supabase Auth</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Standard setup, critical for personalization.</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">AI Meal Plan Generation (Basic)</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">2-3</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">OpenAI GPT-4, Spoonacular</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Prompt engineering is key here.</td>
+                </tr>
+                <tr style="background-color: #f2f2f2;">
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Smart Grocery Lists</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">1-2</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Supabase DB, Meal Plan data</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Logic for consolidating ingredients.</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Nutritional Tracking</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">1-2</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">USDA API, Spoonacular</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Display and basic aggregation.</td>
+                </tr>
+                <tr style="background-color: #f2f2f2;">
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Waste Reduction Engine</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">3-4</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">GPT-4, Recipe data</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Most complex, requires iterative AI refinement.</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Real-Time Adaptation ("What's in my fridge")</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">2-3</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">GPT-4, Supabase DB</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">User input and AI re-generation.</td>
+                </tr>
+                <tr style="background-color: #f2f2f2;">
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Subscription & Payments</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">1-2</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Stripe API, Supabase Auth</td>
+                    <td style="padding: 10px 15px; border-bottom: 1px solid #ddd;">Standard integration.</td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="background-color: #e8f6f3; padding: 15px; border-radius: 8px; border: 1px solid #d1e7dd; font-size: 0.95em; color: #333;">
+            <p style="margin: 0;"><strong>Total Estimated MVP Development Time:</strong> 8-12 weeks (single developer)</p>
+            <p style="margin: 5px 0 0 0;">This assumes a focused approach leveraging existing libraries and services. The waste reduction engine and real-time adaptation will require the most iterative prompt engineering and logic development.</p>
+        </div>
+    </div>
+
+    <!-- Scalability Considerations -->
+    <div style="margin-bottom: 50px; background-color: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 5px solid #9b59b6;">
+        <h2 style="color: #34495e; margin-bottom: 20px; font-size: 1.8em;">4. Scalability Considerations</h2>
+        <p style="font-size: 1.1em; line-height: 1.6; color: #444; margin-bottom: 25px;">
+            The chosen serverless and API-first architecture inherently supports scalability, but specific aspects need monitoring.
+        </p>
+        <ul style="list-style-type: none; padding: 0;">
+            <li style="display: flex; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 1.8em; color: #9b59b6; margin-right: 15px;">&#x2B06;&#xFE0F;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Performance & Latency</h3>
+                    <p style="margin: 0; color: #555;"><strong>Challenge:</strong> AI API calls (GPT-4) can introduce latency, especially for complex meal plan generations. Multiple API calls for a single user request could stack up.</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;"><strong>Mitigation:</strong> Implement caching for frequently requested recipes; optimize GPT-4 prompts for efficiency; explore streaming responses; pre-generate common plan components; leverage Supabase Edge Functions for close proximity to users.</p>
+                </div>
+            </li>
+            <li style="display: flex; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 1.8em; color: #9b59b6; margin-right: 15px;">&#x1F4C8;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Data Handling & Storage</h3>
+                    <p style="margin: 0; color: #555;"><strong>Challenge:</strong> User preferences, generated plans, and ingredient inventories will grow rapidly. Managing large datasets efficiently in Supabase.</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;"><strong>Mitigation:</strong> Supabase (Postgres) scales well vertically and horizontally. Implement proper indexing, partitioning strategies, and consider read replicas as user base grows. Archive old user data if not actively accessed.</p>
+                </div>
+            </li>
+            <li style="display: flex; align-items: center; margin-bottom: 15px;">
+                <span style="font-size: 1.8em; color: #9b59b6; margin-right: 15px;">&#x1F465;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">User Growth & Concurrency</h3>
+                    <p style="margin: 0; color: #555;"><strong>Challenge:</strong> Spikes in user activity, especially during peak meal planning times (e.g., Sunday evenings), could strain API rate limits or database connections.</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;"><strong>Mitigation:</strong> Supabase and Vercel are designed for serverless scaling. Monitor API rate limits and implement exponential backoff/retry mechanisms. Distribute AI processing via queues (e.g., Supabase functions with background jobs) for heavy tasks.</p>
+                </div>
+            </li>
+            <li style="display: flex; align-items: center;">
+                <span style="font-size: 1.8em; color: #9b59b6; margin-right: 15px;">&#x1F4B0;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Cost Optimization at Scale</h3>
+                    <p style="margin: 0; color: #555;"><strong>Challenge:</strong> OpenAI API costs can become substantial with high usage. Spoonacular also has usage tiers.</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #777;"><strong>Mitigation:</strong> Closely monitor API usage. Implement usage quotas for free-tier users. Explore fine-tuning smaller, cheaper models for specific tasks (e.g., ingredient parsing) if feasible. Negotiate enterprise rates with API providers as volume grows.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Technology Risk Assessment -->
+    <div style="margin-bottom: 50px; background-color: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 5px solid #e74c3c;">
+        <h2 style="color: #34495e; margin-bottom: 20px; font-size: 1.8em;">5. Technology Risk Assessment</h2>
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="background-color: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c;">
+                <h3 style="color: #c0392b; margin-bottom: 8px; font-size: 1.2em;">Risk 1: AI Model Drift / "Hallucinations"</h3>
+                <p style="margin: 0 0 10px 0; color: #555;">GPT-4, while powerful, can generate plausible but incorrect or undesirable recipes (e.g., unsafe ingredient combinations, unrealistic steps).</p>
+                <p style="margin: 0; color: #333;"><strong>Mitigation:</strong> Implement a robust validation layer for AI outputs. This includes: 1) Pre-defined rules for banned ingredients/combinations. 2) Preference for adapting existing, validated Spoonacular recipes over pure generation. 3) Human review for a subset of generated plans/recipes. 4) User feedback loop to flag problematic suggestions.</p>
+            </div>
+            <div style="background-color: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c;">
+                <h3 style="color: #c0392b; margin-bottom: 8px; font-size: 1.2em;">Risk 2: API Downtime / Rate Limiting</h3>
+                <p style="margin: 0 0 10px 0; color: #555;">Reliance on external APIs (OpenAI, Spoonacular, USDA) means their outages or strict rate limits directly impact SmartPlate's functionality.</p>
+                <p style="margin: 0; color: #333;"><strong>Mitigation:</strong> Implement aggressive caching for API responses (especially recipes and nutritional data). Design with graceful degradation (e.g., if Spoonacular is down, use a cached generic recipe). Implement robust error handling with exponential backoff and retry logic. Monitor API statuses and communicate proactively with users if issues arise. Consider multi-provider strategy for critical data if costs allow.</p>
+            </div>
+            <div style="background-color: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c;">
+                <h3 style="color: #c0392b; margin-bottom: 8px; font-size: 1.2em;">Risk 3: Data Privacy & Security</h3>
+                <p style="margin: 0 0 10px 0; color: #555;">Handling user dietary preferences, health goals, and payment information requires stringent security measures and compliance.</p>
+                <p style="margin: 0; color: #333;"><strong>Mitigation:</strong> Leverage Supabase's built-in security features (Row Level Security, secure authentication). Ensure all data is encrypted in transit and at rest. Conduct regular security audits and penetration testing. Adhere to relevant data privacy regulations (GDPR, CCPA). Use Stripe for all payment processing, avoiding handling sensitive credit card data directly.</p>
+            </div>
+            <div style="background-color: #ffebee; padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c;">
+                <h3 style="color: #c0392b; margin-bottom: 8px; font-size: 1.2em;">Risk 4: Vendor Lock-in / Cost Escalation</h3>
+                <p style="margin: 0 0 10px 0; color: #555;">Deep integration with specific vendors (e.g., OpenAI, Supabase) could make switching difficult or lead to unexpected cost increases.</p>
+                <p style="margin: 0; color: #333;"><strong>Mitigation:</strong> Abstract API calls behind internal interfaces to allow easier swapping of providers. Regularly monitor and project API costs. For Supabase, leverage its open-source nature (Postgres) which offers migration flexibility. Build a strong relationship with key vendors to understand their roadmap and pricing changes.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Implementation Strategy -->
+    <div style="margin-bottom: 50px; background-color: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 5px solid #f1c40f;">
+        <h2 style="color: #34495e; margin-bottom: 20px; font-size: 1.8em;">6. AI Implementation Strategy</h2>
+        <p style="font-size: 1.1em; line-height: 1.6; color: #444; margin-bottom: 25px;">
+            SmartPlate's success hinges on intelligent AI application, focusing on personalization and waste reduction.
+        </p>
+        <ul style="list-style-type: none; padding: 0;">
+            <li style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+                <span style="font-size: 1.8em; color: #f1c40f; margin-right: 15px;">&#x1F9E0;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Phase 1: Prompt Engineering & Recipe Adaptation (MVP)</h3>
+                    <p style="margin: 0; color: #555;">Focus on crafting precise GPT-4 prompts to generate meal plans based on user preferences, dietary needs, and Spoonacular/USDA recipe data. Emphasize adapting existing recipes to fit constraints rather than generating from scratch to ensure quality and safety. Implement initial logic for ingredient reuse across a simple plan.</p>
+                </div>
+            </li>
+            <li style="display: flex; align-items: flex-start; margin-bottom: 15px;">
+                <span style="font-size: 1.8em; color: #f1c40f; margin-right: 15px;">&#x1F50E;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Phase 2: Iterative Learning & Waste Optimization</h3>
+                    <p style="margin: 0; color: #555;">Collect user feedback (recipe ratings, ingredient usage). Refine GPT-4 prompts and introduce more sophisticated algorithms for ingredient optimization across a full weekly plan, aiming for maximum reuse and minimal waste. Begin developing "what's in my fridge" real-time adaptation logic.</p>
+                </div>
+            </li>
+            <li style="display: flex; align-items: flex-start;">
+                <span style="font-size: 1.8em; color: #f1c40f; margin-right: 15px;">&#x1F916;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Phase 3: Advanced Personalization & Predictive AI</h3>
+                    <p style="margin: 0; color: #555;">Implement deeper user profiling, learning from past choices, skipped meals, and grocery purchases to predict future preferences. Explore fine-tuning smaller, specialized models for tasks like ingredient substitution or recipe variations to reduce GPT-4 reliance for common tasks and optimize costs.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Development Roadmap -->
+    <div style="margin-bottom: 50px; background-color: #f8f9fa; padding: 25px; border-radius: 10px; border-left: 5px solid #3498db;">
+        <h2 style="color: #34495e; margin-bottom: 20px; font-size: 1.8em;">7. Development Roadmap (MVP: 12 Weeks)</h2>
+        <p style="font-size: 1.1em; line-height: 1.6; color: #444; margin-bottom: 25px;">
+            A phased approach focusing on core value delivery and iterative refinement.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; align-items: center; background-color: #e8f6f3; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <span style="font-size: 2em; color: #2ecc71; margin-right: 15px;">&#x2460;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Weeks 1-2: Foundation & User Management</h3>
+                    <p style="margin: 0; color: #555;">Set up Next.js/Vercel, Supabase (Auth, DB), basic user profiles, dietary preferences input, Stripe integration for subscriptions.</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; background-color: #e8f6f3; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <span style="font-size: 2em; color: #2ecc71; margin-right: 15px;">&#x2461;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Weeks 3-5: AI Meal Plan Core & Recipe Integration</h3>
+                    <p style="margin: 0; color: #555;">Integrate OpenAI GPT-4 for basic 7-day meal plan generation. Connect Spoonacular for recipe data. Display nutritional info via USDA API. Implement initial waste reduction logic (simple ingredient reuse).</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; background-color: #e8f6f3; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <span style="font-size: 2em; color: #2ecc71; margin-right: 15px;">&#x2462;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Weeks 6-7: Smart Grocery Lists & UI Refinement</h3>
+                    <p style="margin: 0; color: #555;">Develop intelligent grocery list generation (categorization, consolidation). Refine user interface for meal plans and lists. Implement basic "what's in my fridge" input functionality.</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; background-color: #e8f6f3; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <span style="font-size: 2em; color: #2ecc71; margin-right: 15px;">&#x2463;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Weeks 8-9: Real-Time Adaptation & Feedback Loops</h3>
+                    <p style="margin: 0; color: #555;">Enhance "what's in my fridge" to dynamically adjust plans. Implement user rating system for recipes/plans. Integrate OneSignal for basic notifications.</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; background-color: #e8f6f3; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                <span style="font-size: 2em; color: #2ecc71; margin-right: 15px;">&#x2464;</span>
+                <div>
+                    <h3 style="margin: 0 0 5px 0; color: #34495e; font-size: 1.2em;">Weeks 10-12: Testing, Bug Fixes & Beta Launch Prep</h3>
+                    <p style="margin: 0; color: #555;">Extensive internal testing. Prepare for private beta, including onboarding flows and feedback collection mechanisms. Finalize deployment pipelines.</p>
+                </div>
+            </div>
+        </div>
+        <div style="background-color: #e0f2f7; padding: 15px; border-radius: 8px; border: 1px solid #aed6f1; font-size: 0.95em; color: #333; margin-top: 30px;">
+            <p style="margin: 0;"><strong>Post-MVP:</strong> Focus on mobile app development, advanced AI personalization, grocery delivery integrations, and B2B features based on initial user feedback and market demand.</p>
+        </div>
+    </div>
+
+</div>
+```
+⏱️  Timing Breakdown:
+   Request build:  0s
+   API call:       41s
+   Response parse: 0s
+   TOTAL:          41s
+📊 Token usage: {
+  "prompt_tokens": 3710,
+  "completion_tokens": 8791,
+  "total_tokens": 12501,
+  "prompt_tokens_details": {
+    "cached_tokens": 0
+  },
+  "completion_tokens_details": {
+    "reasoning_tokens": 0,
+    "image_tokens": 0
+  }
+}

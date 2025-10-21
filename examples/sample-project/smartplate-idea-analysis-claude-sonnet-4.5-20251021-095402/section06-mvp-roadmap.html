@@ -1,0 +1,606 @@
+```html
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; max-width: 1400px; margin: 0 auto; padding: 40px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px;">
+  
+  <!-- Header -->
+  <div style="text-align: center; margin-bottom: 50px;">
+    <h1 style="color: white; font-size: 42px; font-weight: 800; margin: 0 0 15px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">MVP Roadmap & Feature Prioritization</h1>
+    <p style="color: rgba(255,255,255,0.95); font-size: 18px; margin: 0; font-weight: 300;">Strategic execution plan optimized for rapid validation and sustainable growth</p>
+  </div>
+
+  <!-- Value vs Effort Matrix -->
+  <div style="background: white; border-radius: 16px; padding: 40px; margin-bottom: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+    <h2 style="color: #1a202c; font-size: 28px; margin: 0 0 25px 0; font-weight: 700;">Value vs. Effort Matrix</h2>
+    <p style="color: #4a5568; margin-bottom: 30px; line-height: 1.6;">Strategic feature prioritization across 28 potential capabilities, color-coded by development phase</p>
+    
+    <div style="position: relative; width: 100%; height: 700px; background: linear-gradient(to right, #f7fafc 0%, #edf2f7 100%); border-radius: 12px; padding: 60px 40px 40px 60px; box-sizing: border-box;">
+      
+      <!-- Axis Labels -->
+      <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); font-weight: 700; color: #2d3748; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">User Value →</div>
+      <div style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%) rotate(-90deg); font-weight: 700; color: #2d3748; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">← Effort</div>
+      
+      <!-- Quadrant Labels -->
+      <div style="position: absolute; top: 80px; right: 60px; background: rgba(72, 187, 120, 0.1); padding: 8px 16px; border-radius: 6px; font-weight: 600; color: #2f855a; font-size: 13px;">Quick Wins</div>
+      <div style="position: absolute; top: 80px; left: 80px; background: rgba(237, 137, 54, 0.1); padding: 8px 16px; border-radius: 6px; font-weight: 600; color: #c05621; font-size: 13px;">Fill-ins</div>
+      <div style="position: absolute; bottom: 60px; right: 60px; background: rgba(102, 126, 234, 0.1); padding: 8px 16px; border-radius: 6px; font-weight: 600; color: #5a67d8; font-size: 13px;">Big Bets</div>
+      <div style="position: absolute; bottom: 60px; left: 80px; background: rgba(252, 129, 129, 0.1); padding: 8px 16px; border-radius: 6px; font-weight: 600; color: #c53030; font-size: 13px;">Time Sinks</div>
+      
+      <!-- Dividing Lines -->
+      <div style="position: absolute; left: 60px; top: 50%; width: calc(100% - 100px); height: 2px; background: #cbd5e0;"></div>
+      <div style="position: absolute; left: 50%; top: 60px; width: 2px; height: calc(100% - 100px); background: #cbd5e0;"></div>
+      
+      <!-- Phase 1 Features (MVP) - Green -->
+      <div style="position: absolute; right: 25%; top: 25%; background: #48bb78; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">AI Meal Plan<br>Generator</div>
+      <div style="position: absolute; right: 18%; top: 32%; background: #48bb78; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Dietary<br>Preferences</div>
+      <div style="position: absolute; right: 30%; top: 18%; background: #48bb78; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Smart Grocery<br>Lists</div>
+      <div style="position: absolute; right: 22%; top: 40%; background: #48bb78; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Recipe<br>Library</div>
+      <div style="position: absolute; right: 35%; top: 28%; background: #48bb78; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">User Auth &<br>Profiles</div>
+      <div style="position: absolute; right: 15%; top: 22%; background: #48bb78; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Ingredient<br>Optimization</div>
+      <div style="position: absolute; right: 28%; top: 35%; background: #48bb78; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Basic<br>Nutrition Info</div>
+      
+      <!-- Phase 2 Features (Growth) - Blue -->
+      <div style="position: absolute; right: 20%; bottom: 28%; background: #4299e1; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Mobile Apps<br>(iOS/Android)</div>
+      <div style="position: absolute; right: 32%; bottom: 22%; background: #4299e1; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Meal Prep<br>Scheduler</div>
+      <div style="position: absolute; right: 15%; bottom: 35%; background: #4299e1; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Advanced<br>Macro Tracking</div>
+      <div style="position: absolute; right: 25%; bottom: 18%; background: #4299e1; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Recipe<br>Substitutions</div>
+      <div style="position: absolute; right: 38%; bottom: 30%; background: #4299e1; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Family<br>Sharing</div>
+      <div style="position: absolute; right: 28%; bottom: 25%; background: #4299e1; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Calendar<br>Integration</div>
+      
+      <!-- Phase 2 Quick Wins - Blue in upper right -->
+      <div style="position: absolute; right: 12%; top: 38%; background: #4299e1; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Recipe<br>Ratings</div>
+      <div style="position: absolute; right: 38%; top: 22%; background: #4299e1; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Push<br>Notifications</div>
+      
+      <!-- Phase 3 Features (Scale) - Purple -->
+      <div style="position: absolute; right: 18%; bottom: 20%; background: #9f7aea; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(159, 122, 234, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Grocery<br>Delivery API</div>
+      <div style="position: absolute; right: 10%; bottom: 28%; background: #9f7aea; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(159, 122, 234, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Voice Assistant<br>Integration</div>
+      <div style="position: absolute; right: 35%; bottom: 15%; background: #9f7aea; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(159, 122, 234, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">AI Recipe<br>Creation</div>
+      <div style="position: absolute; right: 42%; bottom: 22%; background: #9f7aea; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(159, 122, 234, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Smart Kitchen<br>Integration</div>
+      
+      <!-- Phase 3 Quick Wins - Purple in upper right -->
+      <div style="position: absolute; right: 8%; top: 30%; background: #9f7aea; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(159, 122, 234, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Social<br>Sharing</div>
+      <div style="position: absolute; right: 42%; top: 15%; background: #9f7aea; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(159, 122, 234, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Gamification<br>Streaks</div>
+      
+      <!-- Future/Deferred Features - Orange (Fill-ins) and Red (Time Sinks) -->
+      <div style="position: absolute; left: 15%; top: 25%; background: #ed8936; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(237, 137, 54, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Video<br>Tutorials</div>
+      <div style="position: absolute; left: 22%; top: 35%; background: #ed8936; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(237, 137, 54, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Community<br>Forums</div>
+      <div style="position: absolute; left: 18%; top: 18%; background: #ed8936; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(237, 137, 54, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Chef<br>Partnerships</div>
+      
+      <div style="position: absolute; left: 12%; bottom: 25%; background: #fc8181; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(252, 129, 129, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Custom<br>Recipe Builder</div>
+      <div style="position: absolute; left: 20%; bottom: 18%; background: #fc8181; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(252, 129, 129, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">AR Kitchen<br>Assistant</div>
+      <div style="position: absolute; left: 15%; bottom: 32%; background: #fc8181; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(252, 129, 129, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Nutritionist<br>Marketplace</div>
+      <div style="position: absolute; left: 25%; bottom: 28%; background: #fc8181; color: white; padding: 8px 12px; border-radius: 8px; font-size: 11px; font-weight: 600; box-shadow: 0 4px 12px rgba(252, 129, 129, 0.4); cursor: pointer; text-align: center; line-height: 1.3;">Meal Kit<br>Production</div>
+      
+    </div>
+    
+    <!-- Legend -->
+    <div style="display: flex; justify-content: center; gap: 30px; margin-top: 25px; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 20px; height: 20px; background: #48bb78; border-radius: 4px;"></div>
+        <span style="color: #2d3748; font-size: 14px; font-weight: 600;">Phase 1: MVP (Weeks 1-10)</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 20px; height: 20px; background: #4299e1; border-radius: 4px;"></div>
+        <span style="color: #2d3748; font-size: 14px; font-weight: 600;">Phase 2: Growth (Weeks 11-24)</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 20px; height: 20px; background: #9f7aea; border-radius: 4px;"></div>
+        <span style="color: #2d3748; font-size: 14px; font-weight: 600;">Phase 3: Scale (Months 7-12)</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 20px; height: 20px; background: #ed8936; border-radius: 4px;"></div>
+        <span style="color: #2d3748; font-size: 14px; font-weight: 600;">Future: Fill-ins</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 20px; height: 20px; background: #fc8181; border-radius: 4px;"></div>
+        <span style="color: #2d3748; font-size: 14px; font-weight: 600;">Avoid: Time Sinks</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phased Roadmap -->
+  <div style="background: white; border-radius: 16px; padding: 40px; margin-bottom: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+    <h2 style="color: #1a202c; font-size: 28px; margin: 0 0 30px 0; font-weight: 700;">Phased Execution Roadmap</h2>
+    
+    <!-- Phase 1 -->
+    <div style="margin-bottom: 35px; border-left: 5px solid #48bb78; padding-left: 25px; background: linear-gradient(to right, rgba(72, 187, 120, 0.05), transparent); padding: 20px 20px 20px 25px; border-radius: 0 8px 8px 0;">
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+        <div style="background: #48bb78; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; flex-shrink: 0;">1</div>
+        <div>
+          <h3 style="color: #1a202c; font-size: 22px; margin: 0; font-weight: 700;">MVP Launch - Core Value Validation</h3>
+          <p style="color: #718096; margin: 5px 0 0 0; font-size: 14px; font-weight: 600;">Weeks 1-10 | Budget: $5,000-7,000</p>
+        </div>
+      </div>
+      
+      <p style="color: #2d3748; line-height: 1.7; margin-bottom: 20px;">The MVP phase focuses ruthlessly on validating the core value proposition: can AI generate meal plans that users actually follow? This phase prioritizes the minimum feature set needed to deliver personalized weekly meal plans with optimized grocery lists. Success here means users return weekly and share the product organically. We're building for 100 beta users who will tolerate rough edges in exchange for solving their meal planning pain. The technical approach leverages Spoonacular API for recipes (avoiding recipe creation complexity), GPT-4 for intelligent plan generation, and Supabase for rapid backend setup. This phase should feel like a focused prototype, not a polished product.</p>
+      
+      <div style="background: white; border-radius: 8px; padding: 20px; border: 2px solid #e2e8f0;">
+        <h4 style="color: #2d3748; font-size: 16px; margin: 0 0 15px 0; font-weight: 700;">Core Features (7)</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #48bb78; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>AI Meal Plan Generator:</strong> GPT-4 powered 7-day plans based on preferences</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #48bb78; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Dietary Preferences:</strong> Vegan, keto, gluten-free, allergies, family size</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #48bb78; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Smart Grocery Lists:</strong> Auto-generated, organized by store section</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #48bb78; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Ingredient Optimization:</strong> Reuse ingredients across recipes to reduce waste</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #48bb78; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Recipe Library:</strong> Integration with Spoonacular (5,000+ recipes)</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #48bb78; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>User Auth & Profiles:</strong> Supabase authentication, preference storage</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #48bb78; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Basic Nutrition Info:</strong> Calories and macros per meal via USDA API</span>
+          </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+          <h4 style="color: #2d3748; font-size: 15px; margin: 0 0 10px 0; font-weight: 700;">Success Criteria</h4>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #48bb78; font-size: 28px; font-weight: 800;">100</div>
+              <div style="color: #718096; font-size: 13px;">Beta Users</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #48bb78; font-size: 28px; font-weight: 800;">60%</div>
+              <div style="color: #718096; font-size: 13px;">Weekly Return Rate</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #48bb78; font-size: 28px; font-weight: 800;">4.2+</div>
+              <div style="color: #718096; font-size: 13px;">User Satisfaction Score</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #48bb78; font-size: 28px; font-weight: 800;">25%</div>
+              <div style="color: #718096; font-size: 13px;">Organic Referral Rate</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div style="margin-bottom: 35px; border-left: 5px solid #4299e1; padding-left: 25px; background: linear-gradient(to right, rgba(66, 153, 225, 0.05), transparent); padding: 20px 20px 20px 25px; border-radius: 0 8px 8px 0;">
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+        <div style="background: #4299e1; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; flex-shrink: 0;">2</div>
+        <div>
+          <h3 style="color: #1a202c; font-size: 22px; margin: 0; font-weight: 700;">Growth Phase - Engagement & Retention</h3>
+          <p style="color: #718096; margin: 5px 0 0 0; font-size: 14px; font-weight: 600;">Weeks 11-24 | Budget: $15,000-20,000</p>
+        </div>
+      </div>
+      
+      <p style="color: #2d3748; line-height: 1.7; margin-bottom: 20px;">Phase 2 transitions from validation to sustainable growth, focusing on features that drive daily engagement and reduce churn. Mobile apps become critical here—meal planning is inherently mobile (grocery shopping, kitchen reference). Advanced macro tracking targets the fitness enthusiast segment identified in beta feedback. Family sharing unlocks household subscriptions (higher LTV). The meal prep scheduler addresses the "I planned but didn't execute" problem that causes abandonment. This phase also introduces quick-win engagement features like recipe ratings and push notifications that cost little to build but significantly impact retention. Investment in mobile development ($8K-12K) is justified by 3x higher engagement rates on native apps versus web.</p>
+      
+      <div style="background: white; border-radius: 8px; padding: 20px; border: 2px solid #e2e8f0;">
+        <h4 style="color: #2d3748; font-size: 16px; margin: 0 0 15px 0; font-weight: 700;">Growth Features (8)</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #4299e1; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Mobile Apps (iOS/Android):</strong> React Native for cross-platform development</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #4299e1; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Advanced Macro Tracking:</strong> Protein/carb/fat goals with progress visualization</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #4299e1; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Meal Prep Scheduler:</strong> Calendar view with prep time optimization</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #4299e1; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Recipe Substitutions:</strong> AI-powered ingredient swaps based on availability</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #4299e1; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Family Sharing:</strong> Multi-user profiles with shared grocery lists</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #4299e1; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Calendar Integration:</strong> Google Calendar/Apple Calendar sync</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #4299e1; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Recipe Ratings:</strong> User feedback loop to improve AI recommendations</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #4299e1; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Push Notifications:</strong> Meal prep reminders, grocery list alerts</span>
+          </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+          <h4 style="color: #2d3748; font-size: 15px; margin: 0 0 10px 0; font-weight: 700;">Success Criteria</h4>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #4299e1; font-size: 28px; font-weight: 800;">5,000</div>
+              <div style="color: #718096; font-size: 13px;">Active Users</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #4299e1; font-size: 28px; font-weight: 800;">500</div>
+              <div style="color: #718096; font-size: 13px;">Paying Subscribers</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #4299e1; font-size: 28px; font-weight: 800;">40%</div>
+              <div style="color: #718096; font-size: 13px;">3-Month Retention</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #4299e1; font-size: 28px; font-weight: 800;">$5K</div>
+              <div style="color: #718096; font-size: 13px;">Monthly Recurring Revenue</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div style="margin-bottom: 0; border-left: 5px solid #9f7aea; padding-left: 25px; background: linear-gradient(to right, rgba(159, 122, 234, 0.05), transparent); padding: 20px 20px 20px 25px; border-radius: 0 8px 8px 0;">
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+        <div style="background: #9f7aea; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; flex-shrink: 0;">3</div>
+        <div>
+          <h3 style="color: #1a202c; font-size: 22px; margin: 0; font-weight: 700;">Scale Phase - Platform & Partnerships</h3>
+          <p style="color: #718096; margin: 5px 0 0 0; font-size: 14px; font-weight: 600;">Months 7-12 | Budget: $40,000-60,000</p>
+        </div>
+      </div>
+      
+      <p style="color: #2d3748; line-height: 1.7; margin-bottom: 20px;">Phase 3 transforms SmartPlate from a standalone app into a platform with ecosystem integrations that create defensible moats. Grocery delivery API integration (Instacart, Amazon Fresh) captures affiliate revenue while reducing user friction—the grocery list becomes a one-click purchase. Voice assistant integration (Alexa, Google Home) enables hands-free kitchen interaction, a natural use case that competitors haven't nailed. AI recipe creation moves beyond adaptation to true generation, enabling infinite variety. Smart kitchen integration (smart ovens, scales) positions SmartPlate as the operating system for connected kitchens. Social sharing and gamification features leverage network effects for viral growth. This phase requires partnerships (grocery APIs, device manufacturers) that validate market position and create barriers to entry.</p>
+      
+      <div style="background: white; border-radius: 8px; padding: 20px; border: 2px solid #e2e8f0;">
+        <h4 style="color: #2d3748; font-size: 16px; margin: 0 0 15px 0; font-weight: 700;">Scale Features (6)</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #9f7aea; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Grocery Delivery API:</strong> Instacart/Amazon Fresh one-click ordering</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #9f7aea; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Voice Assistant Integration:</strong> Alexa/Google Home meal planning</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #9f7aea; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>AI Recipe Creation:</strong> Generate custom recipes from scratch</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #9f7aea; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Smart Kitchen Integration:</strong> Connected ovens, scales, thermometers</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #9f7aea; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Social Sharing:</strong> Share meal plans, recipe collections with friends</span>
+          </div>
+          <div style="display: flex; align-items: start; gap: 10px;">
+            <span style="color: #9f7aea; font-size: 18px; flex-shrink: 0;">✓</span>
+            <span style="color: #4a5568; font-size: 14px; line-height: 1.5;"><strong>Gamification Streaks:</strong> Cooking streaks, achievements, challenges</span>
+          </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+          <h4 style="color: #2d3748; font-size: 15px; margin: 0 0 10px 0; font-weight: 700;">Success Criteria</h4>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #9f7aea; font-size: 28px; font-weight: 800;">50K</div>
+              <div style="color: #718096; font-size: 13px;">Active Users</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #9f7aea; font-size: 28px; font-weight: 800;">7,500</div>
+              <div style="color: #718096; font-size: 13px;">Paying Subscribers</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #9f7aea; font-size: 28px; font-weight: 800;">2+</div>
+              <div style="color: #718096; font-size: 13px;">Major Partnerships</div>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <div style="color: #9f7aea; font-size: 28px; font-weight: 800;">$75K</div>
+              <div style="color: #718096; font-size: 13px;">Monthly Recurring Revenue</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI/Low-Code Implementation Strategy -->
+  <div style="background: white; border-radius: 16px; padding: 40px; margin-bottom: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+    <h2 style="color: #1a202c; font-size: 28px; margin: 0 0 25px 0; font-weight: 700;">AI & Low-Code Implementation Stack</h2>
+    <p style="color: #4a5568; margin-bottom: 30px; line-height: 1.6;">Optimized technology choices to minimize custom development and maximize speed-to-market</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+      
+      <!-- Frontend -->
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 25px; color: white;">
+        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">🎨</span> Frontend
+        </h3>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Next.js + React</div>
+          <div style="font-size: 13px; opacity: 0.9;">SEO-friendly, fast, modern UI framework</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> Free (open source)</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Vercel Hosting</div>
+          <div style="font-size: 13px; opacity: 0.9;">Zero-config deployment, global CDN</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> $20/mo (Pro plan)</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Tailwind CSS</div>
+          <div style="font-size: 13px; opacity: 0.9;">Rapid UI development without custom CSS</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> Free</div>
+        </div>
+      </div>
+
+      <!-- Backend -->
+      <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; padding: 25px; color: white;">
+        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">⚙️</span> Backend
+        </h3>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Supabase</div>
+          <div style="font-size: 13px; opacity: 0.9;">PostgreSQL, auth, real-time, storage—all-in-one</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> $25/mo (Pro), scales to $599/mo</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Serverless Functions</div>
+          <div style="font-size: 13px; opacity: 0.9;">Vercel Edge Functions for API routes</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> Included in Vercel Pro</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Redis Cache</div>
+          <div style="font-size: 13px; opacity: 0.9;">Upstash for meal plan caching</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> $10/mo (pay-as-you-go)</div>
+        </div>
+      </div>
+
+      <!-- AI & Data -->
+      <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; padding: 25px; color: white;">
+        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">🤖</span> AI & Data
+        </h3>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">OpenAI GPT-4</div>
+          <div style="font-size: 13px; opacity: 0.9;">Meal plan generation, recipe adaptation</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> $200-400/mo (1K-5K users)</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Spoonacular API</div>
+          <div style="font-size: 13px; opacity: 0.9;">Recipe database (5,000+ recipes)</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> $150/mo (5K requests/day)</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">USDA FoodData API</div>
+          <div style="font-size: 13px; opacity: 0.9;">Nutritional data (free government API)</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> Free</div>
+        </div>
+      </div>
+
+      <!-- Mobile -->
+      <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); border-radius: 12px; padding: 25px; color: white;">
+        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">📱</span> Mobile (Phase 2)
+        </h3>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">React Native + Expo</div>
+          <div style="font-size: 13px; opacity: 0.9;">Cross-platform iOS/Android from one codebase</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> Free (dev time: $8K-12K)</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">OneSignal</div>
+          <div style="font-size: 13px; opacity: 0.9;">Push notifications, in-app messaging</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> Free (up to 10K subscribers)</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">App Store Fees</div>
+          <div style="font-size: 13px; opacity: 0.9;">Apple ($99/yr) + Google ($25 one-time)</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> $124 first year, $99/yr after</div>
+        </div>
+      </div>
+
+      <!-- Payments & Analytics -->
+      <div style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); border-radius: 12px; padding: 25px; color: white;">
+        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">💳</span> Payments
+        </h3>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Stripe</div>
+          <div style="font-size: 13px; opacity: 0.9;">Subscription billing, customer portal</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> 2.9% + $0.30 per transaction</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">PostHog</div>
+          <div style="font-size: 13px; opacity: 0.9;">Product analytics, feature flags, A/B testing</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> Free (1M events/mo)</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); border-radius: 8px; padding: 15px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Google Analytics 4</div>
+          <div style="font-size: 13px; opacity: 0.9;">Traffic analytics, conversion tracking</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.8;"><strong>Cost:</strong> Free</div>
+        </div>
+      </div>
+
+      <!-- DevOps -->
+      <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 12px; padding: 25px; color: #2d3748;">
+        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px;">🔧</span> DevOps
+        </h3>
+        <div style="background: rgba(45, 55, 72, 0.06); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">GitHub</div>
+          <div style="font-size: 13px; opacity: 0.8;">Version control, CI/CD pipelines</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.7;"><strong>Cost:</strong> Free (public repos)</div>
+        </div>
+        <div style="background: rgba(45, 55, 72, 0.06); border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Sentry</div>
+          <div style="font-size: 13px; opacity: 0.8;">Error tracking, performance monitoring</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.7;"><strong>Cost:</strong> $26/mo (Team plan)</div>
+        </div>
+        <div style="background: rgba(45, 55, 72, 0.06); border-radius: 8px; padding: 15px;">
+          <div style="font-weight: 700; margin-bottom: 5px;">Cloudflare</div>
+          <div style="font-size: 13px; opacity: 0.8;">DNS, DDoS protection, CDN</div>
+          <div style="font-size: 12px; margin-top: 8px; opacity: 0.7;"><strong>Cost:</strong> Free (Pro: $20/mo optional)</div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Cost Summary -->
+    <div style="margin-top: 30px; background: linear-gradient(to right, #f7fafc, #edf2f7); border-radius: 12px; padding: 30px; border-left: 5px solid #667eea;">
+      <h3 style="color: #1a202c; font-size: 20px; margin: 0 0 20px 0; font-weight: 700;">Monthly Operating Cost Projections</h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+        <div style="text-align: center;">
+          <div style="color: #667eea; font-size: 36px; font-weight: 800;">$255</div>
+          <div style="color: #4a5568; font-size: 14px; font-weight: 600; margin-top: 5px;">MVP Phase (0-100 users)</div>
+          <div style="color: #718096; font-size: 12px; margin-top: 8px;">Hosting, APIs, basic tools</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="color: #4299e1; font-size: 36px; font-weight: 800;">$550</div>
+          <div style="color: #4a5568; font-size: 14px; font-weight: 600; margin-top: 5px;">Growth Phase (1K-5K users)</div>
+          <div style="color: #718096; font-size: 12px; margin-top: 8px;">+ Mobile infrastructure, scaling</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="color: #9f7aea; font-size: 36px; font-weight: 800;">$1,200</div>
+          <div style="color: #4a5568; font-size: 14px; font-weight: 600; margin-top: 5px;">Scale Phase (10K+ users)</div>
+          <div style="color: #718096; font-size: 12px; margin-top: 8px;">+ Partnership APIs, advanced AI</div>
+        </div>
+      </div>
+      <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px; border: 2px solid #e2e8f0;">
+        <p style="margin: 0; color: #2d3748; font-size: 14px; line-height: 1.6;"><strong>💡 Cost Efficiency Note:</strong> At 1,000 paying subscribers ($9.99/mo), monthly revenue is <strong>$9,990</strong> against <strong>$550</strong> operating costs—an 18x margin before marketing spend. This validates the low-code approach's economic viability.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Development Timeline -->
+  <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+    <h2 style="color: #1a202c; font-size: 28px; margin: 0 0 25px 0; font-weight: 700;">Development Timeline & Milestones</h2>
+    <p style="color: #4a5568; margin-bottom: 35px; line-height: 1.6;">12-month execution roadmap with critical path dependencies and resource allocation</p>
+    
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; min-width: 900px;">
+        <thead>
+          <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <th style="padding: 15px; text-align: left; font-weight: 700; border-radius: 8px 0 0 0;">Phase</th>
+            <th style="padding: 15px; text-align: left; font-weight: 700;">Timeline</th>
+            <th style="padding: 15px; text-align: left; font-weight: 700;">Key Milestones</th>
+            <th style="padding: 15px; text-align: left; font-weight: 700;">Team</th>
+            <th style="padding: 15px; text-align: left; font-weight: 700; border-radius: 0 8px 0 0;">Budget</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background: rgba(72, 187, 120, 0.05);">
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #2d3748;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 12px; height: 12px; background: #48bb78; border-radius: 50%;"></div>
+                MVP
+              </div>
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568;">
+              <strong>Weeks 1-10</strong><br>
+              <span style="font-size: 13px; color: #718096;">~2.5 months</span>
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568; font-size: 14px; line-height: 1.6;">
+              • Week 2: Design system & wireframes<br>
+              • Week 4: Core AI integration working<br>
+              • Week 7: Beta version deployed<br>
+              • Week 10: 100 beta users onboarded
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568; font-size: 14px;">
+              1 Full-stack dev<br>
+              1 Designer (contract)
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #48bb78; font-weight: 700; font-size: 18px;">$7,000</td>
+          </tr>
+          
+          <tr style="background: rgba(66, 153, 225, 0.05);">
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #2d3748;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 12px; height: 12px; background: #4299e1; border-radius: 50%;"></div>
+                Growth
+              </div>
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568;">
+              <strong>Weeks 11-24</strong><br>
+              <span style="font-size: 13px; color: #718096;">~3.5 months</span>
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568; font-size: 14px; line-height: 1.6;">
+              • Week 12: Product Hunt launch<br>
+              • Week 16: Mobile apps in beta<br>
+              • Week 20: 1,000 active users<br>
+              • Week 24: 500 paying subscribers
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568; font-size: 14px;">
+              1 Full-stack dev<br>
+              1 Mobile dev (contract)<br>
+              1 Growth marketer
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4299e1; font-weight: 700; font-size: 18px;">$18,000</td>
+          </tr>
+          
+          <tr style="background: rgba(159, 122, 234, 0.05);">
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; font-weight: 700; color: #2d3748;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 12px; height: 12px; background: #9f7aea; border-radius: 50%;"></div>
+                Scale
+              </div>
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568;">
+              <strong>Months 7-12</strong><br>
+              <span style="font-size: 13px; color: #718096;">6 months</span>
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568; font-size: 14px; line-height: 1.6;">
+              • Month 7: Grocery API integration live<br>
+              • Month 9: Voice assistant beta<br>
+              • Month 10: 25K active users<br>
+              • Month 12: Break-even on CAC
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #4a5568; font-size: 14px;">
+              2 Full-stack devs<br>
+              1 Mobile dev<br>
+              1 Growth lead<br>
+              1 Partnership manager
+            </td>
+            <td style="padding: 20px; border-bottom: 1px solid #e2e8f0; color: #9f7aea; font-weight: 700; font-size: 18px;">$55,000</td>
+          </tr>
+          
+          <tr style="background: #f7fafc;">
+            <td colspan="4" style="padding: 20px; text-align: right; font-weight: 700; color: #2d3748; font-size: 16px;">
+              Total 12-Month Investment:
+            </td>
+            <td style="padding: 20px; color: #667eea; font-weight: 800; font-size: 24px;">$80,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Critical Path Callout -->
+    <div style="margin-top: 30px; background: linear-gradient(to right, #fff5f5, #fed7d7); border-left: 5px solid #fc8181; padding: 20px; border-radius: 0 8px 8px 0;">
+      <h4 style="color: #c53030; font-size: 16px; margin: 0 0 12px 0; font-weight: 700;">⚠️ Critical Path Dependencies</h4>
+      <ul style="margin: 0; padding-left: 20px; color: #742a2a; line-height: 1.8;">
+        <li><strong>GPT-4 API access:</strong> Must secure before Week 3 (2-week approval process)</li>
+        <li><strong>Spoonacular API tier:</strong> Start with free tier (150 requests/day), upgrade Week 8</li>
+        <li><strong>Mobile developer:</strong> Contract sourcing should begin Week 8 for Week 11 start</li>
+        <li><strong>Stripe account approval:</strong> Apply Week 1 (can take 7-10 days for full activation)</li>
+        <li><strong>App Store submissions:</strong> Plan 2-week review buffer for iOS, 3-5 days for Android</li>
+      </ul>
+    </div>
+
+    <!-- Risk Mitigation -->
+    <div style="margin-top: 20px; background: linear-gradient(to right, #f0fff4, #c6f6d5); border-left: 5px solid #48bb78; padding: 20px; border-radius: 0 8px 8px 0;">
+      <h4 style="color: #2f855a; font-size: 16px; margin: 0 0 12px 0; font-weight: 700;">✅ De-Risking Strategies</h4>
+      <ul style="margin: 0; padding-left: 20px; color: #22543d; line-height: 1.8;">
+        <li><strong>Parallel path development:</strong> Build recipe validation layer while AI integration is in progress</li>
+        <li><strong>Fallback recipe source:</strong> If Spoonacular proves inadequate, pivot to Edamam API (similar pricing)</li>
+        <li><strong>MVP feature cuts:</strong> Nutrition tracking can be delayed to Week 12 if timeline slips</li>
+        <li><strong>Beta extension option:</strong> Can extend beta to 200 users if engagement metrics are below target</li>
+        <li><strong>Hiring buffer:</strong> Budget includes 15% contingency for contractor rate fluctuations</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+```

@@ -1,0 +1,591 @@
+```html
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #343a40; padding: 20px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        h1 { font-size: 2.2em; border-bottom: 3px solid #007bff; padding-bottom: 10px; }
+        h2 { font-size: 1.8em; color: #007bff; }
+        h3 { font-size: 1.4em; color: #495057; }
+        p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .section-header {
+            background-color: #e9ecef;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid #007bff;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .feature-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .feature-card h4 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .feature-card p {
+            font-size: 0.95em;
+            color: #555;
+        }
+        .phase-box {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+            border-left: 6px solid;
+            transition: all 0.3s ease;
+        }
+        .phase-box:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .phase-box.alpha { border-color: #28a745; } /* Green */
+        .phase-box.beta { border-color: #ffc107; }  /* Yellow */
+        .phase-box.gamma { border-color: #17a2b8; } /* Cyan */
+        .phase-box.delta { border-color: #6f42c1; } /* Purple */
+
+        .phase-box h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            font-size: 1.6em;
+        }
+        .phase-box h3 .icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .phase-box ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 15px;
+        }
+        .phase-box ul li {
+            background-color: #e9f7ef; /* Light green for features */
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            font-size: 0.95em;
+            color: #333;
+            border: 1px solid #d4edda;
+        }
+        .phase-box ul li.alpha { background-color: #e6ffed; border-color: #c3e6cb; }
+        .phase-box ul li.beta { background-color: #fff9e6; border-color: #ffeeba; }
+        .phase-box ul li.gamma { background-color: #e0f7fa; border-color: #b2ebf2; }
+        .phase-box ul li.delta { background-color: #f3e5f5; border-color: #e1bee7; }
+
+
+        .phase-box ul li::before {
+            content: '✅';
+            margin-right: 8px;
+            font-size: 1.1em;
+        }
+        .timeline-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        .timeline-line {
+            position: absolute;
+            height: 4px;
+            background-color: #e0e0e0;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 0;
+            border-radius: 2px;
+        }
+        .timeline-progress {
+            position: absolute;
+            height: 4px;
+            background-color: #007bff;
+            width: 0%; /* Will be set by JS or dynamically */
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            border-radius: 2px;
+            transition: width 1s ease-out;
+        }
+        .timeline-milestone {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 0.85em;
+            font-weight: bold;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            min-width: 120px;
+            transition: background-color 0.3s ease;
+        }
+        .timeline-milestone:hover {
+            background-color: #0056b3;
+        }
+        .timeline-milestone::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #007bff;
+            margin-top: 5px;
+        }
+        .timeline-milestone span {
+            display: block;
+            font-size: 0.75em;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+        .ai-lowcode-section {
+            background-color: #eaf6ff;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            border-left: 6px solid #007bff;
+        }
+        .ai-lowcode-section h3 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .ai-lowcode-section .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .tech-item {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #007bff;
+        }
+        .tech-item strong {
+            color: #343a40;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .tech-item p {
+            font-size: 0.85em;
+            margin-bottom: 0;
+        }
+        .cost-estimate {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            color: #856404;
+            font-weight: 500;
+        }
+
+        /* Value vs. Effort Matrix Styling */
+        .matrix-container {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #ced4da;
+            width: 100%;
+            aspect-ratio: 16/9; /* Maintain aspect ratio */
+            max-width: 800px;
+            margin: 30px auto;
+            position: relative;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            width: 100%;
+            height: 100%;
+        }
+        .matrix-quadrant {
+            border: 1px solid #e9ecef;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start; /* Align items to the top */
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        .matrix-quadrant h4 {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #495057;
+            margin: 0;
+            z-index: 10;
+            background-color: rgba(255,255,255,0.8);
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+        .matrix-quadrant.high-value-low-effort { background-color: #e6ffe6; } /* Green */
+        .matrix-quadrant.high-value-high-effort { background-color: #fffbe6; } /* Yellow */
+        .matrix-quadrant.low-value-low-effort { background-color: #e6f7ff; } /* Blue */
+        .matrix-quadrant.low-value-high-effort { background-color: #ffe6e6; } /* Red */
+
+        .matrix-item {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin: 5px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: calc(50% - 10px); /* Adjust to fit multiple items per row */
+            flex-grow: 1; /* Allow items to grow */
+            flex-shrink: 0;
+        }
+        .matrix-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Value/Effort Axis Labels */
+        .matrix-axis-label {
+            position: absolute;
+            font-weight: bold;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .matrix-axis-label.value-high { top: 5%; left: -60px; transform: rotate(-90deg); transform-origin: top left; }
+        .matrix-axis-label.value-low { bottom: 5%; left: -60px; transform: rotate(-90deg); transform-origin: bottom left; }
+        .matrix-axis-label.effort-high { bottom: -30px; right: 5%; }
+        .matrix-axis-label.effort-low { bottom: -30px; left: 5%; }
+
+        .matrix-y-axis {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 30px; /* Space for Y-axis label */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .matrix-y-label {
+            transform: rotate(-90deg);
+            white-space: nowrap;
+            font-weight: bold;
+            color: #495057;
+            font-size: 1.1em;
+        }
+        .matrix-x-axis {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 30px; /* Space for X-axis label */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .matrix-x-label {
+            font-weight: bold;
+            color: #495057;
+            font-size: 1.1em;
+        }
+        .matrix-inner-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .matrix-row {
+            display: flex;
+            flex-grow: 1;
+        }
+        .matrix-quadrant {
+            flex-grow: 1;
+            position: relative;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 8px; /* Gap between feature items */
+            overflow-y: auto; /* Enable scrolling for many items */
+        }
+        .matrix-quadrant h4 {
+            position: sticky; /* Keep quadrant label visible */
+            top: 0;
+            left: 0;
+            background-color: rgba(255,255,255,0.9);
+            padding: 5px 10px;
+            border-radius: 5px;
+            z-index: 10;
+            margin-bottom: 10px;
+        }
+
+        /* Quadrant specific item colors */
+        .matrix-item.phase-alpha { background-color: #d4edda; border-color: #28a745; color: #155724; }
+        .matrix-item.phase-beta { background-color: #fff3cd; border-color: #ffc107; color: #856404; }
+        .matrix-item.phase-gamma { background-color: #d1ecf1; border-color: #17a2b8; color: #0c5460; }
+        .matrix-item.phase-delta { background-color: #e2d9eb; border-color: #6f42c1; color: #381b5c; }
+
+        .tooltip {
+            position: absolute;
+            background-color: #343a40;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            white-space: normal;
+            max-width: 200px;
+            line-height: 1.4;
+        }
+        .matrix-item:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+    </style>
+
+    <div class="container">
+        <div class="section-header">
+            <h1>🚀 SmartPlate: MVP Roadmap & Feature Prioritization</h1>
+            <p>A phased execution plan for SmartPlate, driven by a Value vs. Effort Matrix to ensure strategic feature development and a clear path to market.</p>
+        </div>
+
+        <h2>📊 Value vs. Effort Matrix: Feature Prioritization</h2>
+        <p>This matrix plots key features based on their perceived value to the user and the estimated development effort. Features are color-coded to align with their planned phase for release.</p>
+
+        <div class="matrix-container">
+            <div style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background-color: #ced4da; transform: translateY(-50%); z-index: 5;"></div>
+            <div style="position: absolute; left: 50%; top: 0; height: 100%; width: 1px; background-color: #ced4da; transform: translateX(-50%); z-index: 5;"></div>
+
+            <div class="matrix-y-axis" style="left: -40px; top: 50%; transform: translateY(-50%) rotate(-90deg);">
+                <span class="matrix-y-label">Value</span>
+            </div>
+            <div class="matrix-x-axis" style="bottom: -40px; left: 50%; transform: translateX(-50%);">
+                <span class="matrix-x-label">Effort</span>
+            </div>
+
+            <div class="matrix-row">
+                <div class="matrix-quadrant high-value-low-effort">
+                    <h4>High Value, Low Effort (Phase 1: Quick Wins)</h4>
+                    <div class="matrix-item phase-alpha">AI Meal Plan Gen <span class="tooltip">Core feature, GPT-4 integration.</span></div>
+                    <div class="matrix-item phase-alpha">Basic Grocery List <span class="tooltip">Auto-generates basic lists.</span></div>
+                    <div class="matrix-item phase-alpha">User Prefs (Dietary) <span class="tooltip">Initial dietary restrictions.</span></div>
+                    <div class="matrix-item phase-alpha">Recipe Search/Fav <span class="tooltip">Basic recipe browsing.</span></div>
+                    <div class="matrix-item phase-alpha">User Auth <span class="tooltip">Supabase for login/signup.</span></div>
+                    <div class="matrix-item phase-alpha">Basic UI/UX <span class="tooltip">Clean, functional interface.</span></div>
+                    <div class="matrix-item phase-alpha">Feedback Loop <span class="tooltip">In-app reporting.</span></div>
+                    <div class="matrix-item phase-alpha">Onboarding Flow <span class="tooltip">Initial setup questions.</span></div>
+                </div>
+                <div class="matrix-quadrant high-value-high-effort">
+                    <h4>High Value, High Effort (Phase 2: Big Bets)</h4>
+                    <div class="matrix-item phase-beta">Waste Reduction Engine <span class="tooltip">Intelligent ingredient reuse.</span></div>
+                    <div class="matrix-item phase-beta">Real-time Adaptation <span class="tooltip">"What's in my fridge" logic.</span></div>
+                    <div class="matrix-item phase-beta">Advanced User Prefs <span class="tooltip">Cooking skill, cuisine, dislikes.</span></div>
+                    <div class="matrix-item phase-beta">Nutrition Tracking <span class="tooltip">Calorie/macro breakdown.</span></div>
+                    <div class="matrix-item phase-beta">Meal Prep Scheduling <span class="tooltip">Planning cook times.</span></div>
+                    <div class="matrix-item phase-beta">Mobile App (PWA) <span class="tooltip">Progressive Web App.</span></div>
+                    <div class="matrix-item phase-beta">Grocery Integrations <span class="tooltip">API calls to services.</span></div>
+                </div>
+            </div>
+            <div class="matrix-row">
+                <div class="matrix-quadrant low-value-low-effort">
+                    <h4>Low Value, Low Effort (Phase 3: Fill-ins)</h4>
+                    <div class="matrix-item phase-gamma">Recipe Sharing <span class="tooltip">Share plans with friends.</span></div>
+                    <div class="matrix-item phase-gamma">Recipe Rating <span class="tooltip">User-generated ratings.</span></div>
+                    <div class="matrix-item phase-gamma">Shopping List Export <span class="tooltip">PDF/Email list.</span></div>
+                    <div class="matrix-item phase-gamma">Custom Recipe Input <span class="tooltip">Add own recipes.</span></div>
+                    <div class="matrix-item phase-gamma">Ad Personalization <span class="tooltip">Targeted ads for free tier.</span></div>
+                    <div class="matrix-item phase-gamma">Multi-user Profiles <span class="tooltip">Basic family support.</span></div>
+                </div>
+                <div class="matrix-quadrant low-value-high-effort">
+                    <h4>Low Value, High Effort (Phase 4: Long-Term)</h4>
+                    <div class="matrix-item phase-delta">Smart Kitchen Sync <span class="tooltip">Integrate with smart appliances.</span></div>
+                    <div class="matrix-item phase-delta">Voice Control <span class="tooltip">Hands-free interaction.</span></div>
+                    <div class="matrix-item phase-delta">Offline Mode <span class="tooltip">Access plans without internet.</span></div>
+                    <div class="matrix-item phase-delta">B2B Integrations <span class="tooltip">Corporate wellness APIs.</span></div>
+                    <div class="matrix-item phase-delta">Advanced AI Tuning <span class="tooltip">Hyper-personalization.</span></div>
+                    <div class="matrix-item phase-delta">Multi-language <span class="tooltip">Internationalization.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <h2>🛣️ Phased Roadmap: SmartPlate Evolution</h2>
+
+        <div class="phase-box alpha">
+            <h3><span class="icon">🌱</span> Phase 1: Core Experience (MVP - Months 1-3)</h3>
+            <p><strong>Objective:</strong> Establish the foundational AI-powered meal planning experience, validate core value proposition, and gather initial user feedback. Focus on speed to market and essential features.</p>
+            <ul>
+                <li class="alpha"><strong>AI Meal Plan Generation:</strong> Personalized 7-day plans based on basic preferences.</li>
+                <li class="alpha"><strong>Basic Grocery List:</strong> Auto-generated, consolidated lists.</li>
+                <li class="alpha"><strong>User Preferences (Dietary):</strong> Initial setup for restrictions.</li>
+                <li class="alpha"><strong>Recipe Search & Favorites:</strong> Basic browsing and saving.</li>
+                <li class="alpha"><strong>User Authentication:</strong> Secure login/signup via Supabase.</li>
+                <li class="alpha"><strong>Minimalist UI/UX:</strong> Clean and intuitive interface for core functions.</li>
+            </ul>
+            <p><strong>Success Criteria:</strong> 100 beta users, 80% plan generation success rate, 30% weekly active users (WAU), positive feedback on core planning. <br><strong>Timeline Estimate:</strong> 8-10 weeks (MVP development & Beta)</p>
+        </div>
+
+        <div class="phase-box beta">
+            <h3><span class="icon">🚀</span> Phase 2: Intelligence & Retention (Growth - Months 4-8)</h3>
+            <p><strong>Objective:</strong> Introduce SmartPlate's unique differentiators (waste reduction, real-time adaptation), enhance personalization, and drive user retention. Monetize with the premium subscription.</p>
+            <ul>
+                <li class="beta"><strong>Waste Reduction Engine:</strong> AI optimizes ingredient reuse across recipes.</li>
+                <li class="beta"><strong>Real-time Adaptation:</strong> "What's in my fridge" feature, plan adjustments.</li>
+                <li class="beta"><strong>Advanced User Preferences:</strong> Cooking skill, cuisine preferences, ingredient dislikes.</li>
+                <li class="beta"><strong>Nutritional Tracking:</strong> Calorie/macro breakdowns for meals (Premium).</li>
+                <li class="beta"><strong>Meal Prep Scheduling:</strong> Tools to plan cooking times and tasks.</li>
+                <li class="beta"><strong>PWA Mobile App:</strong> Optimized mobile experience for wider reach.</li>
+            </ul>
+            <p><strong>Success Criteria:</strong> 1,000 paying subscribers, 10% conversion rate, 40% WAU, reduced food waste reported by users, positive app store reviews. <br><strong>Timeline Estimate:</strong> 16-20 weeks</p>
+        </div>
+
+        <div class="phase-box gamma">
+            <h3><span class="icon">🌐</span> Phase 3: Expansion & Ecosystem (Scaling - Months 9-15)</h3>
+            <p><strong>Objective:</strong> Expand market reach through partnerships, enhance community features, and refine the user experience with quality-of-life improvements.</p>
+            <ul>
+                <li class="gamma"><strong>Grocery Delivery Integrations:</strong> Direct links to Instacart, Amazon Fresh.</li>
+                <li class="gamma"><strong>Recipe Sharing & Rating:</strong> Community features for recipes and plans.</li>
+                <li class="gamma"><strong>Custom Recipe Input:</strong> Users can add and integrate personal recipes.</li>
+                <li class="gamma"><strong>Multi-User Profiles:</strong> Support for family-shared accounts and preferences.</li>
+                <li class="gamma"><strong>Affiliate Partnerships:</strong> Monetization through grocery and kitchen tool recommendations.</li>
+            </ul>
+            <p><strong>Success Criteria:</strong> 7,500 paying subscribers, $75K MRR, 2+ major grocery integrations, strong community engagement. <br><strong>Timeline Estimate:</strong> 24-28 weeks</p>
+        </div>
+
+        <div class="phase-box delta">
+            <h3><span class="icon">🔮</span> Phase 4: Innovation & Enterprise (Long-Term - 15+ Months)</h3>
+            <p><strong>Objective:</strong> Explore advanced technologies, B2B opportunities, and deepen personalization to maintain market leadership.</p>
+            <ul>
+                <li class="delta"><strong>Smart Kitchen Integration:</strong> Connect with smart appliances (e.g., smart ovens, scales).</li>
+                <li class="delta"><strong>Voice Control & Assistants:</strong> Hands-free meal planning and cooking instructions.</li>
+                <li class="delta"><strong>B2B Wellness Programs:</strong> Partnerships with corporate wellness and healthcare providers.</li>
+                <li class="delta"><strong>Advanced AI Personalization:</strong> Hyper-granular taste profiles, health condition adaptations.</li>
+            </ul>
+            <p><strong>Success Criteria:</strong> Entry into B2B market, strategic partnerships, sustained high retention, continuous innovation pipeline. <br><strong>Timeline Estimate:</strong> Ongoing</p>
+        </div>
+
+        <h2>🛠️ AI/Low-Code Implementation Strategy</h2>
+        <p>SmartPlate's technical foundation leverages modern AI and low-code platforms to achieve rapid development, scalability, and cost-efficiency, adhering to a "do more with less" philosophy.</p>
+
+        <div class="ai-lowcode-section">
+            <h3>Core Technology Stack & Strategy</h3>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <strong>AI Engine: OpenAI GPT-4 API</strong>
+                    <p>Powers personalized meal plan generation, recipe adaptation, and intelligent ingredient reuse for the waste reduction engine. Offers robust natural language understanding for user preferences.</p>
+                </div>
+                <div class="tech-item">
+                    <strong>Backend & Database: Supabase</strong>
+                    <p>Provides a scalable, serverless PostgreSQL database, authentication, and real-time capabilities. Reduces backend development effort significantly, allowing focus on core logic.</p>
+                </div>
+                <div class="tech-item">
+                    <strong>Frontend: Next.js (React) + Vercel</strong>
+                    <p>Fast, SEO-friendly, and performant web application. Vercel provides seamless deployment and global CDN, ensuring a smooth user experience. PWA for mobile expansion.</p>
+                </div>
+                <div class="tech-item">
+                    <strong>Recipe Data: Spoonacular API + Custom DB</strong>
+                    <p>Initial recipe data and nutritional information. Custom database for user-generated content and specialized recipes, ensuring content diversity and quality.</p>
+                </div>
+                <div class="tech-item">
+                    <strong>Nutritional Data: USDA FoodData Central API</strong>
+                    <p>Free and comprehensive source for detailed nutritional information, integrated for calorie and macro tracking features.</p>
+                </div>
+                <div class="tech-item">
+                    <strong>Payments & Notifications: Stripe & OneSignal</strong>
+                    <p>Stripe for secure subscription management. OneSignal for push notifications (reminders, plan updates) to enhance engagement without complex backend setup.</p>
+                </div>
+            </div>
+            <div class="cost-estimate">
+                <strong>Estimated API & Hosting Costs (Initial Scale):</strong>
+                <p>OpenAI, Spoonacular: ~$200-500/month (depending on usage)<br>
+                Hosting (Vercel + Supabase): ~$50-100/month<br>
+                Total Operating Costs: ~$250-600/month for initial 1,000-10,000 users. Highly scalable with tiered pricing models.</p>
+            </div>
+        </div>
+
+        <h2>🗓️ Development Timeline (Milestone Overview)</h2>
+        <p>An aggressive yet realistic timeline leveraging low-code and AI tools for rapid prototyping and deployment.</p>
+
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+            <div class="timeline-progress" style="width: 0%;"></div> <!-- Dynamically updated by JS if interactive -->
+            <div class="timeline-milestone" style="left: 0%;">Week 1-2<span>User Interviews</span></div>
+            <div class="timeline-milestone" style="left: 20%;">Week 3<span>Waitlist LP Launch</span></div>
+            <div class="timeline-milestone" style="left: 50%;">Week 4-10<span>MVP Development</span></div>
+            <div class="timeline-milestone" style="left: 75%;">Week 11-14<span>Private Beta</span></div>
+            <div class="timeline-milestone" style="left: 100%;">Week 15-16<span>Public Launch</span></div>
+        </div>
+        <p style="text-align: center; font-size: 0.9em; color: #6c757d; margin-top: 20px;">
+            <em>Note: Timeline is optimized for feature set and technical complexity, leveraging AI/low-code tools for accelerated development.</em>
+        </p>
+
+    </div>
+</div>
+```
+⏱️  Timing Breakdown:
+   Request build:  0s
+   API call:       35s
+   Response parse: 0s
+   TOTAL:          35s
+📊 Token usage: {
+  "prompt_tokens": 3739,
+  "completion_tokens": 7742,
+  "total_tokens": 11481,
+  "prompt_tokens_details": {
+    "cached_tokens": 0
+  },
+  "completion_tokens_details": {
+    "reasoning_tokens": 0,
+    "image_tokens": 0
+  }
+}

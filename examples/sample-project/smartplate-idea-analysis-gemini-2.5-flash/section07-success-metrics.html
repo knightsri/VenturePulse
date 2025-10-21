@@ -1,0 +1,201 @@
+```html
+<div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f8f9fa; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); max-width: 1200px; margin: 20px auto; color: #333;">
+    <h1 style="color: #0056b3; text-align: center; margin-bottom: 30px; font-size: 2.2em; font-weight: 600;">
+        <span style="display: inline-block; background-color: #e0f2f7; padding: 8px 15px; border-radius: 8px; margin-right: 10px;">📈</span> VenturePulse: SmartPlate - Success Metrics & Risk Assessment
+    </h1>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin-bottom: 40px;">
+        <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); width: calc(50% - 20px); min-width: 350px;">
+            <h2 style="color: #0056b3; font-size: 1.6em; margin-bottom: 15px; border-bottom: 2px solid #e0f2f7; padding-bottom: 10px;">📊 Viability Scoring</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+
+                <div style="background-color: #f7f9fc; padding: 18px; border-radius: 8px; border: 1px solid #d0e0f0;">
+                    <h3 style="color: #4a69bd; margin-top: 0; font-size: 1.2em; display: flex; align-items: center;">Market Validation <span style="margin-left: auto; background-color: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">9/10</span></h3>
+                    <p style="font-size: 0.9em; line-height: 1.5;">The problem statement is acutely felt by busy professionals and families, aligning with strong market trends like personalized nutrition and increased home cooking post-pandemic. The $12B TAM and $3.2B SAM demonstrate significant opportunity. Competitor analysis shows a gap in AI-first, waste-reduction focused personalization, which SmartPlate directly addresses. The willingness to pay for convenience and health is well-established. Customer interviews and a waitlist landing page are crucial next steps to fully validate demand beyond assumptions.</p>
+                    <p style="font-size: 0.85em; color: #6c757d; margin-top: 10px;"><strong>Gap Analysis:</strong> While trends are strong, direct evidence of willingness to pay for the *specific combination* of AI personalization and waste reduction needs to be confirmed through initial user feedback and conversion rates during beta. The stated $15-20 CAC and LTV:CAC ratio are projections, requiring validation.</p>
+                </div>
+
+                <div style="background-color: #f7f9fc; padding: 18px; border-radius: 8px; border: 1px solid #d0e0f0;">
+                    <h3 style="color: #4a69bd; margin-top: 0; font-size: 1.2em; display: flex; align-items: center;">Technical Feasibility <span style="margin-left: auto; background-color: #ffc107; color: #333; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">8/10</span></h3>
+                    <p style="font-size: 0.9em; line-height: 1.5;">The chosen AI/low-code stack (React/Next.js, Supabase, GPT-4, Spoonacular, USDA API) is pragmatic and leverages established, scalable technologies. This approach significantly reduces initial development time and cost, allowing for an 8-12 week MVP. The "do more with less" philosophy is evident. OpenAI's GPT-4 has matured sufficiently for reliable recipe generation, reducing prior AI "hallucination" risks. The integration strategy appears sound for an MVP.</p>
+                    <p style="font-size: 0.85em; color: #6c757d; margin-top: 10px;"><strong>Recommendations:</strong> Implement robust API error handling and fallback mechanisms. Plan for potential increased API costs at scale; while estimates are low, high usage of GPT-4 could impact margins. Consider stress testing the Spoonacular API for rate limits and response times with anticipated user load. Focus on a clear data architecture for user preferences and "what's in my fridge" to ensure real-time adaptation is performant.</p>
+                </div>
+
+                <div style="background-color: #f7f9fc; padding: 18px; border-radius: 8px; border: 1px solid #d0e0f0;">
+                    <h3 style="color: #4a69bd; margin-top: 0; font-size: 1.2em; display: flex; align-items: center;">Competitive Advantage <span style="margin-left: auto; background-color: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">9/10</span></h3>
+                    <p style="font-size: 0.9em; line-height: 1.5;">SmartPlate carves out a distinct niche by combining AI-first personalization with a strong emphasis on waste reduction, a feature not systematically offered by direct or indirect competitors. While others offer meal planning or nutrition tracking, none deeply integrate ingredient reuse across an entire weekly plan to minimize waste. This unique value proposition directly addresses a significant pain point ($1,500+ annual food waste) and resonates with eco-conscious consumers. The proposed freemium model also offers a flexible entry point.</p>
+                    <p style="font-size: 0.85em; color: #6c757d; margin-top: 10px;"><strong>Recommendations:</strong> Aggressively market the "waste reduction" and "ingredient optimization" features. Explore patenting the waste-optimization algorithm if truly novel and defensible. Continuously monitor competitor moves, especially around AI integration and sustainability claims, to maintain differentiation. Build a community around waste-free cooking to foster loyalty.</p>
+                </div>
+
+                <div style="background-color: #f7f9fc; padding: 18px; border-radius: 8px; border: 1px solid #d0e0f0;">
+                    <h3 style="color: #4a69bd; margin-top: 0; font-size: 1.2em; display: flex; align-items: center;">Business Viability <span style="margin-left: auto; background-color: #28a745; color: white; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">8/10</span></h3>
+                    <p style="font-size: 0.9em; line-height: 1.5;">The freemium subscription model is well-suited for this market, allowing broad user acquisition with a clear path to monetization. Unit economics (LTV:CAC of 9-12x) are attractive, though dependent on projected CAC and retention. Additional revenue streams from affiliate commissions and premium content provide diversification. The bootstrap-friendly initial funding requirement minimizes early risk. The market trends support sustained growth and demand for solutions like SmartPlate.</p>
+                    <p style="font-size: 0.85em; color: #6c757d; margin-top: 10px;"><strong>Recommendations:</strong> Focus heavily on retention strategies from day one, as LTV is a critical driver of business viability. Clearly define the value proposition for each tier of the freemium model to maximize conversion. Explore corporate wellness programs early, as B2B sales can provide stable, higher-value contracts. Refine pricing based on initial A/B testing during beta.</p>
+                </div>
+
+                <div style="background-color: #f7f9fc; padding: 18px; border-radius: 8px; border: 1px solid #d0e0f0;">
+                    <h3 style="color: #4a69bd; margin-top: 0; font-size: 1.2em; display: flex; align-items: center;">Execution Clarity <span style="margin-left: auto; background-color: #ffc107; color: #333; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">7/10</span></h3>
+                    <p style="font-size: 0.9em; line-height: 1.5;">The execution plan is structured with clear phases, timelines, and measurable goals for MVP development, beta, and public launch. The go-to-market strategy leverages digital channels and influencer marketing, which are appropriate for the target audience. The identified founder background as a product manager is a strength. The 6-month and 12-month goals are ambitious but provide clear targets for progress tracking.</p>
+                    <p style="font-size: 0.85em; color: #6c757d; margin-top: 10px;"><strong>Recommendations:</strong> The primary gap is the solo founder's need for a full-stack developer. Securing this key technical talent (hire or contract) is paramount for hitting the MVP timeline. Develop a detailed feature roadmap for the MVP, clearly defining "must-haves" vs. "nice-to-haves" to avoid scope creep. Establish a robust feedback loop mechanism during beta to efficiently iterate on the product. Formalize partnership outreach early for grocery and nutritionist collaborations.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); width: calc(50% - 20px); min-width: 350px;">
+            <h2 style="color: #0056b3; font-size: 1.6em; margin-bottom: 15px; border-bottom: 2px solid #e0f2f7; padding-bottom: 10px;">🚨 Risk Register</h2>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                    <tr style="background-color: #0056b3; color: white;">
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; font-size: 0.9em;">Risk</th>
+                        <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; font-size: 0.9em;">Category</th>
+                        <th style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #ddd; font-size: 0.9em;">P</th>
+                        <th style="padding: 12px 15px; text-align: center; border-bottom: 1px solid #ddd; font-size: 0.9em;">I</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background-color: #f2f7fc;">
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; font-weight: bold;">User Engagement & Retention</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">Product/Market</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #ffc107; color: #333; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">Medium</span></td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">High</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding: 10px 15px; background-color: #fdfefe; border-bottom: 1px solid #eee;">
+                            <p style="margin-top: 0; margin-bottom: 5px; font-size: 0.85em;"><strong>Description:</strong> Users might churn if the personalized plans aren't consistently appealing, if the "waste reduction" doesn't feel tangible, or if the effort to input "what's in my fridge" outweighs the perceived benefit. Low retention directly impacts LTV and business viability.</p>
+                            <p style="margin-bottom: 0; font-size: 0.85em;"><strong>Mitigation:</strong> Implement robust onboarding to highlight value. Gamify progress and waste savings. Send weekly personalized email digests with plan summaries and cooking tips. Integrate push notifications for meal prep reminders and "use this ingredient" alerts. Continuously collect user feedback through in-app surveys and A/B test features to optimize engagement loops. Develop a strong community feature for recipe sharing and support.</p>
+                        </td>
+                    </tr>
+
+                    <tr style="background-color: #f2f7fc;">
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; font-weight: bold;">AI Hallucinations / Bad Recipes</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">Technical/Product</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #ffc107; color: #333; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">Medium</span></td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">High</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding: 10px 15px; background-color: #fdfefe; border-bottom: 1px solid #eee;">
+                            <p style="margin-top: 0; margin-bottom: 5px; font-size: 0.85em;"><strong>Description:</strong> While GPT-4 is advanced, it can still generate nonsensical or unappetizing recipes, or suggest unsafe ingredient combinations. This could lead to a poor user experience, negative reviews, and loss of trust in the AI's capabilities, undermining the core value proposition.</p>
+                            <p style="margin-bottom: 0; font-size: 0.85em;"><strong>Mitigation:</strong> Implement a strict validation layer for AI-generated recipes, cross-referencing with a curated database for common sense checks (e.g., banned ingredient combinations, realistic cooking times). Prioritize adapting existing, validated recipes from Spoonacular over pure AI generation. Introduce a user rating and reporting system for recipes, with human review for low-rated or flagged items. Begin with human oversight for a significant portion of initial AI outputs, gradually scaling back with confidence. Consider general liability insurance.</p>
+                        </td>
+                    </tr>
+
+                    <tr style="background-color: #f2f7fc;">
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; font-weight: bold;">Competition & Market Saturation</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">Market/Strategic</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #ffc107; color: #333; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">Medium</span></td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">High</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding: 10px 15px; background-color: #fdfefe; border-bottom: 1px solid #eee;">
+                            <p style="margin-top: 0; margin-bottom: 5px; font-size: 0.85em;"><strong>Description:</strong> The meal planning and nutrition space is crowded with established players (MyFitnessPal, Mealime, HelloFresh). While SmartPlate has a unique differentiator, larger companies could replicate features or leverage their user base to quickly dominate new segments, making user acquisition and market penetration challenging.</p>
+                            <p style="margin-bottom: 0; font-size: 0.85em;"><strong>Mitigation:</strong> Continuously innovate on the core AI personalization and waste reduction features to maintain a competitive edge. Build a strong brand identity focused on sustainability and smart living. Foster a highly engaged user community. Explore strategic partnerships with smaller, complementary brands to expand reach. Focus on superior UX and customer service to build loyalty. Actively monitor competitor product roadmaps and marketing to anticipate and respond to threats.</p>
+                        </td>
+                    </tr>
+
+                    <tr style="background-color: #f2f7fc;">
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; font-weight: bold;">Technical Talent Acquisition</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">Operational</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #ffc107; color: #333; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">Medium</span></td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #dc3545; color: white; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">High</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding: 10px 15px; background-color: #fdfefe; border-bottom: 1px solid #eee;">
+                            <p style="margin-top: 0; margin-bottom: 5px; font-size: 0.85em;"><strong>Description:</strong> As a solo founder with a product management background, the immediate need for a full-stack developer is critical for MVP development. Finding high-quality, reliable technical talent within budget and on a tight timeline can be challenging, potentially delaying launch and increasing initial costs.</p>
+                            <p style="margin-bottom: 0; font-size: 0.85em;"><strong>Mitigation:</strong> Leverage personal networks and specialized recruiting platforms for early-stage startups. Consider fractional CTO or contract-to-hire arrangements to mitigate upfront costs and risk. Clearly articulate the project's vision and potential impact to attract mission-driven talent. Prioritize technical skills that align directly with the chosen AI/low-code stack to minimize ramp-up time. Explore incubator programs that provide technical co-founder matching or development support.</p>
+                        </td>
+                    </tr>
+
+                    <tr style="background-color: #f2f7fc;">
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; font-weight: bold;">API Dependency & Cost Escalation</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee;">Technical/Financial</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #ffc107; color: #333; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">Medium</span></td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #eee; text-align: center;"><span style="background-color: #ffc107; color: #333; padding: 4px 8px; border-radius: 5px; font-size: 0.8em;">Medium</span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding: 10px 15px; background-color: #fdfefe; border-bottom: 1px solid #eee;">
+                            <p style="margin-top: 0; margin-bottom: 5px; font-size: 0.85em;"><strong>Description:</strong> Reliance on third-party APIs (OpenAI, Spoonacular) introduces external dependencies regarding their service availability, pricing changes, or changes in terms of service. Unexpected cost increases for these APIs at scale could significantly impact the unit economics and profitability, especially for the AI component.</p>
+                            <p style="margin-bottom: 0; font-size: 0.85em;"><strong>Mitigation:</strong> Implement caching strategies for frequently accessed data (e.g., popular recipes from Spoonacular) to reduce API calls. Monitor API usage and costs diligently, setting alerts for thresholds. Research alternative APIs or consider building proprietary solutions for non-core functionalities (e.g., a smaller, specialized recipe database) to reduce dependency. Negotiate bulk pricing or explore enterprise agreements with key API providers as user numbers grow. Build a modular architecture to allow for easier swapping of API providers if necessary.</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 40px;">
+        <h2 style="color: #0056b3; font-size: 1.6em; margin-bottom: 20px; text-align: center; border-bottom: 2px solid #e0f2f7; padding-bottom: 10px;">📈 Success Metrics Dashboard</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+
+            <div style="background-color: #e6f7ff; border-left: 5px solid #007bff; padding: 15px; border-radius: 8px;">
+                <h3 style="color: #007bff; margin-top: 0; font-size: 1.1em;">Technical Metrics</h3>
+                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #28a745; font-size: 1.2em; margin-right: 8px;">✓</span> API Response Time (avg. < 200ms)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #28a745; font-size: 1.2em; margin-right: 8px;">✓</span> Uptime (99.9%+)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #28a745; font-size: 1.2em; margin-right: 8px;">✓</span> AI Recipe Generation Success Rate (95%+)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #28a745; font-size: 1.2em; margin-right: 8px;">✓</span> Page Load Speed (avg. < 3s)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #28a745; font-size: 1.2em; margin-right: 8px;">✓</span> Database Query Performance (avg. < 100ms)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #28a745; font-size: 1.2em; margin-right: 8px;">✓</span> Bug Report Count (Target: < 5 critical/month)</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #e6ffee; border-left: 5px solid #28a745; padding: 15px; border-radius: 8px;">
+                <h3 style="color: #28a745; margin-top: 0; font-size: 1.1em;">Engagement Metrics</h3>
+                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #007bff; font-size: 1.2em; margin-right: 8px;">★</span> Daily Active Users (DAU) / Monthly Active Users (MAU) Ratio (> 20%)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #007bff; font-size: 1.2em; margin-right: 8px;">★</span> Average Sessions per Week (> 2)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #007bff; font-size: 1.2em; margin-right: 8px;">★</span> Meal Plans Generated per User per Month (> 4)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #007bff; font-size: 1.2em; margin-right: 8px;">★</span> Grocery List Usage Rate (70%+ of generated plans)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #007bff; font-size: 1.2em; margin-right: 8px;">★</span> Recipe Save/Favorite Rate (10%+ of viewed recipes)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #007bff; font-size: 1.2em; margin-right: 8px;">★</span> User Reported Food Waste Reduction (Survey-based, 20%+)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #007bff; font-size: 1.2em; margin-right: 8px;">★</span> NPS Score (> 40)</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #fff3e6; border-left: 5px solid #fd7e14; padding: 15px; border-radius: 8px;">
+                <h3 style="color: #fd7e14; margin-top: 0; font-size: 1.1em;">Financial Metrics</h3>
+                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #dc3545; font-size: 1.2em; margin-right: 8px;">$</span> Monthly Recurring Revenue (MRR)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #dc3545; font-size: 1.2em; margin-right: 8px;">$</span> Customer Acquisition Cost (CAC) (Target: $15-20)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #dc3545; font-size: 1.2em; margin-right: 8px;">$</span> Lifetime Value (LTV) / CAC Ratio (> 3x)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #dc3545; font-size: 1.2em; margin-right: 8px;">$</span> Churn Rate (Premium < 5% monthly)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #dc3545; font-size: 1.2em; margin-right: 8px;">$</span> Conversion Rate (Free to Premium > 10%)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #dc3545; font-size: 1.2em; margin-right: 8px;">$</span> Average Revenue Per User (ARPU)</li>
+                </ul>
+            </div>
+
+            <div style="background-color: #f3e6ff; border-left: 5px solid #6f42c1; padding: 15px; border-radius: 8px;">
+                <h3 style="color: #6f42c1; margin-top: 0; font-size: 1.1em;">Growth Metrics</h3>
+                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.9em;">
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #17a2b8; font-size: 1.2em; margin-right: 8px;">🚀</span> New User Registrations (Target: 10k in 6 months)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #17a2b8; font-size: 1.2em; margin-right: 8px;">🚀</span> Subscriber Growth Rate (Target: 1k paying in 6 months)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #17a2b8; font-size: 1.2em; margin-right: 8px;">🚀</span> App Store Rating (Target: 4.5+ stars)</li>
+                    <li style="margin-bottom: 8px; display: flex; align-items: center;"><span style="color: #17a2b8; font-size: 1.2em; margin-right: 8px;">🚀</span> Social Media Reach & Engagement</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+        <p style="font-size: 1.1em; color: #555; font-weight: 500;">
+            <strong>Next Steps:</strong> Prioritize securing a co-founder/lead developer to accelerate MVP development and immediately begin customer validation interviews to refine the product-market fit.
+        </p>
+    </div>
+</div>
+```
+⏱️  Timing Breakdown:
+   Request build:  0s
+   API call:       36s
+   Response parse: 0s
+   TOTAL:          36s
+📊 Token usage: {
+  "prompt_tokens": 3793,
+  "completion_tokens": 7978,
+  "total_tokens": 11771,
+  "prompt_tokens_details": {
+    "cached_tokens": 0
+  },
+  "completion_tokens_details": {
+    "reasoning_tokens": 0,
+    "image_tokens": 0
+  }
+}
