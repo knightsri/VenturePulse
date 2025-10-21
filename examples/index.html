@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VenturePulse Example Reports | SmartPlate Analysis</title>
+    <meta name="description" content="See VenturePulse in action - compare AI-powered product viability analyses across multiple models">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .intro {
+            padding: 2rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .intro h2 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .intro p {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #555;
+        }
+
+        .project-details {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .project-details h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .project-details .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .detail-item {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .detail-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .view-project-btn {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .view-project-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .models-section {
+            padding: 2rem;
+        }
+
+        .models-section h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+
+        .models-intro {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .model-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .model-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .model-card .badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.free { background: #28a745; color: white; }
+        .badge.premium { background: #ffc107; color: #333; }
+        .badge.best { background: #667eea; color: white; }
+        .badge.budget { background: #6c757d; color: white; }
+
+        .model-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            padding-right: 100px;
+        }
+
+        .model-card .provider {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .model-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .stat-value {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+
+        .reports-list {
+            margin-top: 1.5rem;
+        }
+
+        .reports-list h4 {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .report-links {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+
+        .report-link {
+            display: block;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #667eea;
+            font-size: 0.85rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .report-link:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .cta-section {
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .model-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .report-links {
+                grid-template-columns: 1fr;
+            }
+
+            .model-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 VenturePulse Example Reports</h1>
+            <p class="subtitle">See AI-powered product viability analysis in action</p>
+        </header>
+
+        <section class="intro">
+            <h2>About This Showcase</h2>
+            <p>
+                This page demonstrates <strong>VenturePulse</strong> analyzing the same product idea 
+                (<strong>SmartPlate</strong>) using multiple AI models. Compare how different models 
+                approach market analysis, competitive positioning, technical feasibility, and strategic recommendations.
+            </p>
+
+            <div class="project-details">
+                <h3>📱 SmartPlate: AI-Powered Meal Planning</h3>
+                <p>
+                    SmartPlate is an AI-powered meal planning app that generates personalized weekly meal plans 
+                    based on dietary preferences, health goals, and family needs. It combines recipe discovery, 
+                    grocery list generation, and nutritional tracking into one seamless experience.
+                </p>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <strong>Target Market</strong>
+                        Health-conscious families and busy professionals
+                    </div>
+                    <div class="detail-item">
+                        <strong>Business Model</strong>
+                        Freemium subscription ($0 → $9.99/mo → $14.99/mo family)
+                    </div>
+                    <div class="detail-item">
+                        <strong>Key Innovation</strong>
+                        AI-generated personalized meal plans in seconds
+                    </div>
+                    <div class="detail-item">
+                        <strong>Analysis Date</strong>
+                        October 21, 2024
+                    </div>
+                </div>
+                <a href="sample-project/smartplate-idea.md" class="view-project-btn">📄 View Full Project Description</a>
+            </div>
+        </section>
+
+        <section class="models-section">
+            <h2>🤖 Compare AI Model Analyses</h2>
+            <p class="models-intro">
+                Each model brings different strengths to the analysis. Explore how free vs. premium models 
+                differ in depth, creativity, and strategic insights.
+            </p>
+
+            <div class="model-grid">
+                <!-- Claude Sonnet 4.5 -->
+                <div class="model-card">
+                    <span class="badge best">Best Quality</span>
+                    <h3>Claude Sonnet 4.5</h3>
+                    <p class="provider">Anthropic</p>
+                    
+                    <div class="model-stats">
+                        <div class="stat">
+                            <span class="stat-value">~$4</span>
+                            <span class="stat-label">Cost</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">15 min</span>
+                            <span class="stat-label">Duration</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">9.5/10</span>
+                            <span class="stat-label">Quality</span>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        <strong>Best for:</strong> Investor-ready reports with exceptional depth, 
+                        nuanced competitive analysis, and sophisticated strategic recommendations.
+                    </p>
+
+                    <div class="reports-list">
+                        <h4>📊 View Reports</h4>
+                        <div class="report-links">
+                            <a href="sample-project/smartplate-idea-analysis-claude-sonnet-4.5-20251021-095402/executive-summary.html" class="report-link">Executive Summary</a>
+                            <a href="sample-project/smartplate-idea-analysis-claude-sonnet-4.5-20251021-095402/market-landscape.html" class="report-link">Market Landscape</a>
+                            <a href="sample-project/smartplate-idea-analysis-claude-sonnet-4.5-20251021-095402/technical-feasibility.html" class="report-link">Technical</a>
+                            <a href="sample-project/smartplate-idea-analysis-claude-sonnet-4.5-20251021-095402/competitive-advantage.html" class="report-link">Competitive</a>
+                            <a href="sample-project/smartplate-idea-analysis-claude-sonnet-4.5-20251021-095402/business-model.html" class="report-link">Business Model</a>
+                            <a href="sample-project/smartplate-idea-analysis-claude-sonnet-4.5-20251021-095402/mvp-roadmap.html" class="report-link">MVP Roadmap</a>
+                            <a href="sample-project/smartplate-idea-analysis-claude-sonnet-4.5-20251021-095402/success-metrics.html" class="report-link">Success Metrics</a>
+                            <a href="sample-project/smartplate-idea-analysis-claude-sonnet-4.5-20251021-095402/go-to-market.html" class="report-link">Go-to-Market</a>
+                            <a href="sample-project/smartplate-idea-analysis-claude-sonnet-4.5-20251021-095402/provenance-metadata.html" class="report-link">Provenance</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gemini 2.5 Flash -->
+                <div class="model-card">
+                    <span class="badge free">Free</span>
+                    <h3>Gemini 2.5 Flash</h3>
+                    <p class="provider">Google</p>
+                    
+                    <div class="model-stats">
+                        <div class="stat">
+                            <span class="stat-value">$0</span>
+                            <span class="stat-label">Cost</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">8 min</span>
+                            <span class="stat-label">Duration</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">7.5/10</span>
+                            <span class="stat-label">Quality</span>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        <strong>Best for:</strong> Quick validation, testing multiple ideas, 
+                        or initial exploration before investing in premium analysis.
+                    </p>
+
+                    <div class="reports-list">
+                        <h4>📊 View Reports</h4>
+                        <div class="report-links">
+                            <a href="sample-project/smartplate-idea-analysis-gemini-2.5-flash/executive-summary.html" class="report-link">Executive Summary</a>
+                            <a href="sample-project/smartplate-idea-analysis-gemini-2.5-flash/market-landscape.html" class="report-link">Market Landscape</a>
+                            <a href="sample-project/smartplate-idea-analysis-gemini-2.5-flash/technical-feasibility.html" class="report-link">Technical</a>
+                            <a href="sample-project/smartplate-idea-analysis-gemini-2.5-flash/competitive-advantage.html" class="report-link">Competitive</a>
+                            <a href="sample-project/smartplate-idea-analysis-gemini-2.5-flash/business-model.html" class="report-link">Business Model</a>
+                            <a href="sample-project/smartplate-idea-analysis-gemini-2.5-flash/mvp-roadmap.html" class="report-link">MVP Roadmap</a>
+                            <a href="sample-project/smartplate-idea-analysis-gemini-2.5-flash/success-metrics.html" class="report-link">Success Metrics</a>
+                            <a href="sample-project/smartplate-idea-analysis-gemini-2.5-flash/go-to-market.html" class="report-link">Go-to-Market</a>
+                            <a href="sample-project/smartplate-idea-analysis-gemini-2.5-flash/provenance-metadata.html" class="report-link">Provenance</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GPT-4o Mini -->
+                <div class="model-card">
+                    <span class="badge budget">Budget</span>
+                    <h3>GPT-4o Mini</h3>
+                    <p class="provider">OpenAI</p>
+                    
+                    <div class="model-stats">
+                        <div class="stat">
+                            <span class="stat-value">~$0.50</span>
+                            <span class="stat-label">Cost</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">10 min</span>
+                            <span class="stat-label">Duration</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">8/10</span>
+                            <span class="stat-label">Quality</span>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        <strong>Best for:</strong> Balanced quality and cost. Good middle ground 
+                        for solid analysis without premium pricing.
+                    </p>
+
+                    <div class="reports-list">
+                        <h4>📊 View Reports</h4>
+                        <div class="report-links">
+                            <a href="sample-project/smartplate-idea-analysis-gpt-4o-mini-20251021-142748/executive-summary.html" class="report-link">Executive Summary</a>
+                            <a href="sample-project/smartplate-idea-analysis-gpt-4o-mini-20251021-142748/market-landscape.html" class="report-link">Market Landscape</a>
+                            <a href="sample-project/smartplate-idea-analysis-gpt-4o-mini-20251021-142748/technical-feasibility.html" class="report-link">Technical</a>
+                            <a href="sample-project/smartplate-idea-analysis-gpt-4o-mini-20251021-142748/competitive-advantage.html" class="report-link">Competitive</a>
+                            <a href="sample-project/smartplate-idea-analysis-gpt-4o-mini-20251021-142748/business-model.html" class="report-link">Business Model</a>
+                            <a href="sample-project/smartplate-idea-analysis-gpt-4o-mini-20251021-142748/mvp-roadmap.html" class="report-link">MVP Roadmap</a>
+                            <a href="sample-project/smartplate-idea-analysis-gpt-4o-mini-20251021-142748/success-metrics.html" class="report-link">Success Metrics</a>
+                            <a href="sample-project/smartplate-idea-analysis-gpt-4o-mini-20251021-142748/go-to-market.html" class="report-link">Go-to-Market</a>
+                            <a href="sample-project/smartplate-idea-analysis-gpt-4o-mini-20251021-142748/provenance-metadata.html" class="report-link">Provenance</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DeepSeek R1 -->
+                <div class="model-card">
+                    <span class="badge budget">Ultra Budget</span>
+                    <h3>DeepSeek R1 Chimera</h3>
+                    <p class="provider">DeepSeek</p>
+                    
+                    <div class="model-stats">
+                        <div class="stat">
+                            <span class="stat-value">~$0.10</span>
+                            <span class="stat-label">Cost</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">7 min</span>
+                            <span class="stat-label">Duration</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">7/10</span>
+                            <span class="stat-label">Quality</span>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        <strong>Best for:</strong> High-volume testing, rapid iteration, 
+                        or when budget is extremely constrained.
+                    </p>
+
+                    <div class="reports-list">
+                        <h4>📊 View Reports</h4>
+                        <div class="report-links">
+                            <a href="sample-project/smartplate-idea-analysis-deepseek-r1t2-chimera-20251021-100113/executive-summary.html" class="report-link">Executive Summary</a>
+                            <a href="sample-project/smartplate-idea-analysis-deepseek-r1t2-chimera-20251021-100113/market-landscape.html" class="report-link">Market Landscape</a>
+                            <a href="sample-project/smartplate-idea-analysis-deepseek-r1t2-chimera-20251021-100113/technical-feasibility.html" class="report-link">Technical</a>
+                            <a href="sample-project/smartplate-idea-analysis-deepseek-r1t2-chimera-20251021-100113/competitive-advantage.html" class="report-link">Competitive</a>
+                            <a href="sample-project/smartplate-idea-analysis-deepseek-r1t2-chimera-20251021-100113/business-model.html" class="report-link">Business Model</a>
+                            <a href="sample-project/smartplate-idea-analysis-deepseek-r1t2-chimera-20251021-100113/mvp-roadmap.html" class="report-link">MVP Roadmap</a>
+                            <a href="sample-project/smartplate-idea-analysis-deepseek-r1t2-chimera-20251021-100113/success-metrics.html" class="report-link">Success Metrics</a>
+                            <a href="sample-project/smartplate-idea-analysis-deepseek-r1t2-chimera-20251021-100113/go-to-market.html" class="report-link">Go-to-Market</a>
+                            <a href="sample-project/smartplate-idea-analysis-deepseek-r1t2-chimera-20251021-100113/provenance-metadata.html" class="report-link">Provenance</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Ready to Analyze Your Idea?</h2>
+            <p>Stop spending weeks on research. Get comprehensive viability analysis in minutes.</p>
+            <div class="cta-buttons">
+                <a href="https://github.com/knightsri/VenturePulse" class="btn btn-primary">⭐ Get VenturePulse</a>
+                <a href="https://github.com/knightsri/VenturePulse#quick-start" class="btn btn-secondary">📖 Quick Start Guide</a>
+            </div>
+        </section>
+
+        <footer>
+            <p>
+                Built with <strong>VenturePulse</strong> • 
+                <a href="https://github.com/knightsri/VenturePulse">GitHub</a> • 
+                <a href="https://shalusri.com">Blog</a>
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                Open source, MIT licensed • Use it, modify it, share it
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
