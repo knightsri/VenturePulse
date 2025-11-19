@@ -13,6 +13,8 @@ import analyzeRoutes from './routes/analyze';
 import jobsRoutes from './routes/jobs';
 import reportsRoutes from './routes/reports';
 import modelsRoutes from './routes/models';
+import ideasRoutes from './routes/ideas';
+import comparisonRoutes from './routes/comparison';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -43,6 +45,8 @@ app.use('/api/analyze', analyzeRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/models', modelsRoutes);
+app.use('/api/ideas', ideasRoutes);
+app.use('/api/compare', comparisonRoutes);
 
 // Serve static reports
 app.use('/reports', express.static('/app/reports'));

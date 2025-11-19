@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Idea {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  industry    String?
+  targetMarket String?
+  estimatedBudget Float?
+  tags        String[]
+  notes       String?
+  status      IdeaStatus @default(DRAFT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  versions    IdeaVersion[]
+  reports     Report[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model IdeaVersion {
+  id          String   @id @default(uuid())
+  ideaId      String
+  version     Int
+  name        String
+  description String
+  industry    String?
+  targetMarket String?
+  estimatedBudget Float?
+  tags        String[]
+  notes       String?
+  versionNotes String?
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  idea        Idea @relation(fields: [ideaId], references: [id], onDelete: Cascade)
+
+  @@index([ideaId])
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  ideaId      String?
+  projectName String
+  model       String
+  status      ReportStatus @default(GENERATING)
+  reportPath  String?
+  cost        Float?
+  verdict     String?
+  overallScore Float?
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  idea        Idea? @relation(fields: [ideaId], references: [id], onDelete: SetNull)
+
+  @@index([ideaId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum IdeaStatus {
+  DRAFT
+  READY
+  ANALYZING
+  ANALYZED
+  ARCHIVED
+}
+
+enum ReportStatus {
+  GENERATING
+  COMPLETED
+  FAILED
+}

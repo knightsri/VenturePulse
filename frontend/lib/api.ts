@@ -74,6 +74,78 @@ export interface ReportMetadata {
   path: string;
 }
 
+export interface Idea {
+  id: string;
+  name: string;
+  description: string;
+  industry?: string;
+  targetMarket?: string;
+  estimatedBudget?: number;
+  tags: string[];
+  notes?: string;
+  status: 'DRAFT' | 'ANALYZING' | 'ANALYZED' | 'ARCHIVED';
+  createdAt: string;
+  updatedAt: string;
+  versions?: IdeaVersion[];
+  reports?: ReportMetadata[];
+}
+
+export interface IdeaVersion {
+  id: string;
+  ideaId: string;
+  version: number;
+  description: string;
+  changes: string;
+  createdAt: string;
+}
+
+export interface CreateIdeaRequest {
+  name: string;
+  description: string;
+  industry?: string;
+  targetMarket?: string;
+  estimatedBudget?: number;
+  tags?: string[];
+  notes?: string;
+}
+
+export interface UpdateIdeaRequest extends CreateIdeaRequest {
+  changes: string;
+}
+
+export interface ScoreData {
+  market: number;
+  technical: number;
+  competitive: number;
+  business: number;
+  execution: number;
+  overall: number;
+}
+
+export interface ModelComparison {
+  model: string;
+  reportId: string;
+  scores: ScoreData;
+  verdict: string;
+  cost: number;
+  createdAt: string;
+}
+
+export interface ComparisonResult {
+  ideaName: string;
+  models: ModelComparison[];
+  averageScores: ScoreData;
+  scoreSpread: ScoreData;
+  consensus: string[];
+  disagreements: string[];
+  recommendation: string;
+  costVsQuality: {
+    bestValue: string;
+    highestQuality: string;
+    lowestCost: string;
+  };
+}
+
 export interface AnalysisRequest {
   projectName: string;
   projectContent?: string;
@@ -194,6 +266,103 @@ export function streamJobProgress(
   return () => {
     eventSource.close();
   };
+}
+
+/**
+ * Ideas API Functions
+ */
+
+/**
+ * Fetch all ideas
+ */
+export async function fetchIdeas(params?: {
+  search?: string;
+  status?: string;
+  industry?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<Idea[]> {
+  const response = await apiClient.get('/api/ideas', { params });
+  return response.data.ideas;
+}
+
+/**
+ * Fetch a single idea by ID
+ */
+export async function fetchIdea(ideaId: string): Promise<Idea> {
+  const response = await apiClient.get(`/api/ideas/${ideaId}`);
+  return response.data.idea;
+}
+
+/**
+ * Create a new idea
+ */
+export async function createIdea(data: CreateIdeaRequest): Promise<Idea> {
+  const response = await apiClient.post('/api/ideas', data);
+  return response.data.idea;
+}
+
+/**
+ * Update an existing idea
+ */
+export async function updateIdea(ideaId: string, data: UpdateIdeaRequest): Promise<Idea> {
+  const response = await apiClient.put(`/api/ideas/${ideaId}`, data);
+  return response.data.idea;
+}
+
+/**
+ * Delete an idea
+ */
+export async function deleteIdea(ideaId: string): Promise<void> {
+  await apiClient.delete(`/api/ideas/${ideaId}`);
+}
+
+/**
+ * Analyze an idea
+ */
+export async function analyzeIdea(ideaId: string, models: string[]): Promise<AnalysisResponse> {
+  const response = await apiClient.post(`/api/ideas/${ideaId}/analyze`, { models });
+  return response.data;
+}
+
+/**
+ * Fetch reports for an idea
+ */
+export async function fetchIdeaReports(ideaId: string): Promise<ReportMetadata[]> {
+  const response = await apiClient.get(`/api/ideas/${ideaId}/reports`);
+  return response.data.reports;
+}
+
+/**
+ * Comparison API Functions
+ */
+
+/**
+ * Compare specific reports
+ */
+export async function compareReports(reportIds: string[]): Promise<ComparisonResult> {
+  const response = await apiClient.get('/api/compare', {
+    params: { reports: reportIds.join(',') },
+  });
+  return response.data.comparison;
+}
+
+/**
+ * Compare all reports for an idea
+ */
+export async function compareIdeaReports(ideaId: string): Promise<ComparisonResult> {
+  const response = await apiClient.get(`/api/compare/idea/${ideaId}`);
+  return response.data.comparison;
+}
+
+/**
+ * Compare latest reports for a project
+ */
+export async function compareLatestReports(projectName: string): Promise<ComparisonResult> {
+  const response = await apiClient.get('/api/compare/latest', {
+    params: { projectName },
+  });
+  return response.data.comparison;
 }
 
 export default apiClient;
