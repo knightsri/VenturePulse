@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
+    depends_on:
+      - api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+    networks:
+      - venturepulse-network
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=${NODE_ENV:-development}
+      - PORT=4000
+      - FRONTEND_URL=http://localhost:3000
+    depends_on:
+      - redis
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - reports-volume:/app/reports
+      - ./prompts:/app/prompts:ro
+      - ./scripts:/app/scripts:ro
+    command: npm run dev
+    networks:
+      - venturepulse-network
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.worker
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=${NODE_ENV:-development}
+    depends_on:
+      - redis
+    volumes:
+      - reports-volume:/app/reports
+      - ./prompts:/app/prompts:ro
+      - ./scripts:/app/scripts:ro
+      - ./backend/src:/app/src:ro
+    networks:
+      - venturepulse-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - venturepulse-network
+
+volumes:
+  reports-volume:
+  redis-data:
+
+networks:
+  venturepulse-network:
+    driver: bridge
