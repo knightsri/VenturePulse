@@ -18,6 +18,12 @@ export function Navigation() {
                 New Analysis
               </Link>
               <Link
+                href="/ideas"
+                className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Ideas Library
+              </Link>
+              <Link
                 href="/dashboard"
                 className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
