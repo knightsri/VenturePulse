@@ -1,0 +1,45 @@
+# Git
+.git
+.gitignore
+
+# Environment files (API key will be passed via docker-compose)
+.env
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv
+venv/
+ENV/
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Analysis outputs (mounted as volume)
+analyses/
+
+# Examples and archive (not needed in container)
+examples/
+Archive/
+
+# Documentation
+*.md
+!prompts/**/*.md
+
+# Shell scripts (not needed for web app)
+scripts/

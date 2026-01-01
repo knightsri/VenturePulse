@@ -25,5 +25,9 @@ Thumbs.db
 # Project files
 Archive/
 
+# Analyses output folder
+analyses/
+!analyses/.gitkeep
+
 # Claude Code project instructions (machine-specific)
 CLAUDE.md

@@ -26,10 +26,19 @@ Generate a comprehensive executive summary that provides decision-makers with a 
 - **Content:**
   - Demographic profile (age, role, location if relevant)
   - Psychographic profile (values, behaviors, needs)
-  - Market size indicators
+  - Market size indicators (with TAM/SAM/SOM breakdown - see below)
   - Why this audience specifically?
 
-### 4. Market Timing ("Why Now?")
+### 4. Market Size Breakdown
+- **Format:** Clear TAM/SAM/SOM breakdown
+- **Content:**
+  - **TAM (Total Addressable Market):** Overall market size globally/regionally
+  - **SAM (Serviceable Addressable Market):** Segment you can realistically target
+  - **SOM (Serviceable Obtainable Market):** Market share you can capture in 3 years
+  - Include specific numbers with sources/estimates
+  - **Example:** "TAM: $50B global edtech, SAM: $5B K-12 math tutoring, SOM: $50M (1% capture in 3 years)"
+
+### 5. Market Timing ("Why Now?")
 - **Length:** 2-3 paragraphs
 - **Content:**
   - Technology trends enabling this solution
@@ -38,7 +47,32 @@ Generate a comprehensive executive summary that provides decision-makers with a 
   - Regulatory or policy changes (if relevant)
   - Competitive landscape gaps
 
-### 5. Top 3 Highlights
+### 6. Competitive Positioning Matrix
+- **Format:** 2x2 matrix comparing this solution vs. 2-3 key alternatives
+- **Axes:** Choose most relevant (e.g., Cost vs. Quality, Speed vs. Accuracy, etc.)
+- **Visual:** Create HTML/CSS grid showing positioning
+- **Content:** Brief explanation of why this positioning is advantageous
+- **Example:**
+  ```
+  High Quality
+  │
+  │  [Competitor A]     [Your Solution]
+  │
+  │  [Status Quo]    [Competitor B]
+  │
+  └─────────────────────────── Low Cost → High Cost
+  ```
+
+### 7. Financial Snapshot
+- **Format:** Quick financial overview
+- **Content:**
+  - **Estimated MVP Development Cost:** Range (e.g., $20K-$50K)
+  - **Revenue Model:** One clear sentence (e.g., "SaaS subscription at $49/month per user")
+  - **Break-Even Timeline:** Estimated months to profitability (with key assumptions)
+  - **Unit Economics Preview:** Rough LTV:CAC ratio target
+- **Length:** 3-4 bullet points, keep it high-level
+
+### 8. Top 3 Highlights
 - **Format:** 3 distinct highlight boxes
 - **Each highlight:** 80-100 words
 - **Content:** Most compelling aspects that make this opportunity stand out
@@ -49,7 +83,7 @@ Generate a comprehensive executive summary that provides decision-makers with a 
   - Exceptional team or unfair advantage
   - Strong early traction or validation
 
-### 6. Overall Viability Scores
+### 9. Overall Viability Scores
 Score each dimension on a 1-10 scale with brief justification:
 
 **Market Validation (1-10)**
@@ -79,13 +113,13 @@ Score each dimension on a 1-10 scale with brief justification:
 
 **Presentation:** Display scores visually (badges, progress bars, or creative visualization)
 
-### 7. Verdict
+### 10. Verdict
 Based on the composite viability score, provide a clear verdict:
 - **8.0+ average:** ✅ "GO BUILD" - Strong viability, proceed with confidence
 - **6.0-7.9 average:** ⚙️ "PROTOTYPE FIRST" - Promising but validate key assumptions
 - **Below 6.0:** 🔍 "RE-VALIDATE" - Significant gaps need addressing
 
-### 8. Critical Success Factors
+### 11. Critical Success Factors
 - **Count:** 3-5 factors
 - **Content:** What MUST go right for this to succeed?
 - **Format:** Brief, specific, measurable where possible
@@ -94,17 +128,29 @@ Based on the composite viability score, provide a clear verdict:
   - "Achieve sub-$20 CAC through content marketing"
   - "Retain 30%+ of users after 3 months"
 
-### 9. Key Risks & Mitigations
+### 12. Key Risks & Mitigations
 - **Count:** 3-5 risks
-- **Format:** Risk + specific mitigation strategy
+- **Format:** Risk + Severity (🔴 High / 🟡 Medium / 🟢 Low) + Mitigation strategy
 - **Content:**
   - User engagement/retention risks
   - Technical/platform dependency risks
   - Competitive response scenarios
   - Market timing or adoption risks
   - Regulatory or operational risks
+- **Example:**
+  - **Risk:** Low user retention after initial novelty wears off | **Severity:** 🔴 High
+  - **Mitigation:** Build habit-forming features (streaks, daily challenges) and implement weekly engagement emails
 
-### 10. Recommended Next Steps
+### 13. Success Metrics (First 6 Months)
+- **Count:** 3 key metrics
+- **Format:** Metric name + Target value + Why it matters
+- **Content:** Most critical early indicators of product-market fit
+- **Examples:**
+  - **Weekly Active Users:** 5,000+ (shows sustained engagement)
+  - **Net Promoter Score:** 40+ (indicates strong word-of-mouth potential)
+  - **Conversion Rate (Free → Paid):** 5%+ (validates willingness to pay)
+
+### 14. Recommended Next Steps
 - **Count:** 5-7 actionable items
 - **Format:** Ordered list with timeframes where appropriate
 - **Content:** Concrete actions to validate or launch
@@ -166,10 +212,15 @@ Your output should be complete HTML like this (but use your creative presentatio
 ## Final Checklist
 
 Before submitting, verify:
-- [ ] All 10 required elements are present
+- [ ] All 14 required elements are present
+- [ ] TAM/SAM/SOM numbers are specific and sourced
+- [ ] Competitive positioning matrix is visual and clear
+- [ ] Financial snapshot includes MVP cost, revenue model, and break-even
 - [ ] Scores are justified with brief rationale
 - [ ] Verdict matches composite score
+- [ ] Risks include severity ratings (High/Medium/Low)
 - [ ] Risks have specific mitigations
+- [ ] Success metrics have target values and rationale
 - [ ] Next steps are actionable with timeframes
 - [ ] HTML is complete and styled
 - [ ] Visually appealing and scannable
