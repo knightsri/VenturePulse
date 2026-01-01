@@ -1,0 +1,32 @@
+# VenturePulse - Docker Compose Configuration
+# Run with: docker-compose up
+
+services:
+  venturepulse:
+    build: .
+    container_name: venturepulse
+    ports:
+      - "${PORT:-8501}:${PORT:-8501}"
+    env_file:
+      - .env
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - PORT=${PORT:-8501}
+    volumes:
+      # Persist analyses between container restarts
+      - ./analyses:/app/analyses
+      # Mount prompts for easy editing (optional, remove for production)
+      - ./prompts:/app/prompts:ro
+      # Mount .env file for the app to read
+      - ./.env:/app/.env:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:$${PORT:-8501}/_stcore/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# Optional: Add a volume for persistent storage
+volumes:
+  analyses:

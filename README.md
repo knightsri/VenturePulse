@@ -1,27 +1,45 @@
 
 # 🎯 VenturePulse
 
-> **AI-powered product viability analysis in minutes, not weeks**
+> **AI-powered product viability analysis in about an hour, not weeks**
 
-Turn weeks of market research, competitive analysis, and strategic planning into a comprehensive AI-generated report suite in under 15 minutes.
+Turn weeks of market research, competitive analysis, and strategic planning into a comprehensive AI-generated report suite. Quick validation in ~25 minutes, full VC-ready analysis in ~60-90 minutes.
 
 ---
 
 ## 🚀 What is VenturePulse?
 
-VenturePulse is a **prompt library + CLI orchestrator** that generates McKinsey-quality product viability reports using AI. It analyzes your product idea across 9 critical dimensions, each as a standalone, focused HTML report:
+VenturePulse is a **prompt library + CLI/Web orchestrator** that generates McKinsey-quality product viability reports using AI. It analyzes your product idea across **19 critical dimensions** (plus Provenance), organized into four strategic phases:
 
+### 🔍 Foundation (Understanding the Problem)
 1. **Executive Summary** - Viability scores, verdict, key highlights, recommended next steps
 2. **Market Landscape** - Competitors, timing, TAM/SAM/SOM, white space analysis
-3. **Technical Feasibility** - Architecture, complexity, AI/low-code implementation, risks  
-4. **Competitive Advantage** - Moats, defensibility, competitive scoring matrix
-5. **Business Model** - Pricing, unit economics, financial projections, compliance
-6. **MVP Roadmap** - Feature prioritization matrix, phased timeline, implementation strategy
-7. **Success Metrics** - KPIs across technical/engagement/business dimensions, risk register
-8. **Go-to-Market** - ICP analysis, distribution channels, acquisition strategy
-9. **Provenance & Metadata** - Analysis transparency, model details, generation timestamp
+3. **User Stories** - Core personas, jobs-to-be-done, problem scenarios
+4. **Comparable Companies** - Direct/indirect competitors, case studies, market positioning
+5. **User Research** - Research methodology, validation approach, interview guides
+6. **Validation Experiments** - Hypothesis testing, experiment design, success criteria
 
-**The output:** Nine separate, beautifully formatted HTML reports—each independently comprehensive and presentation-ready.
+### 🏗️ Strategy (Building the Solution)
+7. **Technical Feasibility** - Architecture, complexity, AI/low-code implementation, risks
+8. **Competitive Advantage** - Moats, defensibility, competitive scoring matrix
+9. **Business Model** - Pricing, unit economics, financial projections
+10. **Legal & Compliance** - Regulatory requirements, IP considerations, privacy
+
+### 🚀 Execution (Launching & Growing)
+11. **MVP Roadmap** - Feature prioritization matrix, phased timeline, implementation strategy
+12. **Customer Journey** - Acquisition to advocacy lifecycle, touchpoints
+13. **Go-to-Market** - ICP analysis, distribution channels, acquisition strategy
+14. **Partnerships** - Strategic alliances, integration opportunities, ecosystem
+15. **Expansion Plan** - Geographic/vertical growth strategy, market entry
+
+### 📈 Future (Scaling & Exits)
+16. **Success Metrics** - KPIs across technical/engagement/business dimensions, risk register
+17. **Funding Strategy** - Capital requirements, investor narrative, fundraising roadmap
+18. **Exit Strategy** - Acquisition targets, exit timeline, valuation drivers
+19. **Pitch Narrative** - Compelling story, key messages, presentation framework
+20. **Provenance** - Analysis transparency, model details, generation timestamp
+
+**The output:** Up to 20 beautifully formatted HTML reports—each independently comprehensive and presentation-ready. Choose **Quick Analysis** (7 core sections) or **Full Analysis** (all 19 sections).
 
 ---
 
@@ -34,12 +52,13 @@ VenturePulse is a **prompt library + CLI orchestrator** that generates McKinsey-
 - ❌ Missing critical dimensions (compliance, risks, defensibility)
 - ❌ No structured decision framework
 
-### The VenturePulse Way (10-15 minutes)
-- ✅ One command generates 9 comprehensive reports
+### The VenturePulse Way (25-90 minutes)
+- ✅ One command generates up to 19 comprehensive reports
+- ✅ Quick Analysis (7 sections) or Full Analysis (19 sections)
 - ✅ Automated competitive research and market analysis
 - ✅ Structured scoring across all viability dimensions
 - ✅ Professional formatting ready for stakeholders/investors
-- ✅ Costs $0 (free models) to $5 (premium analysis)
+- ✅ Costs $0 (free models) to $10 (premium full analysis)
 
 **What used to cost thousands in consulting fees now costs the price of a coffee.**
 
@@ -49,9 +68,9 @@ VenturePulse is a **prompt library + CLI orchestrator** that generates McKinsey-
 
 ### Prerequisites
 
-- Bash (Mac/Linux/WSL/Git Bash)
-- `curl` and `jq` (`brew install jq` or `apt-get install jq`)
 - [OpenRouter API key](https://openrouter.ai/keys) (free tier available)
+- **For Web UI (Recommended):** Python 3.11+ or Docker
+- **For CLI:** Bash (Mac/Linux/WSL/Git Bash), `curl`, `jq`
 
 ### Installation
 
@@ -59,27 +78,114 @@ VenturePulse is a **prompt library + CLI orchestrator** that generates McKinsey-
 # Clone the repository
 git clone https://github.com/knightsri/VenturePulse.git
 cd VenturePulse
+```
 
+### Option 1: Web UI (Recommended)
+
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Run the Streamlit app (default port 8501)
+streamlit run app/venturepulse.py
+
+# Open http://localhost:8501 in your browser
+# Enter your OpenRouter API key in the sidebar
+```
+
+**Or with Docker:**
+```bash
+# Create .env with your API key (see .env.example)
+cp .env.example .env
+# Edit .env and add your OPENROUTER_API_KEY
+
+docker-compose up
+# Open http://localhost:8501 (or custom PORT from .env)
+```
+
+### Option 2: CLI
+
+```bash
 # Make scripts executable
-chmod +x analyze.sh scripts/*.sh
+chmod +x scripts/*.sh
 
 # Set your API key
 export OPENROUTER_API_KEY="your_key_here"
+
+# Run analysis
+./scripts/analyze-script.sh examples/sample-project/smartplate-idea.md
+
+# View the reports
+open examples/sample-project/smartplate-idea-analysis-*/index.html
 ```
 
-### Run Your First Analysis
+**Time estimates:**
+- Quick Analysis (7 sections): ~25 minutes
+- Full Analysis (19 sections): ~60-90 minutes
+
+---
+
+## 🌐 Web UI Features
+
+The Streamlit-based web interface is the recommended way to use VenturePulse.
+
+### Features
+
+- 📤 **Upload specs** - Drag & drop or paste your project specification
+- 🤖 **Multi-model analysis** - Run the same spec through multiple AI models
+- ⚡ **Sequential or Parallel** - Choose execution mode for multi-model runs
+- 🔀 **Parallel section generation** - Generate all sections simultaneously for faster analysis
+- 📊 **Real-time progress** - See elapsed time, cost, and retry status
+- 🔄 **Automatic retries** - Failed sections retry with exponential backoff
+- 💰 **Cost tracking** - See per-section and total costs in Provenance
+- 🔬 **Compare results** - Side-by-side comparison of outputs from different models
+- 📚 **Analysis history** - Browse and view past analyses
+- 🔑 **API key management** - Enter via UI or environment variable
+
+### Quick Start (Docker)
 
 ```bash
-# Analyze the example project
-./scripts/analyze.sh examples/sample-project/smartplate-idea.md
+# Clone and configure
+git clone https://github.com/knightsri/VenturePulse.git
+cd VenturePulse
+cp .env.example .env
+# Edit .env and add your OPENROUTER_API_KEY
 
-# View the reports (9 separate HTML files created)
-cd examples/sample-project
-cd smartplate-idea-analysis-claude-sonnet-4.5*
-open index.html  # Start here!
+# Run with Docker Compose
+docker-compose up
+
+# Open http://localhost:8501 (or custom PORT from .env)
 ```
 
-**That's it!** You'll get all the comprehensive reports in 10-15 minutes.
+### Quick Start (Local Python)
+
+```bash
+# Clone and setup
+git clone https://github.com/knightsri/VenturePulse.git
+cd VenturePulse
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure (optional - can enter API key in UI)
+cp .env.example .env
+# Edit .env and add your OPENROUTER_API_KEY
+
+# Run Streamlit
+streamlit run app/venturepulse.py
+
+# Open http://localhost:8501 (or custom PORT from .env)
+```
+
+### Multi-Model Comparison
+
+The web UI lets you:
+1. **Select multiple models** from the sidebar dropdown
+2. **Choose execution mode** - Sequential (safer) or Parallel (faster)
+3. **Compare results** in the "Compare Results" tab with:
+   - Side-by-side section comparison
+   - Timing metrics per model
+   - Section-by-section browsing
 
 ---
 
@@ -119,18 +225,29 @@ Uses the default free model (`google/gemini-2.0-flash-exp:free`)
 
 ## 🤖 Recommended Models
 
-VenturePulse works with 100+ models via [OpenRouter](https://openrouter.ai/models). Here are the best:
+VenturePulse works with 100+ models via [OpenRouter](https://openrouter.ai/models). These are the tested, reliable models available in the UI:
 
 ### ⭐ Best for VenturePulse
 
-| Model | Speed | Quality | Cost/Report | Best For |
-|-------|-------|---------|-------------|----------|
-| `google/gemini-2.0-flash-exp:free` | ⚡⚡⚡ Fast | ✅ Good | 💰 **FREE** | Testing ideas quickly |
-| `google/gemini-2.5-pro` | ⚡⚡ Medium | ✅✅ Excellent | 💰💰 ~$1-2 | Solid validation |
-| `anthropic/claude-sonnet-4.5` | ⚡ Slower | ✅✅✅ **Best** | 💰💰💰 ~$3-5 | Investor-ready analysis |
-| `deepseek/deepseek-chat` | ⚡⚡⚡ Fast | ✅ Decent | 💰 ~$0.10 | High-volume testing |
+| Model | Speed | Quality | Cost (Full 19) | Best For |
+|-------|-------|---------|----------------|----------|
+| `anthropic/claude-sonnet-4` | ⚡ Slower | ✅✅✅ **Best** | 💰💰💰 ~$5-10 | Investor-ready analysis |
+| `anthropic/claude-3.5-sonnet` | ⚡ Slower | ✅✅✅ Excellent | 💰💰💰 ~$4-8 | Detailed strategic analysis |
+| `openai/gpt-4o` | ⚡⚡ Medium | ✅✅ Very Good | 💰💰 ~$3-6 | Balanced speed & quality |
+| `openai/gpt-4o-mini` | ⚡⚡⚡ Fast | ✅ Good | 💰 ~$0.30-0.60 | Quick validation |
+| `google/gemini-2.5-pro` | ⚡⚡ Medium | ✅✅ Excellent | 💰💰 ~$3-5 | Solid validation |
+| `deepseek/deepseek-chat` | ⚡⚡⚡ Fast | ✅ Good | 💰 ~$0.30-0.50 | Budget-friendly testing |
+| `deepseek/deepseek-v3.2` | ⚡⚡ Medium | ✅✅ Very Good | 💰 ~$0.50-1.00 | GPT-5 class reasoning |
+| `x-ai/grok-4.1-fast` | ⚡⚡⚡ Fast | ✅✅ Good | 💰 FREE | 2M context, agentic |
+| `x-ai/grok-4-fast` | ⚡⚡⚡ Fast | ✅✅ Good | 💰💰 ~$1-3 | 2M context, multimodal |
+| `qwen/qwen3-max` | ⚡⚡ Medium | ✅✅ Good | 💰 ~$0.50-1.00 | 256K context, multilingual |
+| `qwen/qwen-2.5-72b-instruct` | ⚡⚡ Medium | ✅ Good | 💰 ~$0.30-0.60 | Structured output |
+| `z-ai/glm-4.7` | ⚡⚡ Medium | ✅✅ Good | 💰 ~$0.50-1.00 | 203K context, coding |
+| `z-ai/glm-4.5-air` | ⚡⚡⚡ Fast | ✅ Good | 💰 ~$0.20-0.40 | Budget-friendly |
+| `mistralai/mistral-large` | ⚡⚡ Medium | ✅✅ Good | 💰💰 ~$2-4 | European alternative |
+| `meta-llama/llama-3.3-70b-instruct` | ⚡⚡ Medium | ✅ Good | 💰 ~$0.50-1.00 | Open source option |
 
-**My recommendation:** Start with **free models** to filter bad ideas. For ideas that pass initial validation, use **Claude Sonnet 4.5**—the depth is worth every penny.
+**My recommendation:** Start with **GPT-4o-mini**, **DeepSeek**, or **Grok-4.1-fast** (free!) for quick validation. For investor-ready analysis, use **Claude Sonnet 4** or **Gemini 2.5 Pro**—the depth is worth every penny.
 
 **See all models:** https://openrouter.ai/models
 
@@ -140,21 +257,29 @@ VenturePulse works with 100+ models via [OpenRouter](https://openrouter.ai/model
 
 ```
 VenturePulse/
-├── analyze.sh                          # Main CLI orchestrator
+├── app/
+│   └── venturepulse.py                 # Streamlit web UI (recommended)
 ├── prompts/
 │   ├── common-instructions.md          # Shared analysis guidelines
 │   └── sections/
 │       ├── section01-executive-summary.md
 │       ├── section02-market-landscape.md
-│       └── ... (9 total section prompts)
+│       └── ... (19 total section prompts)
 ├── scripts/
+│   ├── analyze-script.sh              # Main CLI orchestrator
 │   ├── call-openrouter.sh             # OpenRouter API wrapper
-│   ├── create-wrapper.sh              # HTML generation & styling
-│   └── generate-provenance.sh         # Metadata generation
+│   ├── create-wrapper.sh              # HTML wrapper generation
+│   ├── generate-provenance.sh         # Metadata generation
+│   └── createindex.py                 # Index page generator
+├── templates/
+│   └── wrapper.html                   # HTML template for reports
 ├── examples/
 │   └── sample-project/
-│       ├── smartplate-idea.md             # Sample project description
-│       └── smartplate-idea-analysis-*/    # Sample generated reports
+│       └── smartplate-idea.md         # Sample project description
+├── Dockerfile                          # Docker build config
+├── docker-compose.yml                  # Docker Compose config
+├── requirements.txt                    # Python dependencies
+├── CLAUDE.md                           # Claude Code guidance
 └── README.md
 ```
 
@@ -164,15 +289,11 @@ VenturePulse/
 
 ### The Architecture
 
-**Previous approach (v1.0):** Single mega-prompt → One massive 9-tab HTML page
-- ❌ Token limits with complex ideas
-- ❌ Inconsistent output quality
-- ❌ Harder to regenerate individual sections
-
-**Current approach (v1.5):** Sequential specialized prompts → all focused HTML reports by section
-- ✅ Each analysis builds on previous insights
-- ✅ More reliable, more detailed outputs
-- ✅ Easy to regenerate any individual report
+**Current approach (v2.0):** Sequential specialized prompts → 19 focused HTML reports + Provenance
+- ✅ Each section uses tailored prompts for that analysis type
+- ✅ Web UI with multi-model comparison and cost tracking
+- ✅ Quick (7 sections) or Full (19 sections) analysis modes
+- ✅ Easy to regenerate any individual section
 - ✅ Better handling of complex projects
 
 ### The Process
@@ -181,7 +302,7 @@ VenturePulse/
 
 2. **VenturePulse orchestrates:**
    - Loads common analysis instructions
-   - Sequentially generates 9 specialized reports:
+   - Sequentially generates up to 19 specialized reports:
      - Each section calls OpenRouter API with your chosen model
      - Later sections reference insights from earlier reports
      - Each generates its own styled HTML file
@@ -189,8 +310,8 @@ VenturePulse/
 
 3. **You get:** all comprehensive HTML reports in a timestamped folder
 
-**Total time:** 10-15 minutes (varies by model)
-**Total cost:** $0 (free) to $5 (premium)
+**Total time:** 25-90 minutes depending on analysis depth (varies by model)
+**Total cost:** $0 (free models) to $5-15 (premium full analysis)
 
 ---
 
@@ -202,15 +323,15 @@ Each analysis creates **separate HTML files** in a timestamped folder:
 
 ```
 my-idea-analysis-model-20241021-143052/
-├── index.html          ⭐ Start here
-├── market-landscape.html
-├── technical-feasibility.html
-├── competitive-advantage.html
-├── business-model.html
-├── mvp-roadmap.html
-├── success-metrics.html
-├── go-to-market.html
-└── provenance-metadata.html
+├── index.html                          ⭐ Start here (CLI only)
+├── section01-executive-summary.html
+├── section02-market-landscape.html
+├── section03-user-stories.html
+├── ... (up to 19 sections)
+├── section19-pitch-narrative.html
+├── section20-provenance.html
+├── project-spec.md                     (Web UI)
+└── metadata.json                       (Web UI)
 ```
 
 ### Key Features
@@ -244,7 +365,7 @@ my-idea-analysis-model-20241021-143052/
 - Risk register with probability, impact, and mitigations
 - Comprehensive scoring with gap analysis
 
-**...and 6 more equally detailed reports.**
+**...and 16 more equally detailed reports covering user stories, legal compliance, customer journey, partnerships, funding strategy, and more.**
 
 ---
 
@@ -280,7 +401,7 @@ Since releasing VenturePulse, it's been used for:
 
 ### Side Project Validation
 *"Should I spend my weekends building this?"*
-- Get clear go/no-go decision in 15 minutes vs. 2 weeks of research
+- Get clear go/no-go decision in under 2 hours vs. 2-3 weeks of research
 
 ### Startup Pivot Decisions
 *"We're considering building an application of -so-and-so- domain — does it work?"*
@@ -345,9 +466,50 @@ cd my-idea-analysis-model-20241021-143052/
 
 ## 🔧 Configuration
 
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `OPENROUTER_API_KEY` | (required) | Your OpenRouter API key |
+| `PORT` | `8501` | Application port (Streamlit) |
+| `DEFAULT_MODEL` | `anthropic/claude-sonnet-4` | Pre-selected model in UI |
+| `MAXRETRY` | `3` | Maximum retry attempts for failed API calls |
+| `MAX_PARALLEL_SECTIONS` | `10` | Maximum concurrent section generation workers |
+
+Example `.env` file:
+```bash
+OPENROUTER_API_KEY=sk-or-v1-...
+PORT=8888                            # Run on custom port
+DEFAULT_MODEL=openai/gpt-4o          # Change default model
+MAXRETRY=5                           # Retry up to 5 times
+MAX_PARALLEL_SECTIONS=5              # Use up to 5 parallel workers
+```
+
+### Retry Logic
+
+VenturePulse automatically retries failed API calls with exponential backoff + jitter:
+- **Retryable errors:** Rate limits, timeouts, server errors (502/503/504)
+- **Non-retryable errors:** Invalid API key, model not found, content policy violations
+- **Backoff formula:** `base_delay * (2 ^ attempt) + random(0, jitter_max)`
+  - Example: attempt 1 = ~2-4s, attempt 2 = ~4-6s, attempt 3 = ~8-10s
+
+Failed sections after max retries are marked in the Provenance report with error details.
+
+### Parallel Section Generation
+
+Enable the "Parallel Section Generation" toggle in the UI to generate all sections simultaneously:
+- **Faster:** Completes Full Analysis in ~15-25 minutes vs. ~60-90 minutes sequential
+- **Trade-off:** Uses more API quota simultaneously (may hit rate limits on free tiers)
+- **Best for:** Premium models with higher rate limits
+
 ### Set Default Model
 
-Edit `analyze.sh`:
+**Web UI:** Set `DEFAULT_MODEL` in your `.env` file:
+```bash
+DEFAULT_MODEL=openai/gpt-4o
+```
+
+**CLI:** Edit `scripts/analyze-script.sh`:
 ```bash
 # Change this line:
 DEFAULT_MODEL="google/gemini-2.0-flash-exp:free"
@@ -425,7 +587,7 @@ sudo apt-get install curl
 - Try regenerating the section
 
 ### Analysis takes too long
-- Expected: 10-15 minutes for 9 reports
+- Expected: ~25 minutes for Quick Analysis (7 sections), ~60-90 minutes for Full Analysis (19 sections)
 - Premium models (Claude) are slower but higher quality
 - Try faster model: `google/gemini-2.0-flash-exp:free`
 
@@ -433,13 +595,22 @@ sudo apt-get install curl
 
 ## 🗺️ Roadmap
 
-### v1.5 (Current - October 2024)
-- ✅ Sequential specialized prompts (9 separate reports)
-- ✅ Each section builds on previous insights
-- ✅ Improved reliability and depth
-- ✅ Better handling of complex projects
+### v2.1 (Current - December 2024)
+- ✅ Expanded to 19 specialized sections (from 8)
+- ✅ Streamlit web UI with multi-model comparison
+- ✅ Quick (7 sections) / Full (19 sections) / Custom analysis modes
+- ✅ Sequential and parallel model execution
+- ✅ **Parallel section generation** - All sections generated simultaneously
+- ✅ **Automatic retry logic** - Exponential backoff with jitter for failed API calls
+- ✅ **Cost tracking** - Per-section and total costs in Provenance
+- ✅ **Failure handling** - Graceful handling of partial failures with detailed error reporting
+- ✅ Grouped section navigation (Foundation/Strategy/Execution/Future)
+- ✅ Docker deployment support
 
-TBD
+### Future
+- 🔄 Ollama/local model support
+- 🔄 Ideas library for saved projects
+- 🔄 Report export (PDF, combined HTML)
 
 ---
 
@@ -459,7 +630,7 @@ Contributions welcome! Here's where we need help:
 - **Example Projects:** Contribute sample analyses
 - **Translations:** Internationalize prompts and docs
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Just open an issue or submit a PR on GitHub!
 
 ---
 
@@ -467,7 +638,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 MIT License - see [LICENSE](LICENSE) for details.
 
-**TL;DR:** Use it, modify it, distribute it, commercialize it. Just include the license file.
+**TL;DR:** Use it, modify it, distribute it, commercialize it freely.
 
 The generated reports are **yours**—use them however you want.
 
@@ -499,21 +670,26 @@ The generated reports are **yours**—use them however you want.
 
 ### How much does it cost to run an analysis?
 
-Depends on the model you choose:
+Depends on the model and analysis depth:
 
-| Model | Cost per Full Analysis |
-|-------|----------------------|
-| `google/gemini-2.0-flash-exp:free` | **$0** (currently free) |
-| `deepseek/deepseek-chat` | ~$0.10-0.20 |
-| `google/gemini-2.5-pro` | ~$1-2 |
-| `anthropic/claude-sonnet-4.5` | ~$3-5 |
+| Model | Quick (7 sections) | Full (19 sections) |
+|-------|-------------------|-------------------|
+| `deepseek/deepseek-chat` | ~$0.10-0.20 | ~$0.30-0.50 |
+| `openai/gpt-4o-mini` | ~$0.10-0.25 | ~$0.30-0.60 |
+| `meta-llama/llama-3.3-70b-instruct` | ~$0.20-0.40 | ~$0.50-1.00 |
+| `mistralai/mistral-large` | ~$0.80-1.50 | ~$2-4 |
+| `google/gemini-2.5-pro` | ~$1-2 | ~$3-5 |
+| `openai/gpt-4o` | ~$1-2 | ~$3-6 |
+| `anthropic/claude-3.5-sonnet` | ~$1.50-3 | ~$4-8 |
+| `anthropic/claude-sonnet-4` | ~$2-4 | ~$5-10 |
 
-**My workflow:** Start with free model ($0) to filter obviously flawed ideas. For promising ideas, use Claude Sonnet 4.5 ($3-5) for investor-ready analysis.
+**My workflow:** Start with **DeepSeek** or **GPT-4o-mini** to filter obviously flawed ideas quickly. For promising ideas, use **Claude Sonnet 4** or **Gemini 2.5 Pro** for investor-ready analysis. The Web UI shows exact cost per section and total in the Provenance report.
 
 ### How long does it take?
 
-- **Currently:** 10-15 minutes (sequential generation of 9 reports)
-- **Coming soon:** 3-5 minutes (parallel generation in v1.6)
+- **Quick Analysis:** ~25 minutes (7 core sections)
+- **Full Analysis:** ~60-90 minutes (all 19 sections)
+- Premium models are slower but produce higher quality analysis
 
 Time varies by model—faster models complete quicker, premium models are slower but produce better analysis.
 
@@ -548,11 +724,11 @@ VenturePulse provides **strategic insights** based on AI reasoning and training 
 - Takes 2-3 weeks of iterating
 
 **Using VenturePulse:**
-- Comprehensive, structured analysis
-- Proven framework covering all dimensions
+- Comprehensive, structured analysis across 19 dimensions
+- Proven framework covering all viability aspects
 - Automatic competitive research
-- Professional formatting
-- Takes 10-15 minutes
+- Professional formatting with cost tracking
+- Takes 25-90 minutes (vs. weeks manually)
 
 **The prompts took months to refine.** You're getting battle-tested analysis templates that have been used on 50+ real projects.
 
