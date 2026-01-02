@@ -229,32 +229,31 @@ async def start_analysis(
                 total_cost_usd=0.0,
                 total_tokens=0,
             )
-            db.add(analysis)
-            await db.commit()
-            await db.refresh(analysis)
-
-            # Store selected sections in analysis record
+            # Set sections before adding to avoid refresh issues
             analysis.sections_completed = {
                 f"section{s}": {"status": "pending", "section_num": s}
                 for s in selected_sections
             }
+            db.add(analysis)
+            await db.flush()  # Get the ID without closing transaction
+            analysis_id = analysis.id  # Capture ID before commit
             await db.commit()
 
-            logger.info(f"Created analysis {analysis.id} for project {slug} with model {model}")
+            logger.info(f"Created analysis {analysis_id} for project {slug} with model {model}")
 
             # Start background task
             start_analysis_task(
-                analysis_id=analysis.id,
+                analysis_id=analysis_id,
                 api_key=api_key,
                 sections_to_run=selected_sections,
             )
 
-            logger.info(f"Started background analysis task for analysis {analysis.id}")
-            created_analyses.append(analysis)
+            logger.info(f"Started background analysis task for analysis {analysis_id}")
+            created_analyses.append(analysis_id)
 
     # If only one model, redirect to that analysis
     if len(created_analyses) == 1:
-        return RedirectResponse(url=f"/analysis/{created_analyses[0].id}", status_code=303)
+        return RedirectResponse(url=f"/analysis/{created_analyses[0]}", status_code=303)
 
     # Multiple models - redirect to project page with success message
     model_count = len(created_analyses)
