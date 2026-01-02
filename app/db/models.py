@@ -46,6 +46,7 @@ class User(Base):
         DateTime, server_default=func.now(), nullable=False
     )
     last_login: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    preferred_models: Mapped[Optional[list]] = mapped_column(JSON, nullable=True)  # User's saved model preferences
 
     # Relationships
     projects: Mapped[list["Project"]] = relationship(

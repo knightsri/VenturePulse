@@ -20,6 +20,7 @@ from app.auth.decorators import require_approved
 from app.services.apikey import has_api_key, get_masked_api_key, get_api_key
 from app.services.background import start_analysis_task, cancel_analysis_task, is_analysis_running
 from app.services.report import format_cost, format_time
+from app.services.preferences import get_user_preferred_models, save_user_preferred_models
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -109,6 +110,9 @@ async def analyze_form(
         if not project.is_public and not is_owner and not is_admin:
             raise HTTPException(status_code=404, detail="Project not found")
 
+        # Load user's preferred models
+        user_preferred_models = await get_user_preferred_models(db, user.id)
+
     # Group sections by category
     grouped_sections = {}
     for section in SECTIONS:
@@ -116,6 +120,13 @@ async def analyze_form(
         if group not in grouped_sections:
             grouped_sections[group] = []
         grouped_sections[group].append(section)
+
+    # Determine which models to show as selected
+    # Priority: user preferences > default model
+    if user_preferred_models:
+        selected_models = user_preferred_models
+    else:
+        selected_models = [settings.DEFAULT_MODEL]
 
     return templates.TemplateResponse(
         "pages/analysis_run.html",
@@ -126,6 +137,7 @@ async def analyze_form(
             "project": project,
             "models": POPULAR_MODELS,
             "default_model": settings.DEFAULT_MODEL,
+            "selected_models": selected_models,
             "sections": SECTIONS,
             "grouped_sections": grouped_sections,
             "section_groups": SECTION_GROUPS,
@@ -192,6 +204,9 @@ async def start_analysis(
 
         # Get API key from session
         api_key = get_api_key(request)
+
+        # Save user's model preferences for next time
+        await save_user_preferred_models(db, user.id, models)
 
         # Create an analysis for each model
         created_analyses = []

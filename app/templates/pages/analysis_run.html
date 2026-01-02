@@ -137,10 +137,21 @@
                     <label class="model-checkbox-label" id="label-{{ loop.index }}">
                         <input type="checkbox" name="models" value="{{ model }}"
                                class="model-checkbox"
-                               {% if model == default_model %}checked{% endif %}
+                               {% if model in selected_models %}checked{% endif %}
                                onchange="updateModelSelection(this)">
                         <span class="model-name">{{ model }}</span>
                     </label>
+                {% endfor %}
+                {# Show any custom models from user preferences that aren't in POPULAR_MODELS #}
+                {% for model in selected_models %}
+                    {% if model not in models %}
+                    <label class="model-checkbox-label" id="label-custom-{{ loop.index }}">
+                        <input type="checkbox" name="models" value="{{ model }}"
+                               class="model-checkbox" checked
+                               onchange="updateModelSelection(this)">
+                        <span class="model-name">{{ model }}</span>
+                    </label>
+                    {% endif %}
                 {% endfor %}
             </div>
 
