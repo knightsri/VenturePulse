@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - VenturePulse{% endblock %}
+
+{% block content %}
+<div class="container" style="text-align: center; padding: var(--space-16) var(--space-4);">
+    <div class="error-page">
+        <div class="error-code" style="font-size: 8rem; font-weight: 700; color: var(--color-error); line-height: 1;">
+            500
+        </div>
+        <h1 style="margin: var(--space-4) 0;">Something Went Wrong</h1>
+        <p class="text-muted" style="font-size: var(--font-size-lg); max-width: 500px; margin: 0 auto var(--space-8);">
+            We encountered an unexpected error. Please try again later.
+        </p>
+        <div class="flex gap-4 justify-center">
+            <a href="/" class="btn btn-primary">Go Home</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

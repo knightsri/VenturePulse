@@ -23,6 +23,15 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+    # Resource limits for production
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
 
 # Named volumes for data persistence
 volumes:

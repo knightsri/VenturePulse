@@ -5,13 +5,17 @@ VenturePulse v2 - FastAPI Application Entry Point
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from fastapi.exceptions import RequestValidationError
 from starlette.middleware.sessions import SessionMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings
+from app.auth.session import get_current_user
 from app.db.database import init_db, close_db
 from app.routes import (
     auth_router,
@@ -75,6 +79,8 @@ app.add_middleware(
     secret_key=settings.SECRET_KEY,
     session_cookie="venturepulse_oauth_state",
     max_age=3600,  # 1 hour for OAuth state
+    same_site="lax",
+    https_only=not settings.DEV_MODE,  # Secure cookie in production
 )
 
 # Mount static files
@@ -96,6 +102,70 @@ app.include_router(analysis_router)  # Has /analysis/{id} specific routes
 app.include_router(public_router)    # Has /project/{slug} catch-all
 app.include_router(admin_router)
 app.include_router(settings_router)
+
+
+# Security headers middleware
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Add security headers to all responses."""
+
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        # Security headers
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        # Only add HSTS in production
+        if not settings.DEV_MODE:
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
+
+
+# Add security headers middleware
+app.add_middleware(SecurityHeadersMiddleware)
+
+
+# Custom exception handlers
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    """Handle HTTP exceptions with custom error pages."""
+    user = await get_current_user(request)
+
+    if exc.status_code == 404:
+        return templates.TemplateResponse(
+            "pages/404.html",
+            {"request": request, "user": user, "settings": settings},
+            status_code=404
+        )
+    elif exc.status_code >= 500:
+        return templates.TemplateResponse(
+            "pages/500.html",
+            {"request": request, "user": user, "settings": settings},
+            status_code=exc.status_code
+        )
+    else:
+        # For other HTTP errors, return a simple HTML response
+        return HTMLResponse(
+            content=f"<h1>Error {exc.status_code}</h1><p>{exc.detail}</p>",
+            status_code=exc.status_code
+        )
+
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Handle unexpected exceptions with 500 error page."""
+    logger.exception(f"Unhandled exception: {exc}")
+    user = None
+    try:
+        user = await get_current_user(request)
+    except Exception:
+        pass
+
+    return templates.TemplateResponse(
+        "pages/500.html",
+        {"request": request, "user": user, "settings": settings},
+        status_code=500
+    )
 
 
 # Health check endpoint

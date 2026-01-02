@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash venturepulse
+
 # Copy requirements first for better caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -19,8 +22,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY prompts/ ./prompts/
 
-# Create data directories (will be overwritten by volume mount)
-RUN mkdir -p /app/data/reports /app/data/specs
+# Create data directories and set ownership
+RUN mkdir -p /app/data/reports /app/data/specs && \
+    chown -R venturepulse:venturepulse /app
+
+# Switch to non-root user
+USER venturepulse
 
 # Default port
 ENV PORT=8080
