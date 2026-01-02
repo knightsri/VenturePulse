@@ -229,10 +229,10 @@ strong, b {
 }
 
 .navbar-logo-img {
-    height: 40px;
-    width: 40px;
-    object-fit: contain;
-    vertical-align: middle;
+    height: 44px;
+    width: 44px;
+    object-fit: cover;
+    border-radius: 4px;
 }
 
 .navbar-nav {

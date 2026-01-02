@@ -14,7 +14,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
-from app.db.database import AsyncSessionLocal
+from app.db.database import get_session_factory
 from app.db.models import User
 from app.auth.oauth import oauth, is_google_configured, is_github_configured
 from app.auth.session import create_session, delete_session, get_current_user
@@ -38,7 +38,7 @@ async def get_or_create_user(
     Get existing user or create a new one.
     First user to register becomes admin.
     """
-    async with AsyncSessionLocal() as db:
+    async with get_session_factory()() as db:
         # Check if user exists
         result = await db.execute(
             select(User).where(User.email == email)
@@ -121,17 +121,23 @@ async def google_callback(request: Request):
 
     try:
         token = await oauth.google.authorize_access_token(request)
+
+        # For OpenID Connect, userinfo is included in the token
         user_info = token.get("userinfo")
 
         if not user_info:
-            # Fetch user info if not in token
-            user_info = await oauth.google.userinfo(token=token)
+            # Fallback: parse the ID token
+            user_info = dict(token.get("id_token", {}))
+
+        if not user_info or "email" not in user_info:
+            logger.error("No user info in Google OAuth response")
+            raise HTTPException(status_code=400, detail="Could not get user info from Google")
 
         user = await get_or_create_user(
             email=user_info["email"],
             name=user_info.get("name", user_info["email"]),
             provider="google",
-            provider_id=user_info["sub"],
+            provider_id=user_info.get("sub", user_info["email"]),
             avatar_url=user_info.get("picture"),
         )
 
@@ -139,6 +145,8 @@ async def google_callback(request: Request):
         await create_session(user.id, response)
         return response
 
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Google OAuth error: {e}")
         raise HTTPException(status_code=400, detail="OAuth authentication failed")
@@ -166,28 +174,37 @@ async def github_callback(request: Request):
 
     try:
         token = await oauth.github.authorize_access_token(request)
+        access_token = token.get("access_token")
 
-        # Fetch user info from GitHub API
-        resp = await oauth.github.get("user", token=token)
-        user_info = resp.json()
+        # Fetch user info from GitHub API using httpx
+        import httpx
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Accept": "application/json",
+        }
 
-        # Get email (might need separate API call if private)
-        email = user_info.get("email")
-        if not email:
-            # Fetch emails separately
-            resp = await oauth.github.get("user/emails", token=token)
-            emails = resp.json()
-            primary_email = next(
-                (e for e in emails if e.get("primary") and e.get("verified")),
-                None
-            )
-            if primary_email:
-                email = primary_email["email"]
-            else:
-                raise HTTPException(
-                    status_code=400,
-                    detail="No verified email found on GitHub account"
+        async with httpx.AsyncClient() as client:
+            # Get user profile
+            resp = await client.get("https://api.github.com/user", headers=headers)
+            user_info = resp.json()
+
+            # Get email (might need separate API call if private)
+            email = user_info.get("email")
+            if not email:
+                # Fetch emails separately
+                resp = await client.get("https://api.github.com/user/emails", headers=headers)
+                emails = resp.json()
+                primary_email = next(
+                    (e for e in emails if e.get("primary") and e.get("verified")),
+                    None
                 )
+                if primary_email:
+                    email = primary_email["email"]
+                else:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="No verified email found on GitHub account"
+                    )
 
         user = await get_or_create_user(
             email=email,

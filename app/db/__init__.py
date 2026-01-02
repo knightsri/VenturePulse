@@ -7,7 +7,7 @@ from app.db.database import (
     get_db,
     init_db,
     close_db,
-    AsyncSessionLocal,
+    get_session_factory,
 )
 from app.db.models import (
     Base,
@@ -21,7 +21,7 @@ __all__ = [
     "get_db",
     "init_db",
     "close_db",
-    "AsyncSessionLocal",
+    "get_session_factory",
     "Base",
     "User",
     "Project",

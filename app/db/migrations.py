@@ -10,7 +10,7 @@ import logging
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.database import get_engine, AsyncSessionLocal
+from app.db.database import get_engine, get_session_factory
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ async def run_migrations() -> None:
     logger.info("Checking for pending migrations...")
 
     # Check if this is a fresh database (no users yet = fresh install)
-    async with AsyncSessionLocal() as session:
+    async with get_session_factory()() as session:
         result = await session.execute(text("SELECT COUNT(*) FROM users"))
         user_count = result.scalar()
 

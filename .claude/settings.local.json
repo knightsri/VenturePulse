@@ -10,7 +10,14 @@
       "Bash(C:/VENV/VENTUREPULSE/Scripts/python:*)",
       "Bash(curl:*)",
       "Bash(sqlite3:*)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)",
+      "Bash(cmd.exe //c \"taskkill /F /IM python.exe\")",
+      "Bash(docker-compose down:*)",
+      "Bash(docker-compose build:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker rm:*)",
+      "Bash(docker logs:*)"
     ]
   }
 }

@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
 from app.db.models import Session, User
-from app.db.database import AsyncSessionLocal
+from app.db.database import get_session_factory
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -34,7 +34,7 @@ async def create_session(user_id: int, response: Response) -> str:
     token = secrets.token_hex(32)
     expires_at = datetime.utcnow() + timedelta(hours=settings.SESSION_EXPIRE_HOURS)
 
-    async with AsyncSessionLocal() as db:
+    async with get_session_factory()() as db:
         # Create session record
         session = Session(
             token=token,
@@ -79,7 +79,7 @@ async def get_session(request: Request) -> Optional[Session]:
     if not token:
         return None
 
-    async with AsyncSessionLocal() as db:
+    async with get_session_factory()() as db:
         result = await db.execute(
             select(Session).where(Session.token == token)
         )
@@ -111,7 +111,7 @@ async def get_current_user(request: Request) -> Optional[User]:
     if session is None:
         return None
 
-    async with AsyncSessionLocal() as db:
+    async with get_session_factory()() as db:
         result = await db.execute(
             select(User).where(User.id == session.user_id)
         )
@@ -141,7 +141,7 @@ async def delete_session(request: Request, response: Response) -> bool:
     if not token:
         return False
 
-    async with AsyncSessionLocal() as db:
+    async with get_session_factory()() as db:
         result = await db.execute(
             delete(Session).where(Session.token == token)
         )
@@ -161,7 +161,7 @@ async def cleanup_expired_sessions() -> int:
     Returns:
         Number of sessions deleted
     """
-    async with AsyncSessionLocal() as db:
+    async with get_session_factory()() as db:
         result = await db.execute(
             delete(Session).where(Session.expires_at < datetime.utcnow())
         )

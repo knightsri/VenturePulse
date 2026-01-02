@@ -6,9 +6,6 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Create non-root user for security
-RUN useradd --create-home --shell /bin/bash appuser
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
@@ -22,19 +19,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY prompts/ ./prompts/
 
-# Create data directories with proper permissions
-RUN mkdir -p /app/data/reports /app/data/specs && \
-    chown -R appuser:appuser /app/data
+# Create data directories (will be overwritten by volume mount)
+RUN mkdir -p /app/data/reports /app/data/specs
 
-# Switch to non-root user
-USER appuser
-
-# Default port (can be overridden via PORT env var)
+# Default port
 ENV PORT=8080
 EXPOSE 8080
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD curl -f http://localhost:${PORT}/health || exit 1
 
 # Run the FastAPI app with uvicorn

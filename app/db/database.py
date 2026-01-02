@@ -81,15 +81,21 @@ async def close_db() -> None:
         logger.info("Database connections closed")
 
 
+def get_session_factory() -> async_sessionmaker[AsyncSession]:
+    """Get the session factory, raising an error if not initialized."""
+    if AsyncSessionLocal is None:
+        raise RuntimeError("Database not initialized. Call init_db() first.")
+    return AsyncSessionLocal
+
+
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     Dependency that provides a database session.
     Use with FastAPI's Depends().
     """
-    if AsyncSessionLocal is None:
-        raise RuntimeError("Database not initialized. Call init_db() first.")
+    session_factory = get_session_factory()
 
-    async with AsyncSessionLocal() as session:
+    async with session_factory() as session:
         try:
             yield session
             await session.commit()
