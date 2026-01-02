@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+
+{% block title %}Run Analysis - {{ project.name }} - VenturePulse{% endblock %}
+
+{% block head %}
+<style>
+    .model-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--space-2);
+    }
+
+    .model-checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
+        background: var(--color-gray-50);
+        border: 1px solid var(--color-gray-200);
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .model-checkbox-label:hover {
+        background: var(--color-gray-100);
+    }
+
+    .model-checkbox-label.selected {
+        background: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
+    }
+
+    .model-checkbox {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .model-name {
+        font-size: var(--font-size-sm);
+        word-break: break-all;
+    }
+
+    .model-count {
+        font-weight: 600;
+        color: var(--color-primary);
+    }
+
+    .custom-model-input {
+        display: flex;
+        gap: var(--space-2);
+        margin-top: var(--space-3);
+    }
+
+    .custom-model-input input {
+        flex: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <div class="page-header">
+        <nav class="breadcrumb mb-4">
+            <a href="/dashboard">My Projects</a>
+            <span>/</span>
+            <a href="/project/{{ project.slug }}">{{ project.name }}</a>
+            <span>/</span>
+            <span>Run Analysis</span>
+        </nav>
+        <h1>Run Analysis</h1>
+        <p class="text-muted">Configure and start AI-powered viability analysis</p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% if request.query_params.get('error') %}
+        <div class="alert alert-danger mb-4">
+            {{ request.query_params.get('error')|replace('+', ' ') }}
+        </div>
+    {% endif %}
+    {% if request.query_params.get('success') %}
+        <div class="alert alert-success mb-4">
+            {{ request.query_params.get('success')|replace('+', ' ') }}
+        </div>
+    {% endif %}
+
+    <!-- API Key Status -->
+    <div class="card mb-4" style="{% if not has_api_key %}border-color: var(--color-warning);{% endif %}">
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="mb-1">OpenRouter API Key</h3>
+                {% if has_api_key %}
+                    <p class="text-muted mb-0">
+                        Using key: <code>{{ masked_api_key }}</code>
+                    </p>
+                {% else %}
+                    <p style="color: var(--color-error); margin-bottom: 0;">
+                        No API key set. You need to configure your OpenRouter API key to run analyses.
+                    </p>
+                {% endif %}
+            </div>
+            {% if has_api_key %}
+                <span class="badge badge-success">Active</span>
+            {% else %}
+                <a href="/settings" class="btn btn-primary">Set API Key</a>
+            {% endif %}
+        </div>
+        {% if has_api_key %}
+        <div style="margin-top: var(--space-2);">
+            <a href="/settings" class="text-muted" style="font-size: var(--font-size-sm);">
+                Change API Key
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if has_api_key %}
+    <form action="/project/{{ project.slug }}/analyze" method="POST" class="card" id="analysis-form">
+        <!-- Model Selection -->
+        <div class="form-group">
+            <div class="flex justify-between items-center mb-2">
+                <label class="form-label mb-0">AI Models</label>
+                <span class="model-count" id="model-count">0 selected</span>
+            </div>
+            <p class="form-hint mb-3">Select one or more models to run analysis with. Each model creates a separate analysis.</p>
+
+            <!-- Model Quick Actions -->
+            <div class="flex gap-2 mb-3">
+                <button type="button" class="btn btn-outline btn-sm" onclick="selectAllModels()">Select All</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="clearAllModels()">Clear All</button>
+            </div>
+
+            <!-- Model Checkboxes -->
+            <div class="model-grid">
+                {% for model in models %}
+                    <label class="model-checkbox-label" id="label-{{ loop.index }}">
+                        <input type="checkbox" name="models" value="{{ model }}"
+                               class="model-checkbox"
+                               {% if model == default_model %}checked{% endif %}
+                               onchange="updateModelSelection(this)">
+                        <span class="model-name">{{ model }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+
+            <!-- Custom Model Input -->
+            <div class="custom-model-input">
+                <input type="text" id="custom-model" class="form-input"
+                       placeholder="Add custom model (e.g., anthropic/claude-3-opus)">
+                <button type="button" class="btn btn-secondary" onclick="addCustomModel()">Add</button>
+            </div>
+            <div class="form-hint mt-1">Enter an OpenRouter model path to add a custom model</div>
+        </div>
+
+        <!-- Section Selection -->
+        <div class="form-group">
+            <label class="form-label">Analysis Sections</label>
+
+            <!-- Quick Presets -->
+            <div class="flex gap-2 mb-4">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectPreset('quick')">
+                    Quick (7 sections)
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="selectPreset('full')">
+                    Full (19 sections)
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="selectPreset('none')">
+                    Clear All
+                </button>
+            </div>
+
+            <!-- Section Groups -->
+            {% for group_name, group_desc in section_groups.items() %}
+                <div class="card mb-4" style="background: var(--color-gray-50);">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <strong>{{ group_name }}</strong>
+                            <span class="text-muted" style="font-size: 0.875rem; display: block;">
+                                {{ group_desc }}
+                            </span>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm"
+                                onclick="toggleGroup('{{ group_name }}')">
+                            Toggle All
+                        </button>
+                    </div>
+                    <div class="grid grid-2" style="gap: var(--space-2);">
+                        {% for section in grouped_sections[group_name] %}
+                            <label class="flex items-center gap-2" style="cursor: pointer;">
+                                <input type="checkbox" name="sections" value="{{ section.num }}"
+                                       class="section-checkbox group-{{ group_name }}"
+                                       {% if section.num in quick_sections %}checked{% endif %}
+                                       style="width: 18px; height: 18px;">
+                                <span>{{ section.num }}. {{ section.name }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Submit -->
+        <div class="flex gap-4 mt-8">
+            <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">Start Analysis</button>
+            <a href="/project/{{ project.slug }}" class="btn btn-secondary">Cancel</a>
+        </div>
+
+        <div class="alert alert-info mt-4" id="analysis-info">
+            <strong>Note:</strong> Analysis costs depend on the model and number of sections selected.
+            Most models charge per token used. The analysis will run in the background and you can
+            check progress on the project page.
+        </div>
+    </form>
+    {% else %}
+    <!-- No API Key - Show instructions -->
+    <div class="card text-center" style="padding: var(--space-12);">
+        <div style="font-size: 3rem; margin-bottom: var(--space-4);">KEY</div>
+        <h2>API Key Required</h2>
+        <p class="text-muted mb-4" style="max-width: 500px; margin-left: auto; margin-right: auto;">
+            To run AI-powered analyses, you need to configure your OpenRouter API key.
+            Your key is stored only in your browser session and is never saved to our servers.
+        </p>
+        <a href="/settings" class="btn btn-primary btn-lg">Configure API Key</a>
+        <div class="mt-4">
+            <a href="https://openrouter.ai/keys" target="_blank" rel="noopener" class="text-muted">
+                Don't have a key? Get one at openrouter.ai
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if has_api_key %}
+<script>
+const quickSections = {{ quick_sections|tojson }};
+const allSections = {{ sections|tojson }};
+
+// Update model selection styling and count
+function updateModelSelection(checkbox) {
+    const label = checkbox.closest('.model-checkbox-label');
+    if (checkbox.checked) {
+        label.classList.add('selected');
+    } else {
+        label.classList.remove('selected');
+    }
+    updateModelCount();
+}
+
+function updateModelCount() {
+    const checked = document.querySelectorAll('.model-checkbox:checked');
+    const count = checked.length;
+    const countEl = document.getElementById('model-count');
+    const submitBtn = document.getElementById('submit-btn');
+    const infoEl = document.getElementById('analysis-info');
+
+    countEl.textContent = count + ' selected';
+
+    if (count === 0) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Select at least one model';
+    } else if (count === 1) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Start Analysis';
+    } else {
+        submitBtn.disabled = false;
+        submitBtn.textContent = `Start ${count} Analyses`;
+    }
+
+    // Update info message for multiple models
+    if (count > 1) {
+        infoEl.innerHTML = `<strong>Multi-Model Analysis:</strong> You selected ${count} models.
+            Each model will create a separate analysis that runs in the background.
+            You can compare results across models on the project page.`;
+    } else {
+        infoEl.innerHTML = `<strong>Note:</strong> Analysis costs depend on the model and number of sections selected.
+            Most models charge per token used. The analysis will run in the background and you can
+            check progress on the project page.`;
+    }
+}
+
+function selectAllModels() {
+    document.querySelectorAll('.model-checkbox').forEach(cb => {
+        cb.checked = true;
+        updateModelSelection(cb);
+    });
+}
+
+function clearAllModels() {
+    document.querySelectorAll('.model-checkbox').forEach(cb => {
+        cb.checked = false;
+        updateModelSelection(cb);
+    });
+}
+
+function addCustomModel() {
+    const input = document.getElementById('custom-model');
+    const model = input.value.trim();
+
+    if (!model) {
+        alert('Please enter a model name');
+        return;
+    }
+
+    // Check if model already exists
+    const existing = document.querySelector(`.model-checkbox[value="${model}"]`);
+    if (existing) {
+        existing.checked = true;
+        updateModelSelection(existing);
+        input.value = '';
+        return;
+    }
+
+    // Create new checkbox
+    const grid = document.querySelector('.model-grid');
+    const labelId = 'label-custom-' + Date.now();
+    const html = `
+        <label class="model-checkbox-label selected" id="${labelId}">
+            <input type="checkbox" name="models" value="${model}"
+                   class="model-checkbox" checked
+                   onchange="updateModelSelection(this)">
+            <span class="model-name">${model}</span>
+        </label>
+    `;
+    grid.insertAdjacentHTML('beforeend', html);
+    input.value = '';
+    updateModelCount();
+}
+
+function selectPreset(preset) {
+    const checkboxes = document.querySelectorAll('.section-checkbox');
+
+    checkboxes.forEach(cb => {
+        if (preset === 'quick') {
+            cb.checked = quickSections.includes(cb.value);
+        } else if (preset === 'full') {
+            cb.checked = true;
+        } else {
+            cb.checked = false;
+        }
+    });
+}
+
+function toggleGroup(groupName) {
+    const checkboxes = document.querySelectorAll(`.group-${groupName}`);
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+    checkboxes.forEach(cb => {
+        cb.checked = !allChecked;
+    });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Update initial selection styling
+    document.querySelectorAll('.model-checkbox').forEach(cb => {
+        updateModelSelection(cb);
+    });
+
+    // Handle Enter key in custom model input
+    document.getElementById('custom-model').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addCustomModel();
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

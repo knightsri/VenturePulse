@@ -1,0 +1,437 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #1a73e8; margin-bottom: 20px;">Validation Experiments & Hypotheses</h2>
+
+    <!-- Hypothesis Cards -->
+    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0; border-radius: 4px;">
+        <h4 style="margin: 0;">Hypothesis #1: Problem Existence 🔴 Critical</h4>
+        <p><strong>We believe that</strong> AI engineers and practitioners</p>
+        <p><strong>Will</strong> actively seek task-specific LLM benchmarking tools</p>
+        <p><strong>If they</strong> are evaluating models for production use cases</p>
+        <p><strong>We will know this is true when we see</strong> 70%+ of surveyed engineers confirm this is a top-3 pain point AND 7%+ landing page signup rate</p>
+        <p><strong>Risk Level:</strong> 🔴 Critical (product fails if wrong)</p>
+        <p><strong>Current Evidence:</strong></p>
+        <ul>
+            <li>Supporting: Forum discussions, search volume for LLM comparison tools</li>
+            <li>Contradicting: None identified</li>
+            <li>Gaps: No direct user interviews yet</li>
+        </ul>
+        <p><strong>Experiment Design:</strong></p>
+        <ul>
+            <li><strong>Method:</strong> Customer discovery interviews + landing page test</li>
+            <li><strong>Sample Size:</strong> 20 interviews, 1,000 landing page visitors</li>
+            <li><strong>Duration:</strong> 2 weeks</li>
+            <li><strong>Cost:</strong> $500 (ads) + 20 hours (interviews)</li>
+        </ul>
+        <p><strong>Success Metrics:</strong></p>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+            <thead>
+                <tr style="background-color: #f8f9fa;">
+                    <th style="padding: 8px; border: 1px solid #ddd;">Metric</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Fail</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Minimum</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Success</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Home Run</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Problem confirmation rate</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&lt;40%</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">40-60%</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">60-80%</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&gt;80%</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Landing page signup</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&lt;2%</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">2-5%</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">5-10%</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&gt;10%</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Next Steps if Validated:</strong> Proceed to solution validation</p>
+        <p><strong>Next Steps if Invalidated:</strong> Pivot to adjacent problem or exit</p>
+    </div>
+
+    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0; border-radius: 4px;">
+        <h4 style="margin: 0;">Hypothesis #2: Solution Fit 🔴 Critical</h4>
+        <p><strong>We believe that</strong> AI engineers</p>
+        <p><strong>Will</strong> use a community-driven benchmark platform over manual testing</p>
+        <p><strong>If we</strong> provide easy-to-create, task-specific benchmarks with standardized comparisons</p>
+        <p><strong>We will know this is true when we see</strong> 80%+ of prototype users rate the output as "useful" or "very useful"</p>
+        <p><strong>Risk Level:</strong> 🔴 Critical</p>
+        <p><strong>Current Evidence:</strong></p>
+        <ul>
+            <li>Supporting: Existing manual testing processes are time-consuming</li>
+            <li>Contradicting: Some engineers prefer full control over testing</li>
+            <li>Gaps: No direct testing of solution fit yet</li>
+        </ul>
+        <p><strong>Experiment Design:</strong></p>
+        <ul>
+            <li><strong>Method:</strong> Wizard of Oz MVP</li>
+            <li><strong>Sample Size:</strong> 10 users</li>
+            <li><strong>Duration:</strong> 2 weeks</li>
+            <li><strong>Cost:</strong> Time only (10-15 hours of effort)</li>
+        </ul>
+        <p><strong>Success Metrics:</strong></p>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+            <thead>
+                <tr style="background-color: #f8f9fa;">
+                    <th style="padding: 8px; border: 1px solid #ddd;">Metric</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Fail</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Minimum</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Success</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Home Run</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">User satisfaction</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&lt;6/10</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">6-8/10</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">8-9/10</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&gt;9/10</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">NPS</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&lt;20</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">20-40</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">40-60</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&gt;60</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Next Steps if Validated:</strong> Proceed to pricing validation</p>
+        <p><strong>Next Steps if Invalidated:</strong> Iterate on solution based on feedback</p>
+    </div>
+
+    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin: 1rem 0; border-radius: 4px;">
+        <h4 style="margin: 0;">Hypothesis #3: Willingness to Pay 🔴 Critical</h4>
+        <p><strong>We believe that</strong> AI engineers and teams</p>
+        <p><strong>Will</strong> pay $29-$99/month for advanced benchmarking features</p>
+        <p><strong>If we</strong> provide value that saves significant time and improves decision-making</p>
+        <p><strong>We will know this is true when we see</strong> 10+ pre-orders at target price point</p>
+        <p><strong>Risk Level:</strong> 🔴 Critical</p>
+        <p><strong>Current Evidence:</strong></p>
+        <ul>
+            <li>Supporting: Existing paid tools in adjacent spaces</li>
+            <li>Contradicting: Some engineers prefer free/open-source solutions</li>
+            <li>Gaps: No direct testing of pricing yet</li>
+        </ul>
+        <p><strong>Experiment Design:</strong></p>
+        <ul>
+            <li><strong>Method:</strong> Pre-order test</li>
+            <li><strong>Sample Size:</strong> 20 users</li>
+            <li><strong>Duration:</strong> 1 week</li>
+            <li><strong>Cost:</strong> Time only (5-10 hours of effort)</li>
+        </ul>
+        <p><strong>Success Metrics:</strong></p>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+            <thead>
+                <tr style="background-color: #f8f9fa;">
+                    <th style="padding: 8px; border: 1px solid #ddd;">Metric</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Fail</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Minimum</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Success</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Home Run</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Pre-orders collected</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&lt;5</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">5-10</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">10-20</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&gt;20</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">Acceptable price point</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&lt;$20</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">$20-$50</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">$50-$100</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">&gt;$100</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Next Steps if Validated:</strong> Proceed to GTM planning</p>
+        <p><strong>Next Steps if Invalidated:</strong> Iterate on pricing or value proposition</p>
+    </div>
+
+    <!-- Experiment Catalog -->
+    <h3 style="color: #1a73e8; margin-top: 30px;">Experiment Catalog</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+            <tr style="background-color: #f8f9fa;">
+                <th style="padding: 8px; border: 1px solid #ddd;">Experiment</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Hypothesis</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Method</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Sample Size</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Duration</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Cost</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Success Criteria</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Discovery Interviews</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">#1</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Semi-structured interviews</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">20</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">2 weeks</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">$500</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">60%+ confirm problem</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Landing Page Test</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">#1, #2</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Landing page with waitlist</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">1,000 visitors</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">2 weeks</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">$500</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">5%+ signup rate</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Wizard of Oz MVP</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">#2, #3</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Manual service delivery</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">10 users</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">2 weeks</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Time only</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">8/10+ satisfaction</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Pre-Order Test</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">#3</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Collect payments upfront</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">20 users</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">1 week</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Time only</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">10+ pre-orders</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Experiment Prioritization Matrix -->
+    <h3 style="color: #1a73e8; margin-top: 30px;">Experiment Prioritization Matrix</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+            <tr style="background-color: #f8f9fa;">
+                <th style="padding: 8px; border: 1px solid #ddd;">Experiment</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Hypothesis</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Impact</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Effort</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Risk if Skipped</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Priority</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Discovery Interviews</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">#1</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">🔴 Critical</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Medium</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Fail</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">1</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Landing Page Test</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">#1, #2</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">🔴 Critical</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Low</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Fail</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">2</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Wizard of Oz MVP</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">#2, #3</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">🔴 Critical</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">High</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Fail</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">3</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Pre-Order Test</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">#3</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">🟡 High</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Medium</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Suboptimal pricing</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">4</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Experiment Schedule -->
+    <h3 style="color: #1a73e8; margin-top: 30px;">8-Week Validation Sprint</h3>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;">
+        <div style="background: #e8f0fe; padding: 10px; border-radius: 4px;">
+            <h4 style="margin: 0;">Week 1-2: Problem Validation</h4>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>Launch landing page</li>
+                <li>Recruit interview participants</li>
+                <li>Conduct interviews</li>
+                <li>Run landing page ads</li>
+            </ul>
+        </div>
+        <div style="background: #e8f0fe; padding: 10px; border-radius: 4px;">
+            <h4 style="margin: 0;">Week 3-4: Solution Validation</h4>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>Analyze interview data</li>
+                <li>Build Wizard of Oz process</li>
+                <li>Deliver to 10 users</li>
+            </ul>
+        </div>
+        <div style="background: #e8f0fe; padding: 10px; border-radius: 4px;">
+            <h4 style="margin: 0;">Week 5-6: Pricing Validation</h4>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>Run pricing survey</li>
+                <li>Collect pre-orders</li>
+                <li>Analyze pricing data</li>
+            </ul>
+        </div>
+        <div style="background: #e8f0fe; padding: 10px; border-radius: 4px;">
+            <h4 style="margin: 0;">Week 7-8: Synthesis & Decision</h4>
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>Compile all results</li>
+                <li>Make Go/No-Go decision</li>
+                <li>Plan Phase 2 (if Go)</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Go/No-Go Criteria -->
+    <h3 style="color: #1a73e8; margin-top: 30px;">Minimum Success Criteria (Go/No-Go)</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+        <thead>
+            <tr style="background-color: #f8f9fa;">
+                <th style="padding: 8px; border: 1px solid #ddd;">Category</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Metric</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Must Achieve</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Nice-to-Have</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Problem</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Interview confirmation</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">60%+</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">80%+</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Problem</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Landing page signup</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">5%+</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">10%+</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Solution</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Prototype satisfaction</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">7/10+</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">8.5/10+</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Solution</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">NPS</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">30+</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">50+</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Pricing</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Willingness to pay at $X</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">50%+</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">70%+</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Pricing</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Pre-orders collected</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">10+</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">25+</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ddd;">Overall</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Hypotheses validated</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">3/5 critical</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">5/5 critical</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pivot Triggers -->
+    <h3 style="color: #1a73e8; margin-top: 30px;">Pivot Triggers & Contingency Plans</h3>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px;">
+        <div style="background: #fce8e6; padding: 10px; border-radius: 4px;">
+            <h4 style="margin: 0;">Trigger #1: Problem Doesn't Exist</h4>
+            <p><strong>Signal:</strong> &lt;40% of users confirm problem</p>
+            <p><strong>Action:</strong> Interview users about their actual top problems</p>
+            <p><strong>Pivot Options:</strong> Different problem in same audience, same problem in different audience</p>
+        </div>
+        <div style="background: #fce8e6; padding: 10px; border-radius: 4px;">
+            <h4 style="margin: 0;">Trigger #2: Solution Doesn't Resonate</h4>
+            <p><strong>Signal:</strong> &lt;50% satisfaction with prototype</p>
+            <p><strong>Action:</strong> Deep-dive on what's missing, what's confusing, what's not valuable</p>
+            <p><strong>Pivot Options:</strong> Simplify scope, change format, add human touch</p>
+        </div>
+        <div style="background: #fce8e6; padding: 10px; border-radius: 4px;">
+            <h4 style="margin: 0;">Trigger #3: Won't Pay Enough</h4>
+            <p><strong>Signal:</strong> Acceptable price is &lt;50% of target</p>
+            <p><strong>Action:</strong> Find higher-value use case, different segment, or reduce costs</p>
+            <p><strong>Pivot Options:</strong> Freemium with upsell, enterprise pivot, cost optimization</p>
+        </div>
+        <div style="background: #fce8e6; padding: 10px; border-radius: 4px;">
+            <h4 style="margin: 0;">Trigger #4: Can't Acquire Efficiently</h4>
+            <p><strong>Signal:</strong> CAC &gt;3x target in all channel tests</p>
+            <p><strong>Action:</strong> Test organic/viral channels, reconsider pricing model</p>
+            <p><strong>Pivot Options:</strong> Product-led growth, community-first, partnership distribution</p>
+        </div>
+    </div>
+
+    <!-- Experiment Documentation Template -->
+    <h3 style="color: #1a73e8; margin-top: 30px;">Experiment Documentation Template</h3>
+    <div style="background: #e8f0fe; padding: 10px; border-radius: 4px;">
+        <h4 style="margin: 0;">Experiment: [Name]</h4>
+        <p><strong>Date:</strong> [Start - End]</p>
+        <p><strong>Hypothesis Tested:</strong> #X</p>
+        <h4 style="margin: 10px 0 5px 0;">Setup</h4>
+        <ul style="margin: 0; padding-left: 20px;">
+            <li>What we did</li>
+            <li>Sample size</li>
+            <li>Tools used</li>
+            <li>Cost incurred</li>
+        </ul>
+        <h4 style="margin: 10px 0 5px 0;">Results</h4>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+            <thead>
+                <tr style="background-color: #f8f9fa;">
+                    <th style="padding: 8px; border: 1px solid #ddd;">Metric</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Target</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Actual</th>
+                    <th style="padding: 8px; border: 1px solid #ddd;">Pass/Fail</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding: 8px; border: 1px solid #ddd;">[Metric]</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">[Target]</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">[Actual]</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">[Pass/Fail]</td>
+                </tr>
+            </tbody>
+        </table>
+        <h4 style="margin: 10px 0 5px 0;">Key Learnings</h4>
+        <ul style="margin: 0; padding-left: 20px;">
+            <li>Insight #1</li>
+            <li>Insight #2</li>
+            <li>Surprise finding</li>
+        </ul>
+        <h4 style="margin: 10px 0 5px 0;">Evidence</h4>
+        <ul style="margin: 0; padding-left: 20px;">
+            <li>[Link to data]</li>
+            <li>[Quotes/screenshots]</li>
+        </ul>
+        <h4 style="margin: 10px 0 5px 0;">Next Steps</h4>
+        <ul style="margin: 0; padding-left: 20px;">
+            <li>[What this means for the product]</li>
+            <li>[Follow-up experiments needed]</li>
+        </ul>
+    </div>
+</div>

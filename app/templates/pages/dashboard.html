@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - VenturePulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1>My Projects</h1>
+                <p class="text-muted">Manage your product viability analyses</p>
+            </div>
+            {% if user.is_approved %}
+            <a href="/project/new" class="btn btn-primary">New Project</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- User Info Card -->
+    <div class="card mb-8" style="max-width: 400px;">
+        <div class="flex items-center gap-4">
+            {% if user.avatar_url %}
+            <img src="{{ user.avatar_url }}" alt="{{ user.name }}"
+                 style="width: 48px; height: 48px; border: 2px solid var(--color-black);">
+            {% else %}
+            <div style="width: 48px; height: 48px; background: var(--color-gray-200);
+                        display: flex; align-items: center; justify-content: center;
+                        border: 2px solid var(--color-black);">
+                {{ user.name[0]|upper }}
+            </div>
+            {% endif %}
+            <div>
+                <div style="font-weight: var(--font-weight-semibold);">{{ user.name }}</div>
+                <div class="text-muted" style="font-size: var(--font-size-sm);">{{ user.email }}</div>
+            </div>
+            <span class="badge badge-{{ user.role }}" style="margin-left: auto;">{{ user.role }}</span>
+        </div>
+    </div>
+
+    {% if not user.is_approved %}
+    <div class="alert alert-warning mb-8">
+        <strong>Account Pending Approval</strong><br>
+        Your account is awaiting admin approval. You can browse public projects but cannot create new ones yet.
+    </div>
+    {% endif %}
+
+    <!-- Projects List -->
+    {% if projects %}
+        <div class="grid grid-3">
+            {% for project in projects %}
+                <a href="/project/{{ project.slug }}" class="card-link">
+                    <div class="card">
+                        <div class="card-accent {{ 'card-accent-blue' if project.is_public else 'card-accent-black' }}"></div>
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="card-title mb-0">{{ project.name }}</h3>
+                            <span class="badge {{ 'badge-public' if project.is_public else 'badge-private' }}">
+                                {{ 'Public' if project.is_public else 'Private' }}
+                            </span>
+                        </div>
+                        <p class="card-description">{{ project.description or 'No description' }}</p>
+                        <div class="card-meta">
+                            <span>{{ project.analyses|length if project.analyses else 0 }} analyses</span>
+                            <span>Updated {{ project.updated_at.strftime('%b %d, %Y') }}</span>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% if user.is_approved %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📁</div>
+                <h3 class="empty-state-title">No Projects Yet</h3>
+                <p class="empty-state-description">
+                    Create your first project to start analyzing product viability.
+                </p>
+                <a href="/project/new" class="btn btn-primary">Create Project</a>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Public Projects Section (for pending users or users with no projects) -->
+    {% if not user.is_approved or not projects %}
+        {% if public_projects %}
+        <div style="margin-top: var(--space-8);">
+            <div class="flex justify-between items-center mb-4">
+                <h2>Explore Public Projects</h2>
+                <a href="/browse" class="btn btn-secondary btn-sm">View All</a>
+            </div>
+            <div class="grid grid-3">
+                {% for project in public_projects[:6] %}
+                    <a href="/project/{{ project.slug }}" class="card-link" style="text-decoration: none;">
+                        <div class="card">
+                            <div class="card-accent card-accent-{% if loop.index % 3 == 1 %}red{% elif loop.index % 3 == 2 %}blue{% else %}yellow{% endif %}"></div>
+                            <h3 class="card-title">{{ project.name }}</h3>
+                            <p class="card-description">
+                                {{ (project.description or project.spec_content[:100])[:100] }}{% if (project.description or project.spec_content)|length > 100 %}...{% endif %}
+                            </p>
+                            <div class="card-meta">
+                                <span>{{ project.analyses|length if project.analyses else 0 }} analyses</span>
+                                {% if project.user %}
+                                    <span>by {{ project.user.name }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+            {% if not user.is_approved %}
+            <div class="empty-state">
+                <div class="empty-state-icon">🌐</div>
+                <h3 class="empty-state-title">No Public Projects Yet</h3>
+                <p class="empty-state-description">
+                    Check back later for public projects to explore, or wait for your account approval to create your own.
+                </p>
+                <a href="/browse" class="btn btn-secondary">Browse Projects</a>
+            </div>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
