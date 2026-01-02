@@ -32,10 +32,9 @@ async def run_migrations() -> None:
         else:
             logger.info(f"Existing database with {user_count} users")
 
-    # Future migrations would go here
-    # Example:
-    # await migration_001_add_new_column()
-    # await migration_002_create_new_table()
+    # Run migrations
+    await migration_001_add_preferred_models()
+    await migration_002_add_api_key_temp()
 
     logger.info("Migrations complete")
 
@@ -50,19 +49,31 @@ async def check_first_user(session: AsyncSession) -> bool:
     return count == 0
 
 
-# Future migration functions would be defined here
-# Each migration should be idempotent (safe to run multiple times)
+async def migration_001_add_preferred_models() -> None:
+    """Add preferred_models column to users table."""
+    engine = get_engine()
+    async with engine.begin() as conn:
+        # Check if column exists first (SQLite)
+        result = await conn.execute(text(
+            "SELECT COUNT(*) FROM pragma_table_info('users') WHERE name='preferred_models'"
+        ))
+        if result.scalar() == 0:
+            await conn.execute(text(
+                "ALTER TABLE users ADD COLUMN preferred_models JSON"
+            ))
+            logger.info("Migration 001: Added preferred_models to users table")
 
-# async def migration_001_example() -> None:
-#     """Example migration - add a new column."""
-#     engine = get_engine()
-#     async with engine.begin() as conn:
-#         # Check if column exists first
-#         result = await conn.execute(text(
-#             "SELECT COUNT(*) FROM pragma_table_info('users') WHERE name='new_column'"
-#         ))
-#         if result.scalar() == 0:
-#             await conn.execute(text(
-#                 "ALTER TABLE users ADD COLUMN new_column TEXT"
-#             ))
-#             logger.info("Migration 001: Added new_column to users table")
+
+async def migration_002_add_api_key_temp() -> None:
+    """Add api_key_temp column to analyses table for recovery after restarts."""
+    engine = get_engine()
+    async with engine.begin() as conn:
+        # Check if column exists first (SQLite)
+        result = await conn.execute(text(
+            "SELECT COUNT(*) FROM pragma_table_info('analyses') WHERE name='api_key_temp'"
+        ))
+        if result.scalar() == 0:
+            await conn.execute(text(
+                "ALTER TABLE analyses ADD COLUMN api_key_temp VARCHAR(500)"
+            ))
+            logger.info("Migration 002: Added api_key_temp to analyses table")
