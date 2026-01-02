@@ -3,14 +3,15 @@
 
 services:
   web:
-    build: .
-    container_name: venturepulse
+    build:
+      context: .
+      args:
+        - DOCKERUSER=${DOCKERUSER:-venturepulse}
+    container_name: ${DOCKERUSER:-venturepulse}
     ports:
-      - "${PORT:-8080}:8080"
+      - "${PORT:-8080}:${PORT:-8080}"
     env_file:
       - .env
-    environment:
-      - PORT=8080
     volumes:
       # Persistent data storage (database, reports, specs)
       - ./data:/app/data
@@ -18,7 +19,7 @@ services:
       - ./prompts:/app/prompts:ro
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD-SHELL", "curl -f http://localhost:${PORT:-8080}/health"]
       interval: 30s
       timeout: 10s
       retries: 3
