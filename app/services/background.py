@@ -171,6 +171,7 @@ async def execute_analysis(
                     analysis.total_cost_usd = analysis_result["total_cost"]
                     analysis.total_tokens = analysis_result["total_tokens"]
                     analysis.completed_at = datetime.utcnow()
+                    analysis.api_key_temp = None  # Clear API key after completion
 
                     await db.commit()
 
@@ -191,6 +192,7 @@ async def execute_analysis(
             if analysis:
                 analysis.status = "cancelled"
                 analysis.completed_at = datetime.utcnow()
+                analysis.api_key_temp = None  # Clear API key
                 await db.commit()
 
     except Exception as e:
@@ -203,6 +205,7 @@ async def execute_analysis(
             if analysis:
                 analysis.status = "failed"
                 analysis.completed_at = datetime.utcnow()
+                analysis.api_key_temp = None  # Clear API key
                 # Store error in sections_completed
                 analysis.sections_completed = {
                     "error": {"status": "failed", "message": str(e)}
@@ -256,3 +259,84 @@ def get_running_analysis_ids() -> List[int]:
         aid for aid, task in _running_tasks.items()
         if not task.done()
     ]
+
+
+async def recover_interrupted_analyses():
+    """
+    Resume analyses that were interrupted by a restart.
+    Called during application startup.
+
+    Finds analyses with status 'running' or 'pending' that have an api_key_temp,
+    and restarts them.
+    """
+    logger.info("Checking for interrupted analyses to recover...")
+
+    try:
+        async with get_session_factory()() as db:
+            # Find interrupted analyses
+            result = await db.execute(
+                select(Analysis)
+                .where(
+                    Analysis.status.in_(["pending", "running"]),
+                    Analysis.api_key_temp.isnot(None)
+                )
+            )
+            interrupted = result.scalars().all()
+
+            if not interrupted:
+                logger.info("No interrupted analyses to recover")
+                return
+
+            logger.info(f"Found {len(interrupted)} interrupted analyses to recover")
+
+            SECTIONS, get_section_by_num = get_sections_config()
+
+            for analysis in interrupted:
+                try:
+                    # Get sections to run from sections_completed
+                    sections_to_run = []
+                    if analysis.sections_completed:
+                        for key, value in analysis.sections_completed.items():
+                            if key.startswith("section") and key != "section20":
+                                # Extract section number
+                                section_num = key.replace("section", "")
+                                # Only re-run if not completed
+                                if isinstance(value, dict) and value.get("status") != "completed":
+                                    sections_to_run.append(section_num)
+                                elif isinstance(value, dict) and "section_num" in value:
+                                    # Pending section
+                                    sections_to_run.append(value["section_num"])
+
+                    if not sections_to_run:
+                        # All sections were completed, mark as completed
+                        logger.info(f"Analysis {analysis.id} has no pending sections, marking complete")
+                        analysis.status = "completed"
+                        analysis.completed_at = datetime.utcnow()
+                        analysis.api_key_temp = None
+                        await db.commit()
+                        continue
+
+                    logger.info(
+                        f"Recovering analysis {analysis.id} with {len(sections_to_run)} sections: {sections_to_run}"
+                    )
+
+                    # Start the background task
+                    start_analysis_task(
+                        analysis_id=analysis.id,
+                        api_key=analysis.api_key_temp,
+                        sections_to_run=sections_to_run,
+                    )
+
+                except Exception as e:
+                    logger.error(f"Failed to recover analysis {analysis.id}: {e}")
+                    # Mark as failed
+                    analysis.status = "failed"
+                    analysis.completed_at = datetime.utcnow()
+                    analysis.api_key_temp = None
+                    analysis.sections_completed = {
+                        "error": {"status": "failed", "message": f"Recovery failed: {str(e)}"}
+                    }
+                    await db.commit()
+
+    except Exception as e:
+        logger.exception(f"Error during analysis recovery: {e}")

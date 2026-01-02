@@ -121,6 +121,8 @@ class Analysis(Base):
     status: Mapped[str] = mapped_column(
         String(20), default="pending", nullable=False
     )  # pending, running, completed, failed
+    # Temporary API key storage for recovery after restarts (cleared on completion)
+    api_key_temp: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     report_folder_path: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     sections_completed: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     cost_breakdown: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)

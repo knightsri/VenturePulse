@@ -17,6 +17,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.config import get_settings
 from app.auth.session import get_current_user
 from app.db.database import init_db, close_db
+from app.services.background import recover_interrupted_analyses
 from app.routes import (
     auth_router,
     public_router,
@@ -48,6 +49,9 @@ async def lifespan(app: FastAPI):
     # Initialize database
     await init_db()
     logger.info("Database initialized")
+
+    # Recover any interrupted analyses from previous runs
+    await recover_interrupted_analyses()
 
     # Validate settings
     errors = settings.validate()

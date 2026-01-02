@@ -222,6 +222,7 @@ async def start_analysis(
                 project_id=project.id,
                 model_name=model,
                 status="pending",
+                api_key_temp=api_key,  # Store for recovery after restarts
                 report_folder_path=report_folder,
                 sections_completed={},
                 cost_breakdown={},
@@ -332,12 +333,13 @@ async def cancel_analysis(
         if not is_owner and not is_admin:
             raise HTTPException(status_code=403, detail="Access denied")
 
-        if analysis.status == "running":
-            # Cancel the background task
+        if analysis.status in ("running", "pending"):
+            # Cancel the background task if running
             cancel_analysis_task(analysis_id)
 
             analysis.status = "cancelled"
             analysis.completed_at = datetime.utcnow()
+            analysis.api_key_temp = None  # Clear API key
             await db.commit()
             logger.info(f"Cancelled analysis {analysis_id}")
 
