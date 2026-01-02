@@ -7,7 +7,7 @@
     .analysis-layout {
         display: grid;
         grid-template-columns: 280px 1fr;
-        gap: var(--space-8);
+        gap: var(--space-6);
         min-height: calc(100vh - 200px);
     }
 
@@ -18,233 +18,417 @@
     }
 
     .section-nav {
+        background: var(--color-white);
+        border: 1px solid var(--color-gray-200);
+        border-radius: 0;
+        padding: var(--space-4);
         position: sticky;
         top: var(--space-4);
-        max-height: calc(100vh - 100px);
+        max-height: calc(100vh - 150px);
         overflow-y: auto;
     }
 
-    .section-nav-item {
+    .section-group {
+        margin-bottom: var(--space-4);
+    }
+
+    .section-group-title {
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-gray-500);
+        margin-bottom: var(--space-2);
+        padding-bottom: var(--space-1);
+        border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    .section-link {
         display: flex;
         align-items: center;
         gap: var(--space-2);
-        padding: var(--space-2) var(--space-3);
+        padding: var(--space-2);
+        color: var(--color-gray-700);
         text-decoration: none;
-        color: inherit;
-        border-left: 3px solid transparent;
-        transition: all 0.15s ease;
+        border-radius: 0;
+        font-size: var(--font-size-sm);
+        transition: background-color 0.15s;
     }
 
-    .section-nav-item:hover {
+    .section-link:hover {
         background: var(--color-gray-100);
     }
 
-    .section-nav-item.active {
-        background: var(--color-gray-100);
-        border-left-color: var(--color-primary);
-        font-weight: var(--font-weight-semibold);
+    .section-link.active {
+        background: var(--color-primary);
+        color: white;
+    }
+
+    .section-link.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .section-status {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .section-status.completed {
+        background: var(--color-success);
+    }
+
+    .section-status.running {
+        background: var(--color-primary);
+        animation: pulse 1.5s infinite;
+    }
+
+    .section-status.pending {
+        background: var(--color-gray-300);
+    }
+
+    .section-status.failed {
+        background: var(--color-error);
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
     }
 
     .section-content {
-        padding: var(--space-6);
-        background: white;
+        background: var(--color-white);
         border: 1px solid var(--color-gray-200);
-        min-height: 400px;
+        padding: var(--space-6);
+        min-height: 500px;
     }
 
-    .section-content iframe {
+    .progress-card {
+        background: linear-gradient(135deg, var(--color-primary) 0%, #1565C0 100%);
+        color: white;
+        padding: var(--space-6);
+        margin-bottom: var(--space-6);
+    }
+
+    .progress-bar-container {
+        background: rgba(255,255,255,0.3);
+        border-radius: 4px;
+        height: 8px;
+        margin: var(--space-4) 0;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        background: white;
+        height: 100%;
+        transition: width 0.5s ease;
+    }
+
+    .analysis-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        margin-bottom: var(--space-4);
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-600);
+    }
+
+    .meta-item strong {
+        color: var(--color-gray-900);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: var(--space-12);
+        color: var(--color-gray-500);
+    }
+
+    .section-iframe {
         width: 100%;
-        min-height: 600px;
         border: none;
+        min-height: 600px;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <!-- Header -->
-    <div class="page-header">
-        <nav class="breadcrumb mb-4">
-            <a href="/project/{{ project.slug }}">{{ project.name }}</a>
-            <span>/</span>
-            <span>Analysis</span>
-        </nav>
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb mb-4">
+        <a href="/dashboard">My Projects</a>
+        <span>/</span>
+        <a href="/project/{{ project.slug }}">{{ project.name }}</a>
+        <span>/</span>
+        <span>Analysis #{{ analysis.id }}</span>
+    </nav>
 
-        <div class="flex justify-between items-start flex-wrap gap-4">
+    <!-- Progress Card (show when running or pending) -->
+    {% if is_running or analysis.status == 'pending' %}
+    <div class="progress-card" id="progress-card">
+        <div class="flex justify-between items-center">
             <div>
-                <h1>{{ analysis.model_name }}</h1>
-                <div class="flex gap-4 items-center mt-2">
-                    <span class="badge badge-{{ analysis.status }}">{{ analysis.status|capitalize }}</span>
-                    <span class="text-muted">{{ analysis.started_at.strftime('%B %d, %Y at %H:%M') }}</span>
+                <h2 style="margin: 0; font-size: 1.5rem;">Analysis in Progress</h2>
+                <p style="margin: var(--space-2) 0 0 0; opacity: 0.9;">
+                    Model: {{ analysis.model_name }}
+                </p>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 2rem; font-weight: 700;" id="progress-percent">{{ progress_percent }}%</div>
+                <div style="opacity: 0.9;" id="progress-text">
+                    {{ completed_count }} of {{ total_sections }} sections
                 </div>
             </div>
-
-            {% if is_owner %}
-            <div class="flex gap-2">
-                {% if analysis.status == 'running' %}
-                    <form action="/analysis/{{ analysis.id }}/cancel" method="POST" style="display: inline;">
-                        <button type="submit" class="btn btn-secondary">Cancel</button>
-                    </form>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progress-bar" style="width: {{ progress_percent }}%;"></div>
+        </div>
+        <div class="flex justify-between items-center" style="font-size: var(--font-size-sm); opacity: 0.9;">
+            <span id="status-text">
+                {% if analysis.status == 'pending' %}
+                    Starting analysis...
+                {% else %}
+                    Generating sections...
                 {% endif %}
-                <form action="/analysis/{{ analysis.id }}/delete" method="POST" style="display: inline;"
-                      onsubmit="return confirm('Delete this analysis?');">
-                    <button type="submit" class="btn btn-danger">Delete</button>
+            </span>
+            {% if is_owner or is_admin %}
+            <form action="/analysis/{{ analysis.id }}/cancel" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.2); border-color: white; color: white;">
+                    Cancel
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Analysis Header -->
+    <div class="card mb-4">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 style="margin: 0;">{{ project.name }}</h1>
+                <div class="analysis-meta mt-2">
+                    <div class="meta-item">
+                        <span>Model:</span>
+                        <strong>{{ analysis.model_name }}</strong>
+                    </div>
+                    <div class="meta-item">
+                        <span>Status:</span>
+                        <span class="badge badge-{{ 'success' if analysis.status == 'completed' else 'warning' if analysis.status == 'running' else 'danger' if analysis.status == 'failed' else 'secondary' }}">
+                            {{ analysis.status|title }}
+                        </span>
+                    </div>
+                    {% if analysis.total_cost_usd > 0 %}
+                    <div class="meta-item">
+                        <span>Cost:</span>
+                        <strong>{{ format_cost(analysis.total_cost_usd) }}</strong>
+                    </div>
+                    {% endif %}
+                    {% if analysis.total_tokens > 0 %}
+                    <div class="meta-item">
+                        <span>Tokens:</span>
+                        <strong>{{ "{:,}".format(analysis.total_tokens) }}</strong>
+                    </div>
+                    {% endif %}
+                    {% if analysis.started_at %}
+                    <div class="meta-item">
+                        <span>Started:</span>
+                        <strong>{{ analysis.started_at.strftime('%Y-%m-%d %H:%M') }}</strong>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if is_owner or is_admin %}
+            <div class="flex gap-2">
+                <a href="/project/{{ project.slug }}/analyze" class="btn btn-primary btn-sm">New Analysis</a>
+                <form action="/analysis/{{ analysis.id }}/delete" method="POST"
+                      onsubmit="return confirm('Delete this analysis? This cannot be undone.');">
+                    <button type="submit" class="btn btn-outline btn-sm" style="color: var(--color-error); border-color: var(--color-error);">
+                        Delete
+                    </button>
                 </form>
             </div>
             {% endif %}
         </div>
     </div>
 
-    <!-- Stats -->
-    {% if analysis.status == 'completed' %}
-    <div class="card mb-8">
-        <div class="grid grid-4 text-center">
-            <div>
-                <div style="font-size: 1.5rem; font-weight: bold;">
-                    {{ sections_completed|length }}
-                </div>
-                <div class="text-muted">Sections</div>
-            </div>
-            <div>
-                <div style="font-size: 1.5rem; font-weight: bold;">
-                    {% if analysis.total_tokens %}
-                        {{ '{:,}'.format(analysis.total_tokens) }}
-                    {% else %}
-                        -
-                    {% endif %}
-                </div>
-                <div class="text-muted">Tokens</div>
-            </div>
-            <div>
-                <div style="font-size: 1.5rem; font-weight: bold;">
-                    {% if analysis.total_cost_usd %}
-                        ${{ '%.4f'|format(analysis.total_cost_usd) }}
-                    {% else %}
-                        -
-                    {% endif %}
-                </div>
-                <div class="text-muted">Cost</div>
-            </div>
-            <div>
-                <div style="font-size: 1.5rem; font-weight: bold;">
-                    {% if analysis.completed_at %}
-                        {{ ((analysis.completed_at - analysis.started_at).total_seconds() / 60)|round(1) }}m
-                    {% else %}
-                        -
-                    {% endif %}
-                </div>
-                <div class="text-muted">Duration</div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
+    <!-- Main Content -->
+    {% if sections %}
+    <div class="analysis-layout">
+        <!-- Section Navigation -->
+        <aside class="section-nav">
+            <h3 style="margin: 0 0 var(--space-4) 0; font-size: var(--font-size-base);">Sections</h3>
 
-    <!-- Analysis Content -->
-    {% if analysis.status == 'completed' and sections_completed %}
-        <div class="analysis-layout">
-            <!-- Section Navigation -->
-            <div class="section-nav card">
-                <h3 class="mb-4">Sections</h3>
-                {% for section_key, section_data in sections_completed|dictsort %}
-                    <a href="#" class="section-nav-item {% if loop.first %}active{% endif %}"
-                       data-section="{{ section_key }}"
-                       onclick="loadSection('{{ section_key }}', this); return false;">
-                        <span class="badge badge-success" style="width: 24px; text-align: center;">
-                            {{ section_data.section_num if section_data.section_num else section_key[-2:] }}
-                        </span>
-                        <span>{{ section_key.replace('section', 'Section ').replace('-', ' ').title() }}</span>
+            {% for group_name in ['Foundation', 'Strategy', 'Execution', 'Future', 'Meta'] %}
+                {% if grouped_sections[group_name] %}
+                <div class="section-group">
+                    <div class="section-group-title">{{ group_name }}</div>
+                    {% for sec in grouped_sections[group_name] %}
+                    <a href="/analysis/{{ analysis.id }}?section={{ sec.num }}"
+                       class="section-link {% if selected_section and selected_section.num == sec.num %}active{% endif %} {% if not sec.file %}disabled{% endif %}"
+                       data-section="{{ sec.num }}">
+                        <span class="section-status {{ sec.status }}"></span>
+                        <span>{{ sec.num }}. {{ sec.name }}</span>
                     </a>
-                {% endfor %}
-            </div>
-
-            <!-- Section Content -->
-            <div class="section-content" id="section-content">
-                {% if first_section_content %}
-                    {{ first_section_content|safe }}
-                {% else %}
-                    <p class="text-muted text-center" style="padding: var(--space-8);">
-                        Select a section to view its content
-                    </p>
+                    {% endfor %}
+                </div>
                 {% endif %}
-            </div>
-        </div>
-    {% elif analysis.status == 'running' or analysis.status == 'pending' %}
-        <div class="card text-center" style="padding: var(--space-16);">
-            <div style="font-size: 3rem; margin-bottom: var(--space-4);">⏳</div>
-            <h2>Analysis in Progress</h2>
-            <p class="text-muted mb-4">
-                The AI is analyzing your product specification. This may take a few minutes.
-            </p>
-            <div class="progress-bar" style="max-width: 400px; margin: 0 auto;">
-                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
-            </div>
-            <p class="text-muted mt-4" id="progress-text">Initializing...</p>
-        </div>
+            {% endfor %}
+        </aside>
 
-        <script>
-        function pollStatus() {
-            fetch('/analysis/{{ analysis.id }}/status')
-                .then(response => response.json())
-                .then(data => {
-                    const progressFill = document.getElementById('progress-fill');
-                    const progressText = document.getElementById('progress-text');
-
-                    progressFill.style.width = data.progress + '%';
-                    progressText.textContent = `${data.completed_sections} of ${data.total_sections} sections completed`;
-
-                    if (data.status === 'completed' || data.status === 'failed') {
-                        window.location.reload();
-                    } else {
-                        setTimeout(pollStatus, 3000);
-                    }
-                })
-                .catch(err => {
-                    console.error('Error polling status:', err);
-                    setTimeout(pollStatus, 5000);
-                });
-        }
-
-        pollStatus();
-        </script>
-    {% elif analysis.status == 'failed' %}
-        <div class="card text-center" style="padding: var(--space-16);">
-            <div style="font-size: 3rem; margin-bottom: var(--space-4);">❌</div>
-            <h2>Analysis Failed</h2>
-            <p class="text-muted">
-                Something went wrong during the analysis. Please try again.
-            </p>
-            <a href="/project/{{ project.slug }}/analyze" class="btn btn-primary mt-4">
-                Run New Analysis
-            </a>
-        </div>
+        <!-- Section Content -->
+        <main class="section-content">
+            {% if section_content %}
+                <div id="section-content">
+                    {{ section_content|safe }}
+                </div>
+            {% elif is_running %}
+                <div class="empty-state">
+                    <div style="font-size: 3rem; margin-bottom: var(--space-4);">...</div>
+                    <h3>Generating Content</h3>
+                    <p>Please wait while the AI generates this section...</p>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div style="font-size: 3rem; margin-bottom: var(--space-4);">...</div>
+                    <h3>No Content Available</h3>
+                    <p>Select a completed section from the navigation to view its content.</p>
+                </div>
+            {% endif %}
+        </main>
+    </div>
     {% else %}
-        <div class="card text-center" style="padding: var(--space-16);">
-            <p class="text-muted">No analysis data available</p>
-        </div>
+    <!-- No sections yet -->
+    <div class="card text-center" style="padding: var(--space-12);">
+        {% if is_running or analysis.status == 'pending' %}
+        <div style="font-size: 3rem; margin-bottom: var(--space-4);">...</div>
+        <h2>Analysis Starting</h2>
+        <p class="text-muted">The analysis is starting. Content will appear here as sections are completed.</p>
+        {% elif analysis.status == 'failed' %}
+        <div style="font-size: 3rem; margin-bottom: var(--space-4);">X</div>
+        <h2>Analysis Failed</h2>
+        <p class="text-muted">
+            The analysis failed to complete.
+            {% if analysis.sections_completed and analysis.sections_completed.error %}
+                Error: {{ analysis.sections_completed.error.message }}
+            {% endif %}
+        </p>
+        <a href="/project/{{ project.slug }}/analyze" class="btn btn-primary mt-4">Try Again</a>
+        {% elif analysis.status == 'cancelled' %}
+        <div style="font-size: 3rem; margin-bottom: var(--space-4);">-</div>
+        <h2>Analysis Cancelled</h2>
+        <p class="text-muted">This analysis was cancelled before completion.</p>
+        <a href="/project/{{ project.slug }}/analyze" class="btn btn-primary mt-4">Start New Analysis</a>
+        {% else %}
+        <div style="font-size: 3rem; margin-bottom: var(--space-4);">?</div>
+        <h2>No Content Yet</h2>
+        <p class="text-muted">This analysis has no generated content.</p>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
 
+{% if is_running or analysis.status == 'pending' or analysis.status == 'running' %}
 <script>
-function loadSection(sectionKey, element) {
-    // Update active state
-    document.querySelectorAll('.section-nav-item').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
+// Poll for progress updates
+const analysisId = {{ analysis.id }};
+let pollInterval;
+let lastStatus = '{{ analysis.status }}';
 
-    // Load section content
-    const contentDiv = document.getElementById('section-content');
-    contentDiv.innerHTML = '<p class="text-center text-muted" style="padding: var(--space-8);">Loading...</p>';
+async function checkProgress() {
+    try {
+        const response = await fetch(`/analysis/${analysisId}/status`);
+        const data = await response.json();
 
-    fetch(`/analysis/{{ analysis.id }}/section/${sectionKey}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Section not found');
-            return response.text();
-        })
-        .then(html => {
-            contentDiv.innerHTML = html;
-        })
-        .catch(err => {
-            contentDiv.innerHTML = '<p class="text-center text-muted" style="padding: var(--space-8);">Failed to load section</p>';
-        });
+        // Update progress card if it exists
+        const progressPercent = document.getElementById('progress-percent');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const statusText = document.getElementById('status-text');
+
+        if (progressPercent) {
+            progressPercent.textContent = data.progress + '%';
+        }
+        if (progressBar) {
+            progressBar.style.width = data.progress + '%';
+        }
+        if (progressText) {
+            progressText.textContent = `${data.completed_sections} of ${data.total_sections} sections`;
+        }
+
+        // Update status text with current activity
+        if (statusText) {
+            if (data.status === 'pending') {
+                statusText.textContent = 'Starting analysis...';
+            } else if (data.status === 'running') {
+                // Find currently running or last completed section
+                let runningSection = null;
+                let lastCompleted = null;
+                for (const [key, sec] of Object.entries(data.sections)) {
+                    if (sec.status === 'running') {
+                        runningSection = sec;
+                        break;
+                    }
+                    if (sec.status === 'completed') {
+                        lastCompleted = sec;
+                    }
+                }
+                if (runningSection) {
+                    statusText.innerHTML = `<strong>Generating:</strong> Section ${runningSection.section_num}...`;
+                } else if (lastCompleted) {
+                    statusText.innerHTML = `<strong>Completed:</strong> Section ${lastCompleted.section_num}`;
+                } else {
+                    statusText.textContent = 'Processing...';
+                }
+            }
+        }
+
+        // Update section status indicators in navigation
+        for (const [key, sec] of Object.entries(data.sections)) {
+            const sectionNum = sec.section_num || key.replace('section', '');
+            const statusDot = document.querySelector(`[data-section="${sectionNum}"] .section-status`);
+            if (statusDot) {
+                statusDot.className = 'section-status ' + sec.status;
+            }
+
+            // Enable link if section is completed
+            if (sec.status === 'completed') {
+                const link = document.querySelector(`[data-section="${sectionNum}"]`);
+                if (link && link.classList.contains('disabled')) {
+                    link.classList.remove('disabled');
+                    link.href = `/analysis/${analysisId}?section=${sectionNum}`;
+                }
+            }
+        }
+
+        // Check if completed
+        if (data.status === 'completed' || data.status === 'failed' || data.status === 'cancelled') {
+            clearInterval(pollInterval);
+            // Show completion message then reload
+            if (statusText) {
+                statusText.textContent = data.status === 'completed'
+                    ? 'Analysis complete! Refreshing...'
+                    : 'Analysis ' + data.status + '. Refreshing...';
+            }
+            setTimeout(() => window.location.reload(), 1000);
+        }
+    } catch (error) {
+        console.error('Failed to check progress:', error);
+    }
 }
+
+// Start polling every 2 seconds (faster updates)
+pollInterval = setInterval(checkProgress, 2000);
+
+// Initial check immediately
+checkProgress();
 </script>
+{% endif %}
 {% endblock %}

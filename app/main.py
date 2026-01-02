@@ -88,10 +88,12 @@ app.mount(
 templates = Jinja2Templates(directory=settings.BASE_DIR / "app" / "templates")
 
 # Include routers
+# Note: Order matters! Specific routes must come before parameterized routes
+# e.g., /project/new (in projects_router) must come before /project/{slug} (in public_router)
 app.include_router(auth_router)
-app.include_router(public_router)
-app.include_router(projects_router)
-app.include_router(analysis_router)
+app.include_router(projects_router)  # Has /project/new - must be before public_router
+app.include_router(analysis_router)  # Has /analysis/{id} specific routes
+app.include_router(public_router)    # Has /project/{slug} catch-all
 app.include_router(admin_router)
 app.include_router(settings_router)
 

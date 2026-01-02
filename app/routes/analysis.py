@@ -17,7 +17,9 @@ from app.config import get_settings
 from app.db.database import get_session_factory
 from app.db.models import User, Project, Analysis
 from app.auth.decorators import require_approved
-from app.services.apikey import has_api_key, get_masked_api_key
+from app.services.apikey import has_api_key, get_masked_api_key, get_api_key
+from app.services.background import start_analysis_task, cancel_analysis_task, is_analysis_running
+from app.services.report import format_cost, format_time
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -140,18 +142,25 @@ async def start_analysis(
     slug: str,
     background_tasks: BackgroundTasks,
     user: User = Depends(require_approved),
-    model: str = Form(...),
+    models: List[str] = Form(...),
     sections: List[str] = Form(...),
 ):
     """
-    Start a new analysis.
-    Creates analysis record and starts background task.
+    Start one or more analyses (one per selected model).
+    Creates analysis records and starts background tasks.
     Requires API key to be set.
     """
     # Check for API key
     if not has_api_key(request):
         return RedirectResponse(
             url=f"/project/{slug}/analyze?error=Please+set+your+OpenRouter+API+key+in+Settings+first",
+            status_code=303
+        )
+
+    # Validate models list
+    if not models:
+        return RedirectResponse(
+            url=f"/project/{slug}/analyze?error=Please+select+at+least+one+model",
             status_code=303
         )
 
@@ -171,49 +180,72 @@ async def start_analysis(
         if not project.is_public and not is_owner and not is_admin:
             raise HTTPException(status_code=404, detail="Project not found")
 
-        # Validate model
-        if model not in POPULAR_MODELS:
-            raise HTTPException(status_code=400, detail="Invalid model selected")
-
         # Validate sections
         valid_section_nums = {s["num"] for s in SECTIONS}
         selected_sections = [s for s in sections if s in valid_section_nums]
 
         if not selected_sections:
-            raise HTTPException(status_code=400, detail="At least one section must be selected")
+            return RedirectResponse(
+                url=f"/project/{slug}/analyze?error=Please+select+at+least+one+section",
+                status_code=303
+            )
 
-        # Create report folder path
+        # Get API key from session
+        api_key = get_api_key(request)
+
+        # Create an analysis for each model
+        created_analyses = []
         timestamp = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
-        model_slug = model.replace("/", "-").replace(".", "-")
-        report_folder = f"data/reports/{project.user_id}/{project.slug}/{timestamp}-{model_slug}"
 
-        # Create analysis record
-        analysis = Analysis(
-            project_id=project.id,
-            model_name=model,
-            status="pending",
-            report_folder_path=report_folder,
-            sections_completed={},
-            cost_breakdown={},
-            total_cost_usd=0.0,
-            total_tokens=0,
-        )
-        db.add(analysis)
-        await db.commit()
-        await db.refresh(analysis)
+        for model in models:
+            # Create report folder path (unique per model)
+            model_slug = model.replace("/", "-").replace(".", "-")
+            report_folder = f"data/reports/{project.user_id}/{project.slug}/{timestamp}-{model_slug}"
 
-        # Store selected sections in analysis record
-        analysis.sections_completed = {
-            f"section{s}": {"status": "pending", "section_num": s}
-            for s in selected_sections
-        }
-        await db.commit()
+            # Create analysis record
+            analysis = Analysis(
+                project_id=project.id,
+                model_name=model,
+                status="pending",
+                report_folder_path=report_folder,
+                sections_completed={},
+                cost_breakdown={},
+                total_cost_usd=0.0,
+                total_tokens=0,
+            )
+            db.add(analysis)
+            await db.commit()
+            await db.refresh(analysis)
 
-        logger.info(f"Created analysis {analysis.id} for project {slug}")
+            # Store selected sections in analysis record
+            analysis.sections_completed = {
+                f"section{s}": {"status": "pending", "section_num": s}
+                for s in selected_sections
+            }
+            await db.commit()
 
-    # Note: Background task will be implemented in Phase 4
-    # For now, redirect to analysis status page
-    return RedirectResponse(url=f"/analysis/{analysis.id}", status_code=303)
+            logger.info(f"Created analysis {analysis.id} for project {slug} with model {model}")
+
+            # Start background task
+            start_analysis_task(
+                analysis_id=analysis.id,
+                api_key=api_key,
+                sections_to_run=selected_sections,
+            )
+
+            logger.info(f"Started background analysis task for analysis {analysis.id}")
+            created_analyses.append(analysis)
+
+    # If only one model, redirect to that analysis
+    if len(created_analyses) == 1:
+        return RedirectResponse(url=f"/analysis/{created_analyses[0].id}", status_code=303)
+
+    # Multiple models - redirect to project page with success message
+    model_count = len(created_analyses)
+    return RedirectResponse(
+        url=f"/project/{slug}?success=Started+{model_count}+analyses.+You+can+monitor+progress+below.",
+        status_code=303
+    )
 
 
 @router.get("/analysis/{analysis_id}/status")
@@ -286,6 +318,9 @@ async def cancel_analysis(
             raise HTTPException(status_code=403, detail="Access denied")
 
         if analysis.status == "running":
+            # Cancel the background task
+            cancel_analysis_task(analysis_id)
+
             analysis.status = "cancelled"
             analysis.completed_at = datetime.utcnow()
             await db.commit()
@@ -337,6 +372,152 @@ async def delete_analysis(
         logger.info(f"Deleted analysis {analysis_id}")
 
     return RedirectResponse(url=f"/project/{project_slug}", status_code=303)
+
+
+@router.get("/analysis/{analysis_id}", response_class=HTMLResponse)
+async def view_analysis(
+    request: Request,
+    analysis_id: int,
+    section: Optional[str] = None,
+):
+    """
+    View an analysis report.
+    Shows progress for running analyses, results for completed ones.
+    """
+    from app.auth.decorators import get_current_user
+
+    user = await get_current_user(request)
+
+    async with get_session_factory()() as db:
+        result = await db.execute(
+            select(Analysis)
+            .options(selectinload(Analysis.project).selectinload(Project.user))
+            .where(Analysis.id == analysis_id)
+        )
+        analysis = result.scalar_one_or_none()
+
+        if not analysis:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+
+        project = analysis.project
+
+        # Check access: public project, owner, or admin
+        is_owner = user and user.id == project.user_id
+        is_admin = user and user.is_admin
+
+        if not project.is_public and not is_owner and not is_admin:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+
+        # Get sections info
+        sections_completed = analysis.sections_completed or {}
+        total_sections = len([s for s in sections_completed.keys() if s.startswith("section") and s != "section20"])
+        completed_count = sum(
+            1 for s in sections_completed.values()
+            if isinstance(s, dict) and s.get("status") == "completed"
+        )
+        failed_count = sum(
+            1 for s in sections_completed.values()
+            if isinstance(s, dict) and s.get("status") == "failed"
+        )
+
+        # Calculate progress percentage
+        progress_percent = int((completed_count / total_sections) * 100) if total_sections > 0 else 0
+
+        # Get available section files
+        available_sections = []
+        report_path = settings.BASE_DIR / analysis.report_folder_path if analysis.report_folder_path else None
+
+        if report_path and report_path.exists():
+            for section_def in SECTIONS:
+                section_file = report_path / f"section{section_def['num']}-{section_def['slug']}.html"
+                if section_file.exists():
+                    available_sections.append({
+                        **section_def,
+                        "file": str(section_file),
+                        "status": "completed",
+                    })
+                else:
+                    # Check if this section was requested
+                    section_key = f"section{section_def['num']}"
+                    if section_key in sections_completed:
+                        section_status = sections_completed[section_key].get("status", "pending")
+                        available_sections.append({
+                            **section_def,
+                            "file": None,
+                            "status": section_status,
+                        })
+
+            # Check for provenance
+            provenance_file = report_path / "section20-provenance.html"
+            if provenance_file.exists():
+                available_sections.append({
+                    "num": "20",
+                    "name": "Provenance",
+                    "slug": "provenance",
+                    "group": "Meta",
+                    "file": str(provenance_file),
+                    "status": "completed",
+                })
+
+        # Load selected section content
+        section_content = None
+        selected_section = None
+
+        if section and report_path:
+            # Find the section
+            for sec in available_sections:
+                if sec["num"] == section and sec.get("file"):
+                    selected_section = sec
+                    try:
+                        section_content = open(sec["file"], "r", encoding="utf-8").read()
+                    except Exception as e:
+                        logger.error(f"Failed to read section file: {e}")
+                    break
+        elif available_sections:
+            # Default to first available section
+            for sec in available_sections:
+                if sec.get("file"):
+                    selected_section = sec
+                    try:
+                        section_content = open(sec["file"], "r", encoding="utf-8").read()
+                    except Exception as e:
+                        logger.error(f"Failed to read section file: {e}")
+                    break
+
+        # Group sections by category for navigation
+        grouped_sections = {"Foundation": [], "Strategy": [], "Execution": [], "Future": [], "Meta": []}
+        for sec in available_sections:
+            group = sec.get("group", "Meta")
+            if group in grouped_sections:
+                grouped_sections[group].append(sec)
+
+        # Check if task is still running
+        is_running = is_analysis_running(analysis_id) or analysis.status == "running"
+
+        return templates.TemplateResponse(
+            "pages/analysis_view.html",
+            {
+                "request": request,
+                "settings": settings,
+                "user": user,
+                "analysis": analysis,
+                "project": project,
+                "is_owner": is_owner,
+                "is_admin": is_admin,
+                "sections": available_sections,
+                "grouped_sections": grouped_sections,
+                "section_groups": SECTION_GROUPS,
+                "selected_section": selected_section,
+                "section_content": section_content,
+                "progress_percent": progress_percent,
+                "completed_count": completed_count,
+                "failed_count": failed_count,
+                "total_sections": total_sections,
+                "is_running": is_running,
+                "format_cost": format_cost,
+                "format_time": format_time,
+            }
+        )
 
 
 # Export section configuration for use by other modules

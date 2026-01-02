@@ -1,0 +1,333 @@
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #2d3748;">
+    <h2 style="color: #2d3748; font-size: 2rem; border-bottom: 3px solid #667eea; padding-bottom: 0.5rem; margin-bottom: 2rem;">User Research & Validation Plan</h2>
+    
+    <p style="font-size: 1.1rem; color: #4a5568; margin-bottom: 2rem;">This plan outlines a structured approach to validate the BenchmarkHub concept through user research and experiments. It targets AI engineers, researchers, and content creators to confirm problem severity, solution fit, and business viability before building the MVP. The focus is on rapid, low-cost validation to de-risk the $500K seed investment.</p>
+    
+    <h3 style="color: #2d3748; font-size: 1.5rem; margin-top: 2rem; border-left: 4px solid #667eea; padding-left: 1rem;">1. Key Assumptions to Validate</h3>
+    <p style="color: #4a5568; margin-bottom: 1rem;">Below are 18 critical assumptions categorized by problem, solution, and business. Each includes risk level (High/Critical/Medium/Low), validation method, and target evidence. These are derived from the product vision of addressing LLM selection challenges.</p>
+    
+    <h4 style="color: #4a5568; margin-top: 1.5rem;">Problem Assumptions</h4>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <thead style="background: #667eea; color: white;">
+            <tr>
+                <th style="padding: 0.75rem; text-align: left; border-right: 1px solid #e2e8f0;">Assumption</th>
+                <th style="padding: 0.75rem; text-align: left; border-right: 1px solid #e2e8f0;">Risk if Wrong</th>
+                <th style="padding: 0.75rem; text-align: left; border-right: 1px solid #e2e8f0;">Validation Method</th>
+                <th style="padding: 0.75rem; text-align: left;">Target Evidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">AI engineers frequently struggle to select LLMs for specific tasks due to unreliable academic benchmarks.</td>
+                <td style="padding: 0.75rem;">High</td>
+                <td style="padding: 0.75rem;">Interviews, surveys</td>
+                <td style="padding: 0.75rem;">70%+ confirm this as a weekly challenge</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Running custom comparisons takes 10+ hours per evaluation cycle.</td>
+                <td style="padding: 0.75rem;">High</td>
+                <td style="padding: 0.75rem;">Observation, time logs in interviews</td>
+                <td style="padding: 0.75rem;">Average 15+ hours reported</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Marketing claims from model providers lead to production failures in 40%+ of cases.</td>
+                <td style="padding: 0.75rem;">Medium</td>
+                <td style="padding: 0.75rem;">Interviews, case studies</td>
+                <td style="padding: 0.75rem;">30%+ share failure stories</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Lack of shareable, structured results hinders team collaboration.</td>
+                <td style="padding: 0.75rem;">High</td>
+                <td style="padding: 0.75rem;">Surveys, workflow mapping</td>
+                <td style="padding: 0.75rem;">60%+ report collaboration friction</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Model updates (weekly) make prior benchmarks obsolete quickly.</td>
+                <td style="padding: 0.75rem;">Medium</td>
+                <td style="padding: 0.75rem;">Interviews</td>
+                <td style="padding: 0.75rem;">80%+ re-evaluate monthly</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Task-specific needs (e.g., legal summarization) are underserved by generic tools.</td>
+                <td style="padding: 0.75rem;">High</td>
+                <td style="padding: 0.75rem;">Competitive analysis + interviews</td>
+                <td style="padding: 0.75rem;">50%+ express dissatisfaction with existing tools</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">High API costs deter frequent testing for small teams.</td>
+                <td style="padding: 0.75rem;">Medium</td>
+                <td style="padding: 0.75rem;">Surveys</td>
+                <td style="padding: 0.75rem;">40%+ cite cost as barrier</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h4 style="color: #4a5568; margin-top: 1.5rem;">Solution Assumptions</h4>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <thead style="background: #667eea; color: white;">
+            <tr>
+                <th style="padding: 0.75rem; text-align: left; border-right: 1px solid #e2e8f0;">Assumption</th>
+                <th style="padding: 0.75rem; text-align: left; border-right: 1px solid #e2e8f0;">Risk if Wrong</th>
+                <th style="padding: 0.75rem; text-align: left; border-right: 1px solid #e2e8f0;">Validation Method</th>
+                <th style="padding: 0.75rem; text-align: left;">Target Evidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Users will adopt a community-driven benchmark library for discovery.</td>
+                <td style="padding: 0.75rem;">High</td>
+                <td style="padding: 0.75rem;">Landing page tests, prototype feedback</td>
+                <td style="padding: 0.75rem;">40%+ express interest in forking benchmarks</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Custom builder with LLM-as-judge evaluation will be user-friendly for non-experts.</td>
+                <td style="padding: 0.75rem;">Critical</td>
+                <td style="padding: 0.75rem;">Usability testing on prototypes</td>
+                <td style="padding: 0.75rem;">80%+ complete a sample benchmark in <15 min</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Parallel execution across 50+ models via unified API reduces time by 70%.</td>
+                <td style="padding: 0.75rem;">High</td>
+                <td style="padding: 0.75rem;">Wizard of Oz tests</td>
+                <td style="padding: 0.75rem;">Users report 60%+ time savings</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Cost-per-quality analysis will influence model selection decisions.</td>
+                <td style="padding: 0.75rem;">Medium</td>
+                <td style="padding: 0.75rem;">Surveys post-prototype</td>
+                <td style="padding: 0.75rem;">70%+ cite it as key decision factor</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Collaboration features (e.g., team workspaces) boost adoption in enterprises.</td>
+                <td style="padding: 0.75rem;">High</td>
+                <td style="padding: 0.75rem;">Interviews with team leads</td>
+                <td style="padding: 0.75rem;">50%+ prioritize shared results</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Public leaderboards will drive community engagement without manipulation risks.</td>
+                <td style="padding: 0.75rem;">Medium</td>
+                <td style="padding: 0.75rem;">Fake door tests, moderation simulation</td>
+                <td style="padding: 0.75rem;">20%+ click to contribute</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Historical tracking of model performance will retain users long-term.</td>
+                <td style="padding: 0.75rem;">Low</td>
+                <td style="padding: 0.75rem;">Retention surveys</td>
+                <td style="padding: 0.75rem;">60%+ plan repeat visits quarterly</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h4 style="color: #4a5568; margin-top: 1.5rem;">Business Assumptions</h4>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <thead style="background: #667eea; color: white;">
+            <tr>
+                <th style="padding: 0.75rem; text-align: left; border-right: 1px solid #e2e8f0;">Assumption</th>
+                <th style="padding: 0.75rem; text-align: left; border-right: 1px solid #e2e8f0;">Risk if Wrong</th>
+                <th style="padding: 0.75rem; text-align: left; border-right: 1px solid #e2e8f0;">Validation Method</th>
+                <th style="padding: 0.75rem; text-align: left;">Target Evidence</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">AI engineers will pay $29/month for Pro features like private benchmarks.</td>
+                <td style="padding: 0.75rem;">Critical</td>
+                <td style="padding: 0.75rem;">Pricing surveys, pre-orders</td>
+                <td style="padding: 0.75rem;">20%+ willing at target price</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">CAC will be <$50 via LinkedIn and AI communities.</td>
+                <td style="padding: 0.75rem;">High</td>
+                <td style="padding: 0.75rem;">Ad tests</td>
+                <td style="padding: 0.75rem;">Achieve <$40 in pilots</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Freemium conversion to paid will be 10% after free tier usage.</td>
+                <td style="padding: 0.75rem;">High</td>
+                <td style="padding: 0.75rem;">Cohort analysis in prototypes</td>
+                <td style="padding: 0.75rem;">8%+ upgrade rate</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">Sponsored benchmarks from providers will generate $5K/month initially.</td>
+                <td style="padding: 0.75rem;">Medium</td>
+                <td style="padding: 0.75rem;">Partnership outreach tests</td>
+                <td style="padding: 0.75rem;">2+ sponsors commit</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 0.75rem;">LTV will exceed $300/user over 12 months.</td>
+                <td style="padding: 0.75rem;">Medium</td>
+                <td style="padding: 0.75rem;">Surveys on retention</td>
+                <td style="padding: 0.75rem;">Projected churn <15%/month</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3 style="color: #2d3748; font-size: 1.5rem; margin-top: 2rem; border-left: 4px solid #667eea; padding-left: 1rem;">2. Customer Discovery Interview Guide</h3>
+    <p style="color: #4a5568; margin-bottom: 1rem;">60-90 minute semi-structured interviews with 20-30 AI engineers, researchers, and content creators. Recruit via LinkedIn AI groups, Reddit (r/MachineLearning), Twitter AI threads, and warm intros from AI influencers. Offer $50 Amazon gift card. Record with permission using Otter.ai; use template for quotes on pains, reactions, and pricing.</p>
+    
+    <h4 style="color: #4a5568; margin-top: 1rem;">Part 1: Background & Context (10 min)</h4>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>Tell me about your role in AI/ML and day-to-day tasks involving LLMs.</li>
+        <li>How long have you been evaluating or deploying LLMs?</li>
+        <li>What are your biggest challenges in model selection right now?</li>
+    </ul>
+    
+    <h4 style="color: #4a5568; margin-top: 1rem;">Part 2: Problem Exploration (20 min)</h4>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>Walk me through the last time you chose an LLM for a task like summarization or code generation.</li>
+        <li>How often do you run evaluations (e.g., weekly/monthly)?</li>
+        <li>What triggers a re-evaluation (e.g., new model release)?</li>
+        <li>How does unreliable benchmark data make you feel (e.g., frustrated, wasteful)?</li>
+        <li>What's the worst part about manual comparisons?</li>
+        <li>What have you tried (e.g., PromptFoo, custom scripts)?</li>
+        <li>How much time/money do you spend on LLM testing annually?</li>
+    </ul>
+    
+    <h4 style="color: #4a5568; margin-top: 1rem;">Part 3: Current Solutions (15 min)</h4>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>What tools do you use for benchmarks (e.g., HELM, lmsys.org)?</li>
+        <li>What do you like about them?</li>
+        <li>What do you wish was different (e.g., more task-specific)?</li>
+        <li>Have you switched tools? Why?</li>
+        <li>What would make you switch to a community platform?</li>
+    </ul>
+    
+    <h4 style="color: #4a5568; margin-top: 1rem;">Part 4: Solution Exploration (15 min)</h4>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>If there was a platform to build and run custom LLM benchmarks on real tasks, with community sharing...</li>
+        <li>What would be most valuable (e.g., cost analysis, leaderboards)?</li>
+        <li>What concerns (e.g., API costs, bias)?</li>
+        <li>What features are must-haves for trial?</li>
+        <li>How much would you pay monthly for unlimited runs?</li>
+        <li>Who approves purchases in your team?</li>
+    </ul>
+    
+    <h4 style="color: #4a5568; margin-top: 1rem;">Part 5: Wrap-up (10 min)</h4>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>On a 1-10 scale, how painful is LLM evaluation?</li>
+        <li>Interested in beta testing a prototype?</li>
+        <li>Who else should I talk to?</li>
+    </ul>
+    
+    <h3 style="color: #2d3748; font-size: 1.5rem; margin-top: 2rem; border-left: 4px solid #667eea; padding-left: 1rem;">3. Survey Design</h3>
+    
+    <h4 style="color: #4a5568; margin-top: 1rem;">Screening Survey (7 questions, 5 min)</h4>
+    <p style="color: #4a5568; margin-bottom: 1rem;">Distribute via Typeform/Google Forms on AI forums (target 200+ responses) to build interview pool.</p>
+    <ol style="color: #4a5568; margin-left: 1.5rem;">
+        <li>What best describes your role? [AI Engineer] [ML Researcher] [AI Content Creator] [Other: ___]</li>
+        <li>Have you evaluated LLMs for production in the last year? [Yes, multiple] [Yes, once] [No, but planning] [No]</li>
+        <li>How do you benchmark LLMs? [Academic tools] [Custom scripts] [Provider claims] [Other: ___]</li>
+        <li>On 1-10, how painful is selecting the right LLM? [1-10 scale]</li>
+        <li>Time spent on evaluations per project? [<1 week] [1-4 weeks] [1+ months]</li>
+        <li>Annual budget for LLM APIs/testing? [$0] [$1K-$10K] [$10K+]</li>
+        <li>Interested in 30-min interview? ($50 gift) [Yes, email: ___] [No]</li>
+    </ol>
+    
+    <h4 style="color: #4a5568; margin-top: 1rem;">Validation Survey (18 questions, 10 min)</h4>
+    <p style="color: #4a5568; margin-bottom: 1rem;">Follow-up to screeners or post-landing page (target 100+). Quantify pains, test messaging, use Van Westendorp for pricing.</p>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>Frequency of LLM evaluation challenges? [Daily/Weekly/Monthly]</li>
+        <li>Satisfaction with current tools (1-10)?</li>
+        <li>A/B test headlines: "Custom LLM Benchmarks in Minutes" vs. "Community-Driven Model Comparisons"</li>
+        <li>Price questions: At what price too cheap/expensive? [Van Westendorp: $10/$20/$30/$50 tiers]</li>
+        <li>Demographics: Company size, task types (e.g., summarization, code).</li>
+        <li>Interest in features: Rank custom builder, leaderboards, cost analysis.</li>
+    </ul>
+    
+    <h3 style="color: #2d3748; font-size: 1.5rem; margin-top: 2rem; border-left: 4px solid #667eea; padding-left: 1rem;">4. Landing Page Validation Experiment</h3>
+    <p style="color: #4a5568; margin-bottom: 1rem;">Build with Carrd or Webflow: Describe BenchmarkHub as "Run custom LLM benchmarks on your tasks—community library, leaderboards, cost insights." Include waitlist signup and fake pricing ($29/mo Pro).</p>
+    <ul style="color: #4a5568; margin-left: 1.5rem; margin-bottom: 1rem;">
+        <li><strong>A/B Headlines:</strong> 1. "Benchmark LLMs for Your Real Tasks—Not Academic Tests" | 2. "Compare 50+ Models in Parallel: Speed, Cost, Accuracy" | 3. "Community Benchmarks: Fork, Run, Share Your Evaluations"</li>
+    </ul>
+    <p style="color: #4a5568;"><strong>Metrics:</strong> Visitors (Google Analytics), signup rate, bounce rate, pricing clicks. Drive 1,000+ visitors via $500 Facebook/LinkedIn ads targeting "AI engineer" keywords.</p>
+    <p style="color: #4a5568;"><strong>Success:</strong> >5% signup (50+ emails), <20% bounce, high-quality leads (AI roles).</p>
+    
+    <h3 style="color: #2d3748; font-size: 1.5rem; margin-top: 2rem; border-left: 4px solid #667eea; padding-left: 1rem;">5. Prototype Testing Plan</h3>
+    <p style="color: #4a5568; margin-bottom: 1rem;">Test core workflow: benchmark creation to results.</p>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <thead style="background: #667eea; color: white;">
+            <tr><th style="padding: 0.75rem;">Option</th><th style="padding: 0.75rem;">Description</th><th style="padding: 0.75rem;">Cost</th><th style="padding: 0.75rem;">Timeline</th></tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 0.75rem;">A: Wizard of Oz</td><td style="padding: 0.75rem;">Manual run via forms; simulate API calls with real results.</td><td style="padding: 0.75rem;">$0 + time</td><td style="padding: 0.75rem;">2-4 weeks</td></tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 0.75rem;">B: Concierge MVP</td><td style="padding: 0.75rem;">High-touch: Guide 10 users through custom benchmarks manually.</td><td style="padding: 0.75rem;">$0 + time</td><td style="padding: 0.75rem;">4-6 weeks</td></tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 0.75rem;">C: Clickable Prototype</td><td style="padding: 0.75rem;">Figma mockup of builder/runner UI for navigation tests.</td><td style="padding: 0.75rem;">$200-500</td><td style="padding: 0.75rem;">1-2 weeks</td></tr>
+        </tbody>
+    </table>
+    <p style="color: #4a5568;"><strong>Recommendation:</strong> Start with Option A for 10 users to validate end-to-end value; follow with C for UX feedback.</p>
+    
+    <h3 style="color: #2d3748; font-size: 1.5rem; margin-top: 2rem; border-left: 4px solid #667eea; padding-left: 1rem;">6. Fake Door & Pre-Order Tests</h3>
+    <p style="color: #4a5568; margin-bottom: 1rem;"><strong>Fake Door:</strong> Add "Run Benchmark Now" button on landing page linking to waitlist. Track clicks; show "Beta Coming Soon" with email capture. Success: >10% click rate.</p>
+    <p style="color: #4a5568;"><strong>Pre-Order:</strong> Offer $19 early-bird Pro access (refundable). Use Stripe for 5-10 commitments. Success: >2% conversion, <20% refunds. Test via email follow-ups to waitlist.</p>
+    
+    <h3 style="color: #2d3748; font-size: 1.5rem; margin-top: 2rem; border-left: 4px solid #667eea; padding-left: 1rem;">7. 8-Week Validation Timeline</h3>
+    <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; font-weight: bold; color: #4a5568; margin-bottom: 0.5rem;">Week 1-2: Problem Validation</div>
+        <ul style="color: #4a5568; margin-left: 1.5rem; margin-bottom: 1rem;">
+            <li>Conduct 10-15 interviews with AI engineers.</li>
+            <li>Launch screening survey (200+ responses).</li>
+            <li>Analyze for pain patterns; invalidate assumptions.</li>
+        </ul>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; color: #4a5568; margin-bottom: 0.5rem;">Week 3-4: Solution Validation</div>
+        <ul style="color: #4a5568; margin-left: 1.5rem; margin-bottom: 1rem;">
+            <li>Build/test landing page A/B (3 headlines, $500 ads).</li>
+            <li>Run validation survey (100+ responses).</li>
+            <li>Target 100 waitlist signups; follow-up 20 for feedback.</li>
+        </ul>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; color: #4a5568; margin-bottom: 0.5rem;">Week 5-6: Willingness to Pay</div>
+        <ul style="color: #4a5568; margin-left: 1.5rem; margin-bottom: 1rem;">
+            <li>10 pricing interviews + Van Westendorp survey.</li>
+            <li>Activate fake door with tiers; test pre-orders (5-10).</li>
+        </ul>
+        <div style="display: flex; justify-content: space-between; font-weight: bold; color: #4a5568; margin-bottom: 0.5rem;">Week 7-8: Prototype Validation</div>
+        <ul style="color: #4a5568; margin-left: 1.5rem;">
+            <li>Build Wizard of Oz; deliver to 10-20 users.</li>
+            <li>Collect NPS/feedback; synthesize insights.</li>
+            <li>Go/No-Go decision.</li>
+        </ul>
+    </div>
+    <table style="width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+        <thead style="background: #667eea; color: white;">
+            <tr><th style="padding: 0.75rem;">Metric</th><th style="padding: 0.75rem;">Target</th><th style="padding: 0.75rem;">Actual</th><th style="padding: 0.75rem;">Pass?</th></tr>
+        </thead>
+        <tbody>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 0.75rem;">Interview pain validation</td><td style="padding: 0.75rem;">80%+ confirm</td><td style="padding: 0.75rem;"></td><td style="padding: 0.75rem;">☐</td></tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 0.75rem;">Landing signup rate</td><td style="padding: 0.75rem;">>5%</td><td style="padding: 0.75rem;"></td><td style="padding: 0.75rem;">☐</td></tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 0.75rem;">Price acceptance</td><td style="padding: 0.75rem;">60%+ at $29</td><td style="padding: 0.75rem;"></td><td style="padding: 0.75rem;">☐</td></tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 0.75rem;">Pre-orders</td><td style="padding: 0.75rem;">10+</td><td style="padding: 0.75rem;"></td><td style="padding: 0.75rem;">☐</td></tr>
+            <tr style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 0.75rem;">Prototype NPS</td><td style="padding: 0.75rem;">>40</td><td style="padding: 0.75rem;"></td><td style="padding: 0.75rem;">☐</td></tr>
+        </tbody>
+    </table>
+    <p style="color: #4a5568; font-style: italic;">If 4/5 metrics pass, proceed to MVP; else, pivot or kill.</p>
+    
+    <h3 style="color: #2d3748; font-size: 1.5rem; margin-top: 2rem; border-left: 4px solid #667eea; padding-left: 1rem;">8. User Research Synthesis Template</h3>
+    <h4 style="color: #4a5568; margin-top: 1rem;">Problem Validation Summary</h4>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>Top 3 pains: [e.g., Time on custom tests; Unreliable claims; Cost opacity]</li>
+        <li>User quotes: [Evidence from interviews]</li>
+        <li>Unexpected: [e.g., More emphasis on latency than accuracy]</li>
+        <li>Wrong assumptions: [List invalidated]</li>
+    </ul>
+    <h4 style="color: #4a5568; margin-top: 1rem;">Solution Validation Summary</h4>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>Compelling features: [e.g., Unified API, leaderboards]</li>
+        <li>Unwanted: [e.g., Overly complex stats]</li>
+        <li>UX concerns: [e.g., Builder intuitiveness]</li>
+        <li>Integrations: [e.g., GitHub CI/CD]</li>
+    </ul>
+    <h4 style="color: #4a5568; margin-top: 1rem;">Pricing Validation Summary</h4>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>Optimal price: [$29/mo]</li>
+        <li>Sensitivity by segment: [Enterprises >$99]</li>
+        <li>Value anchors: [Compare to API costs]</li>
+        <li>Model prefs: [Freemium with credits]</li>
+    </ul>
+    <h4 style="color: #4a5568; margin-top: 1rem;">Go-to-Market Insights</h4>
+    <ul style="color: #4a5568; margin-left: 1.5rem;">
+        <li>Hangouts: [Reddit, Twitter AI]</li>
+        <li>Discovery: [Influencer shares, forums]</li>
+        <li>Decision process: [Team buy-in for enterprises]</li>
+        <li>Objections: [Data privacy, accuracy]</li>
+    </ul>
+    <p style="color: #4a5568; margin-top: 2rem; font-size: 0.9rem;">Total word count: ~1150. Next steps: Recruit for Week 1 interviews; budget $1,500 total (ads, incentives).</p>
+</div>

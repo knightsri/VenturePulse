@@ -4,6 +4,18 @@
 
 {% block content %}
 <div class="container">
+    <!-- Flash Messages -->
+    {% if request.query_params.get('success') %}
+        <div class="alert alert-success mb-4">
+            {{ request.query_params.get('success')|replace('+', ' ') }}
+        </div>
+    {% endif %}
+    {% if request.query_params.get('error') %}
+        <div class="alert alert-danger mb-4">
+            {{ request.query_params.get('error')|replace('+', ' ') }}
+        </div>
+    {% endif %}
+
     <!-- Project Header -->
     <div class="page-header">
         <nav class="breadcrumb mb-4">

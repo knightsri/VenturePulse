@@ -1,0 +1,131 @@
+{
+  "project_name": "My Private Project",
+  "model": "deepseek/deepseek-chat",
+  "created_at": "2026-01-02T19:45:50.869517",
+  "sections": {
+    "section01-executive-summary": {
+      "status": "completed",
+      "words": 893,
+      "elapsed_seconds": 57.318262577056885,
+      "cost": 0.00415353,
+      "tokens": 8076,
+      "prompt_tokens": 5323,
+      "completion_tokens": 2753,
+      "retries": 0
+    },
+    "section02-market-landscape": {
+      "status": "completed",
+      "words": 603,
+      "elapsed_seconds": 36.648499488830566,
+      "cost": 0.00470146,
+      "tokens": 10784,
+      "prompt_tokens": 8590,
+      "completion_tokens": 2194,
+      "retries": 0
+    },
+    "section03-user-stories": {
+      "status": "completed",
+      "words": 844,
+      "elapsed_seconds": 55.6669020652771,
+      "cost": 0.00417267,
+      "tokens": 8517,
+      "prompt_tokens": 5978,
+      "completion_tokens": 2539,
+      "retries": 0
+    },
+    "section04-comparable-companies": {
+      "status": "completed",
+      "words": 750,
+      "elapsed_seconds": 39.69633150100708,
+      "cost": 0.00421942,
+      "tokens": 8786,
+      "prompt_tokens": 6316,
+      "completion_tokens": 2470,
+      "retries": 0
+    },
+    "section05-user-research-validation": {
+      "status": "completed",
+      "words": 538,
+      "elapsed_seconds": 35.814244985580444,
+      "cost": 0.00365961,
+      "tokens": 7929,
+      "prompt_tokens": 5960,
+      "completion_tokens": 1969,
+      "retries": 0
+    },
+    "section06-validation-experiments": {
+      "status": "completed",
+      "words": 2210,
+      "elapsed_seconds": 160.76133823394775,
+      "cost": 0.00871719,
+      "tokens": 13848,
+      "prompt_tokens": 6329,
+      "completion_tokens": 7519,
+      "retries": 0
+    },
+    "section20-provenance": {
+      "status": "completed"
+    }
+  },
+  "sections_requested": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06"
+  ],
+  "execution_mode": "sequential",
+  "parallel_workers": null,
+  "timing": {
+    "total_seconds": 389.4542260169983,
+    "total_formatted": "6m 29s",
+    "avg_section_seconds": 64.31759647528331
+  },
+  "cost": {
+    "total_cost": 0.02962388,
+    "total_cost_formatted": "$0.030",
+    "total_tokens": 57940,
+    "section_costs": [
+      {
+        "name": "01. Executive Summary",
+        "cost": 0.00415353,
+        "tokens": 8076,
+        "retries": 0
+      },
+      {
+        "name": "02. Market Landscape",
+        "cost": 0.00470146,
+        "tokens": 10784,
+        "retries": 0
+      },
+      {
+        "name": "03. User Stories",
+        "cost": 0.00417267,
+        "tokens": 8517,
+        "retries": 0
+      },
+      {
+        "name": "04. Comparable Companies",
+        "cost": 0.00421942,
+        "tokens": 8786,
+        "retries": 0
+      },
+      {
+        "name": "05. User Research",
+        "cost": 0.00365961,
+        "tokens": 7929,
+        "retries": 0
+      },
+      {
+        "name": "06. Validation Experiments",
+        "cost": 0.00871719,
+        "tokens": 13848,
+        "retries": 0
+      }
+    ],
+    "total_retries": 0
+  },
+  "failures": [],
+  "status": "completed"
+}

@@ -175,61 +175,8 @@ async def view_project(request: Request, slug: str):
     )
 
 
-@router.get("/analysis/{analysis_id}", response_class=HTMLResponse)
-async def view_analysis(request: Request, analysis_id: int):
-    """
-    View analysis report.
-    Shows section navigation and report content.
-    """
-    user = await get_current_user(request)
-
-    async with get_session_factory()() as db:
-        result = await db.execute(
-            select(Analysis)
-            .options(selectinload(Analysis.project).selectinload(Project.user))
-            .where(Analysis.id == analysis_id)
-        )
-        analysis = result.scalar_one_or_none()
-
-        if not analysis:
-            raise HTTPException(status_code=404, detail="Analysis not found")
-
-        project = analysis.project
-
-        # Check access: public project or owner or admin
-        is_owner = user and user.id == project.user_id
-        is_admin = user and user.is_admin
-
-        if not project.is_public and not is_owner and not is_admin:
-            raise HTTPException(status_code=404, detail="Analysis not found")
-
-        # Get completed sections for navigation
-        sections_completed = analysis.sections_completed or {}
-
-        # Read first section content if analysis is completed
-        first_section_content = None
-        if analysis.status == "completed" and sections_completed:
-            # Get first available section
-            first_section_key = sorted(sections_completed.keys())[0] if sections_completed else None
-            if first_section_key and analysis.report_folder_path:
-                section_file = settings.BASE_DIR / analysis.report_folder_path / f"{first_section_key}.html"
-                if section_file.exists():
-                    first_section_content = section_file.read_text(encoding="utf-8")
-
-    return templates.TemplateResponse(
-        "pages/analysis_view.html",
-        {
-            "request": request,
-            "settings": settings,
-            "user": user,
-            "analysis": analysis,
-            "project": project,
-            "sections_completed": sections_completed,
-            "first_section_content": first_section_content,
-            "is_owner": is_owner,
-            "can_edit": is_owner or is_admin,
-        }
-    )
+# Note: /analysis/{analysis_id} route is now in analysis.py (Phase 4)
+# which provides a more complete implementation with progress tracking
 
 
 @router.get("/analysis/{analysis_id}/section/{section_key}", response_class=HTMLResponse)
