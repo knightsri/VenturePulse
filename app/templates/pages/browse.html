@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Projects - VenturePulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Browse Projects</h1>
+        <p class="text-muted">Explore public product viability analyses</p>
+    </div>
+
+    {% if projects %}
+        <div class="grid grid-3">
+            {% for project in projects %}
+                <a href="/project/{{ project.slug }}" class="card-link">
+                    <div class="card">
+                        <div class="card-accent card-accent-blue"></div>
+                        <h3 class="card-title">{{ project.name }}</h3>
+                        <p class="card-description">{{ project.description or 'No description' }}</p>
+                        <div class="card-meta">
+                            <span>{{ project.analyses|length }} analyses</span>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📊</div>
+            <h3 class="empty-state-title">No Public Projects Yet</h3>
+            <p class="empty-state-description">
+                Be the first to share a product analysis with the community.
+            </p>
+            {% if user %}
+                <a href="/project/new" class="btn btn-primary">Create Project</a>
+            {% else %}
+                <a href="/login" class="btn btn-primary">Sign In to Create</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,10 +1,13 @@
-# VenturePulse - AI-Powered Product Viability Analysis
-# Docker image for the Streamlit web application
+# VenturePulse v2 - AI-Powered Product Viability Analysis
+# Docker image for the FastAPI web application
 
 FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash appuser
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -19,24 +22,20 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY prompts/ ./prompts/
 
-# Create analyses directory
-RUN mkdir -p /app/analyses
+# Create data directories with proper permissions
+RUN mkdir -p /app/data/reports /app/data/specs && \
+    chown -R appuser:appuser /app/data
+
+# Switch to non-root user
+USER appuser
 
 # Default port (can be overridden via PORT env var)
-ARG PORT=8501
-ENV PORT=${PORT}
+ENV PORT=8080
+EXPOSE 8080
 
-# Expose the port
-EXPOSE ${PORT}
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:${PORT}/health || exit 1
 
-# Set environment variables
-ENV STREAMLIT_SERVER_HEADLESS=true
-ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
-ENV STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
-
-# Health check (uses PORT env var at runtime)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:${PORT}/_stcore/health || exit 1
-
-# Run the Streamlit app with port from environment
-CMD streamlit run app/venturepulse.py --server.port=${PORT} --server.maxUploadSize=50
+# Run the FastAPI app with uvicorn
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]

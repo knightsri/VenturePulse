@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Pending Approval - VenturePulse{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; padding-top: var(--space-16);">
+    <div class="card text-center">
+        <div style="font-size: 48px; margin-bottom: var(--space-4);">⏳</div>
+        <h2 class="mb-4">Account Pending Approval</h2>
+        <p class="text-muted mb-6">
+            Your account has been created but requires admin approval before you can
+            create projects and run analyses.
+        </p>
+
+        <div class="alert alert-info" style="text-align: left;">
+            <strong>While you wait, you can:</strong>
+            <ul style="margin: var(--space-2) 0 0 var(--space-4); padding: 0;">
+                <li>Browse public projects</li>
+                <li>View public analysis reports</li>
+                <li>Explore the platform features</li>
+            </ul>
+        </div>
+
+        <div class="flex gap-4 justify-center mt-8">
+            <a href="/browse" class="btn btn-primary">Browse Projects</a>
+            <a href="/" class="btn btn-secondary">Go Home</a>
+        </div>
+
+        {% if user %}
+        <div class="mt-8" style="border-top: 1px solid var(--color-gray-200); padding-top: var(--space-4);">
+            <p class="text-muted" style="font-size: var(--font-size-sm);">
+                Signed in as <strong>{{ user.email }}</strong>
+            </p>
+            <a href="/logout" class="text-muted" style="font-size: var(--font-size-sm);">
+                Sign out
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

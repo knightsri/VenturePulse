@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VenturePulse - AI-Powered Product Viability Analysis">
+    <title>{% block title %}VenturePulse{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bauhaus CSS -->
+    <link rel="stylesheet" href="/static/css/bauhaus.css">
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="/" class="navbar-brand">
+                <img src="/static/img/logo.png" alt="VenturePulse" class="navbar-logo-img">
+                <span>VenturePulse</span>
+            </a>
+
+            <ul class="navbar-nav">
+                <li><a href="/browse" class="navbar-link">Browse</a></li>
+
+                {% if user %}
+                    <li><a href="/dashboard" class="navbar-link">Dashboard</a></li>
+                    {% if user.is_admin %}
+                        <li><a href="/admin" class="navbar-link">Admin</a></li>
+                    {% endif %}
+                    <li>
+                        <div class="navbar-user">
+                            {% if user.avatar_url %}
+                                <img src="{{ user.avatar_url }}" alt="{{ user.name }}" class="navbar-avatar">
+                            {% endif %}
+                            <form action="/logout" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-secondary btn-sm">Logout</button>
+                            </form>
+                        </div>
+                    </li>
+                {% else %}
+                    <li><a href="/login" class="navbar-link">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% if messages %}
+        <div class="container">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="https://github.com/knightsri/VenturePulse" class="footer-link" target="_blank" rel="noopener">
+                    GitHub
+                </a>
+                <a href="https://venturepulse.shalusri.com" class="footer-link" target="_blank" rel="noopener">
+                    Live Demo
+                </a>
+            </div>
+            <div class="footer-copyright text-muted">
+                VenturePulse v2.0
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/static/js/app.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "WebSearch",
+      "WebFetch(domain:openrouter.ai)",
+      "Bash(cat:*)",
+      "Bash(git push)",
+      "Bash(C:/VENV/VENTUREPULSE/Scripts/pip install:*)",
+      "Bash(C:/VENV/VENTUREPULSE/Scripts/python:*)",
+      "Bash(curl:*)",
+      "Bash(sqlite3:*)",
+      "Bash(netstat:*)"
+    ]
+  }
+}
