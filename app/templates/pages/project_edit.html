@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ project.name }} - VenturePulse{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <div class="page-header">
+        <nav class="breadcrumb mb-4">
+            <a href="/dashboard">My Projects</a>
+            <span>/</span>
+            <a href="/project/{{ project.slug }}">{{ project.name }}</a>
+            <span>/</span>
+            <span>Edit</span>
+        </nav>
+        <h1>Edit Project</h1>
+        <p class="text-muted">Update your project details and specification</p>
+    </div>
+
+    {% if errors %}
+        <div class="alert alert-danger mb-4">
+            <ul style="margin: 0; padding-left: var(--space-4);">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <form action="/project/{{ project.slug }}/edit" method="POST" class="card">
+        <div class="form-group">
+            <label for="name" class="form-label">Project Name *</label>
+            <input type="text" id="name" name="name" class="form-input"
+                   value="{{ project.name }}" required>
+            <div class="form-hint">Changing the name may update the project URL</div>
+        </div>
+
+        <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="description" class="form-input"
+                      rows="2" placeholder="Brief overview of your product">{{ project.description or '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="spec_content" class="form-label">Product Specification *</label>
+            <textarea id="spec_content" name="spec_content" class="form-input"
+                      rows="20" required>{{ project.spec_content }}</textarea>
+            <div class="form-hint">The full specification used for AI analysis</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Visibility</label>
+            <div class="flex items-center gap-2">
+                <input type="checkbox" id="is_public" name="is_public"
+                       {% if project.is_public %}checked{% endif %}
+                       style="width: 20px; height: 20px;">
+                <label for="is_public">Make this project public</label>
+            </div>
+            <div class="form-hint">Public projects can be viewed by anyone</div>
+        </div>
+
+        <div class="flex gap-4 mt-8">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="/project/{{ project.slug }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

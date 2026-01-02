@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - VenturePulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Admin Dashboard</h1>
+        <p class="text-muted">Manage users and monitor system health</p>
+    </div>
+
+    <!-- System Stats -->
+    <div class="card mb-8">
+        <h2 class="mb-4">System Statistics</h2>
+        <div class="grid grid-5 text-center">
+            <div>
+                <div style="font-size: 2rem; font-weight: bold; color: var(--color-primary);">
+                    {{ stats.total_users }}
+                </div>
+                <div class="text-muted">Users</div>
+            </div>
+            <div>
+                <div style="font-size: 2rem; font-weight: bold; color: var(--color-secondary);">
+                    {{ stats.total_projects }}
+                </div>
+                <div class="text-muted">Projects</div>
+            </div>
+            <div>
+                <div style="font-size: 2rem; font-weight: bold; color: var(--color-accent);">
+                    {{ stats.public_projects }}
+                </div>
+                <div class="text-muted">Public</div>
+            </div>
+            <div>
+                <div style="font-size: 2rem; font-weight: bold; color: var(--color-info);">
+                    {{ stats.total_analyses }}
+                </div>
+                <div class="text-muted">Analyses</div>
+            </div>
+            <div>
+                <div style="font-size: 2rem; font-weight: bold; color: var(--color-success);">
+                    {{ stats.completed_analyses }}
+                </div>
+                <div class="text-muted">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Approvals -->
+    {% if pending_users %}
+    <div class="card mb-8" style="border-color: var(--color-warning);">
+        <div class="flex justify-between items-center mb-4">
+            <h2 style="margin: 0;">Pending Approvals</h2>
+            <span class="badge badge-warning">{{ pending_users|length }} pending</span>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Provider</th>
+                        <th>Registered</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in pending_users %}
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-2">
+                                {% if u.avatar_url %}
+                                    <img src="{{ u.avatar_url }}" alt=""
+                                         style="width: 32px; height: 32px; border-radius: 50%;">
+                                {% else %}
+                                    <div style="width: 32px; height: 32px; background: var(--color-gray-200);
+                                                display: flex; align-items: center; justify-content: center;
+                                                border-radius: 50%; font-size: 0.875rem;">
+                                        {{ u.name[0]|upper }}
+                                    </div>
+                                {% endif %}
+                                {{ u.name }}
+                            </div>
+                        </td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            <span class="badge badge-default">{{ u.provider }}</span>
+                        </td>
+                        <td>{{ u.created_at.strftime('%b %d, %Y') }}</td>
+                        <td style="text-align: right;">
+                            <form action="/admin/user/{{ u.id }}/approve" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                            </form>
+                            <form action="/admin/user/{{ u.id }}/reject" method="POST" style="display: inline;"
+                                  onsubmit="return confirm('Delete this user?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- All Users -->
+    <div class="card">
+        <h2 class="mb-4">All Users</h2>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Provider</th>
+                        <th>Last Login</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in all_users %}
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-2">
+                                {% if u.avatar_url %}
+                                    <img src="{{ u.avatar_url }}" alt=""
+                                         style="width: 32px; height: 32px; border-radius: 50%;">
+                                {% else %}
+                                    <div style="width: 32px; height: 32px; background: var(--color-gray-200);
+                                                display: flex; align-items: center; justify-content: center;
+                                                border-radius: 50%; font-size: 0.875rem;">
+                                        {{ u.name[0]|upper }}
+                                    </div>
+                                {% endif %}
+                                {{ u.name }}
+                            </div>
+                        </td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            <span class="badge badge-{% if u.role == 'admin' %}info{% elif u.role == 'approved' %}success{% else %}warning{% endif %}">
+                                {{ u.role }}
+                            </span>
+                        </td>
+                        <td>{{ u.provider }}</td>
+                        <td>
+                            {% if u.last_login %}
+                                {{ u.last_login.strftime('%b %d, %Y') }}
+                            {% else %}
+                                <span class="text-muted">Never</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            {% if u.id != user.id %}
+                                {% if u.role == 'pending' %}
+                                    <form action="/admin/user/{{ u.id }}/approve" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                    </form>
+                                {% elif u.role == 'approved' %}
+                                    <form action="/admin/user/{{ u.id }}/revoke" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-warning btn-sm">Revoke</button>
+                                    </form>
+                                    <form action="/admin/user/{{ u.id }}/promote" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-info btn-sm">Make Admin</button>
+                                    </form>
+                                {% elif u.role == 'admin' %}
+                                    <form action="/admin/user/{{ u.id }}/demote" method="POST" style="display: inline;"
+                                          onsubmit="return confirm('Remove admin privileges from this user?');">
+                                        <button type="submit" class="btn btn-warning btn-sm">Remove Admin</button>
+                                    </form>
+                                {% endif %}
+
+                                {% if u.role != 'admin' %}
+                                    <form action="/admin/user/{{ u.id }}/reject" method="POST" style="display: inline;"
+                                          onsubmit="return confirm('Delete this user and all their data?');">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted">You</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

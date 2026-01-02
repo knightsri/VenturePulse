@@ -40,7 +40,11 @@
                     <li>
                         <div class="navbar-user">
                             {% if user.avatar_url %}
-                                <img src="{{ user.avatar_url }}" alt="{{ user.name }}" class="navbar-avatar">
+                                <a href="/settings" style="display: flex; align-items: center;">
+                                    <img src="{{ user.avatar_url }}" alt="{{ user.name }}" class="navbar-avatar">
+                                </a>
+                            {% else %}
+                                <a href="/settings" class="navbar-link" style="margin-right: var(--space-2);">Settings</a>
                             {% endif %}
                             <form action="/logout" method="POST" style="display: inline;">
                                 <button type="submit" class="btn btn-secondary btn-sm">Logout</button>

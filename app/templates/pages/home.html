@@ -97,6 +97,57 @@
     </div>
 </section>
 
+<!-- Featured Projects -->
+{% if featured_projects %}
+<section class="container" style="padding: var(--space-16) var(--space-4);">
+    <h2 class="text-center mb-8">Featured Projects</h2>
+
+    <div class="grid grid-2">
+        {% for project in featured_projects %}
+            <div class="card">
+                <div class="card-accent card-accent-{% if loop.index % 3 == 1 %}red{% elif loop.index % 3 == 2 %}blue{% else %}yellow{% endif %}"></div>
+                <h3 class="card-title">
+                    <a href="/project/{{ project.slug }}" style="color: inherit; text-decoration: none;">
+                        {{ project.name }}
+                    </a>
+                </h3>
+                <p class="card-description">
+                    {{ (project.description or project.spec_content[:200] + '...')[:200] }}{% if (project.description or project.spec_content)|length > 200 %}...{% endif %}
+                </p>
+                <div style="margin-top: var(--space-4); display: flex; gap: var(--space-2); align-items: center;">
+                    <span class="badge badge-success">{{ project.analyses|length }} {% if project.analyses|length == 1 %}analysis{% else %}analyses{% endif %}</span>
+                    {% if project.is_public %}
+                        <span class="badge badge-info">Public</span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center" style="margin-top: var(--space-8);">
+        <a href="/browse" class="btn btn-secondary">Browse All Projects</a>
+    </div>
+</section>
+{% endif %}
+
+<!-- Stats Section -->
+{% if stats %}
+<section style="background-color: var(--color-gray-900); color: white; padding: var(--space-12) 0;">
+    <div class="container">
+        <div class="grid grid-2 text-center">
+            <div>
+                <div style="font-size: 3rem; font-weight: bold; color: var(--color-primary);">{{ stats.total_projects }}</div>
+                <div style="color: var(--color-gray-400);">Public Projects</div>
+            </div>
+            <div>
+                <div style="font-size: 3rem; font-weight: bold; color: var(--color-secondary);">{{ stats.total_analyses }}</div>
+                <div style="color: var(--color-gray-400);">Analyses Completed</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <!-- CTA Section -->
 <section class="container text-center" style="padding: var(--space-16) var(--space-4);">
     <h2 class="mb-4">Ready to Validate Your Idea?</h2>

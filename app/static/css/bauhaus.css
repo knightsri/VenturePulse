@@ -922,3 +922,226 @@ strong, b {
         text-align: center;
     }
 }
+
+/* =============================================================================
+   Additional Components
+   ============================================================================= */
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+}
+
+.breadcrumb a {
+    color: var(--color-gray-500);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    color: var(--color-black);
+}
+
+.breadcrumb span:not(:last-child) {
+    color: var(--color-gray-400);
+}
+
+/* Progress Bar */
+.progress-bar {
+    height: 8px;
+    background-color: var(--color-gray-200);
+    border: 1px solid var(--color-gray-300);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--color-blue);
+    transition: width 0.3s ease;
+}
+
+/* Additional Badge Variants */
+.badge-default {
+    background-color: var(--color-gray-200);
+    color: var(--color-gray-700);
+}
+
+.badge-success {
+    background-color: var(--color-success);
+    color: var(--color-white);
+}
+
+.badge-info {
+    background-color: var(--color-info);
+    color: var(--color-white);
+}
+
+.badge-warning {
+    background-color: var(--color-warning);
+    color: var(--color-black);
+}
+
+.badge-danger {
+    background-color: var(--color-error);
+    color: var(--color-white);
+}
+
+.badge-cancelled {
+    background-color: var(--color-gray-400);
+    color: var(--color-white);
+}
+
+/* Button Variants */
+.btn-outline {
+    background-color: transparent;
+    border: var(--border-width) solid var(--color-black);
+    color: var(--color-black);
+}
+
+.btn-outline:hover {
+    background-color: var(--color-gray-100);
+}
+
+.btn-danger {
+    background-color: var(--color-error);
+    border-color: var(--color-error);
+    color: var(--color-white);
+}
+
+.btn-danger:hover {
+    background-color: #B71C1C;
+    border-color: #B71C1C;
+}
+
+.btn-success {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: var(--color-white);
+}
+
+.btn-success:hover {
+    background-color: #1B5E20;
+    border-color: #1B5E20;
+}
+
+.btn-warning {
+    background-color: var(--color-warning);
+    border-color: var(--color-warning);
+    color: var(--color-black);
+}
+
+.btn-warning:hover {
+    background-color: #F57F17;
+    border-color: #F57F17;
+}
+
+.btn-info {
+    background-color: var(--color-info);
+    border-color: var(--color-info);
+    color: var(--color-white);
+}
+
+.btn-info:hover {
+    background-color: #0D47A1;
+    border-color: #0D47A1;
+}
+
+/* Table Container */
+.table-container {
+    overflow-x: auto;
+}
+
+/* Form Hint */
+.form-hint {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    margin-top: var(--space-1);
+}
+
+/* Additional Grid Columns */
+.grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.grid-5 {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+@media (max-width: 1024px) {
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid-5 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-4,
+    .grid-5 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Card Link */
+.card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s ease;
+}
+
+.card-link:hover {
+    transform: translateY(-2px);
+}
+
+.card-link:hover .card {
+    border-color: var(--color-black);
+}
+
+/* Card Meta */
+.card-meta {
+    display: flex;
+    gap: var(--space-4);
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+    margin-top: var(--space-4);
+}
+
+/* Flex Wrap */
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+/* Items Start */
+.items-start {
+    align-items: flex-start;
+}
+
+/* Alert Danger */
+.alert-danger {
+    background-color: #FFEBEE;
+    border-color: var(--color-red);
+    color: var(--color-error);
+}
+
+/* Semantic Aliases */
+.color-primary { color: var(--color-primary, var(--color-red)); }
+.color-secondary { color: var(--color-secondary, var(--color-blue)); }
+.color-accent { color: var(--color-accent, var(--color-yellow)); }
+.color-success { color: var(--color-success); }
+.color-info { color: var(--color-info); }
+.color-warning { color: var(--color-warning); }
+.color-danger { color: var(--color-error); }
+
+/* CSS Variables for semantic colors */
+:root {
+    --color-primary: var(--color-red);
+    --color-secondary: var(--color-blue);
+    --color-accent: var(--color-yellow);
+    --color-danger: var(--color-error);
+}

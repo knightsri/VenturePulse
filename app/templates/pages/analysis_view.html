@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis - {{ project.name }} - VenturePulse{% endblock %}
+
+{% block head %}
+<style>
+    .analysis-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: var(--space-8);
+        min-height: calc(100vh - 200px);
+    }
+
+    @media (max-width: 768px) {
+        .analysis-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .section-nav {
+        position: sticky;
+        top: var(--space-4);
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+
+    .section-nav-item {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
+        text-decoration: none;
+        color: inherit;
+        border-left: 3px solid transparent;
+        transition: all 0.15s ease;
+    }
+
+    .section-nav-item:hover {
+        background: var(--color-gray-100);
+    }
+
+    .section-nav-item.active {
+        background: var(--color-gray-100);
+        border-left-color: var(--color-primary);
+        font-weight: var(--font-weight-semibold);
+    }
+
+    .section-content {
+        padding: var(--space-6);
+        background: white;
+        border: 1px solid var(--color-gray-200);
+        min-height: 400px;
+    }
+
+    .section-content iframe {
+        width: 100%;
+        min-height: 600px;
+        border: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="page-header">
+        <nav class="breadcrumb mb-4">
+            <a href="/project/{{ project.slug }}">{{ project.name }}</a>
+            <span>/</span>
+            <span>Analysis</span>
+        </nav>
+
+        <div class="flex justify-between items-start flex-wrap gap-4">
+            <div>
+                <h1>{{ analysis.model_name }}</h1>
+                <div class="flex gap-4 items-center mt-2">
+                    <span class="badge badge-{{ analysis.status }}">{{ analysis.status|capitalize }}</span>
+                    <span class="text-muted">{{ analysis.started_at.strftime('%B %d, %Y at %H:%M') }}</span>
+                </div>
+            </div>
+
+            {% if is_owner %}
+            <div class="flex gap-2">
+                {% if analysis.status == 'running' %}
+                    <form action="/analysis/{{ analysis.id }}/cancel" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-secondary">Cancel</button>
+                    </form>
+                {% endif %}
+                <form action="/analysis/{{ analysis.id }}/delete" method="POST" style="display: inline;"
+                      onsubmit="return confirm('Delete this analysis?');">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Stats -->
+    {% if analysis.status == 'completed' %}
+    <div class="card mb-8">
+        <div class="grid grid-4 text-center">
+            <div>
+                <div style="font-size: 1.5rem; font-weight: bold;">
+                    {{ sections_completed|length }}
+                </div>
+                <div class="text-muted">Sections</div>
+            </div>
+            <div>
+                <div style="font-size: 1.5rem; font-weight: bold;">
+                    {% if analysis.total_tokens %}
+                        {{ '{:,}'.format(analysis.total_tokens) }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="text-muted">Tokens</div>
+            </div>
+            <div>
+                <div style="font-size: 1.5rem; font-weight: bold;">
+                    {% if analysis.total_cost_usd %}
+                        ${{ '%.4f'|format(analysis.total_cost_usd) }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="text-muted">Cost</div>
+            </div>
+            <div>
+                <div style="font-size: 1.5rem; font-weight: bold;">
+                    {% if analysis.completed_at %}
+                        {{ ((analysis.completed_at - analysis.started_at).total_seconds() / 60)|round(1) }}m
+                    {% else %}
+                        -
+                    {% endif %}
+                </div>
+                <div class="text-muted">Duration</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Analysis Content -->
+    {% if analysis.status == 'completed' and sections_completed %}
+        <div class="analysis-layout">
+            <!-- Section Navigation -->
+            <div class="section-nav card">
+                <h3 class="mb-4">Sections</h3>
+                {% for section_key, section_data in sections_completed|dictsort %}
+                    <a href="#" class="section-nav-item {% if loop.first %}active{% endif %}"
+                       data-section="{{ section_key }}"
+                       onclick="loadSection('{{ section_key }}', this); return false;">
+                        <span class="badge badge-success" style="width: 24px; text-align: center;">
+                            {{ section_data.section_num if section_data.section_num else section_key[-2:] }}
+                        </span>
+                        <span>{{ section_key.replace('section', 'Section ').replace('-', ' ').title() }}</span>
+                    </a>
+                {% endfor %}
+            </div>
+
+            <!-- Section Content -->
+            <div class="section-content" id="section-content">
+                {% if first_section_content %}
+                    {{ first_section_content|safe }}
+                {% else %}
+                    <p class="text-muted text-center" style="padding: var(--space-8);">
+                        Select a section to view its content
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    {% elif analysis.status == 'running' or analysis.status == 'pending' %}
+        <div class="card text-center" style="padding: var(--space-16);">
+            <div style="font-size: 3rem; margin-bottom: var(--space-4);">⏳</div>
+            <h2>Analysis in Progress</h2>
+            <p class="text-muted mb-4">
+                The AI is analyzing your product specification. This may take a few minutes.
+            </p>
+            <div class="progress-bar" style="max-width: 400px; margin: 0 auto;">
+                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+            <p class="text-muted mt-4" id="progress-text">Initializing...</p>
+        </div>
+
+        <script>
+        function pollStatus() {
+            fetch('/analysis/{{ analysis.id }}/status')
+                .then(response => response.json())
+                .then(data => {
+                    const progressFill = document.getElementById('progress-fill');
+                    const progressText = document.getElementById('progress-text');
+
+                    progressFill.style.width = data.progress + '%';
+                    progressText.textContent = `${data.completed_sections} of ${data.total_sections} sections completed`;
+
+                    if (data.status === 'completed' || data.status === 'failed') {
+                        window.location.reload();
+                    } else {
+                        setTimeout(pollStatus, 3000);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error polling status:', err);
+                    setTimeout(pollStatus, 5000);
+                });
+        }
+
+        pollStatus();
+        </script>
+    {% elif analysis.status == 'failed' %}
+        <div class="card text-center" style="padding: var(--space-16);">
+            <div style="font-size: 3rem; margin-bottom: var(--space-4);">❌</div>
+            <h2>Analysis Failed</h2>
+            <p class="text-muted">
+                Something went wrong during the analysis. Please try again.
+            </p>
+            <a href="/project/{{ project.slug }}/analyze" class="btn btn-primary mt-4">
+                Run New Analysis
+            </a>
+        </div>
+    {% else %}
+        <div class="card text-center" style="padding: var(--space-16);">
+            <p class="text-muted">No analysis data available</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function loadSection(sectionKey, element) {
+    // Update active state
+    document.querySelectorAll('.section-nav-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+
+    // Load section content
+    const contentDiv = document.getElementById('section-content');
+    contentDiv.innerHTML = '<p class="text-center text-muted" style="padding: var(--space-8);">Loading...</p>';
+
+    fetch(`/analysis/{{ analysis.id }}/section/${sectionKey}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Section not found');
+            return response.text();
+        })
+        .then(html => {
+            contentDiv.innerHTML = html;
+        })
+        .catch(err => {
+            contentDiv.innerHTML = '<p class="text-center text-muted" style="padding: var(--space-8);">Failed to load section</p>';
+        });
+}
+</script>
+{% endblock %}

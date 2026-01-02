@@ -9,16 +9,52 @@
         <p class="text-muted">Explore public product viability analyses</p>
     </div>
 
+    <!-- Search and Filter -->
+    <div class="card" style="margin-bottom: var(--space-8);">
+        <form action="/browse" method="GET" style="display: flex; gap: var(--space-4); flex-wrap: wrap; align-items: flex-end;">
+            <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                <label for="search" class="form-label">Search</label>
+                <input type="text" id="search" name="search" class="form-input"
+                       placeholder="Search projects..." value="{{ search }}">
+            </div>
+            <div class="form-group" style="min-width: 150px; margin-bottom: 0;">
+                <label for="sort" class="form-label">Sort by</label>
+                <select id="sort" name="sort" class="form-input">
+                    <option value="recent" {% if sort == 'recent' %}selected{% endif %}>Most Recent</option>
+                    <option value="name" {% if sort == 'name' %}selected{% endif %}>Name</option>
+                    <option value="analyses" {% if sort == 'analyses' %}selected{% endif %}>Most Analyses</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-secondary">Search</button>
+            {% if search %}
+                <a href="/browse" class="btn btn-outline">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if search %}
+        <p class="text-muted mb-4">Showing results for "{{ search }}"</p>
+    {% endif %}
+
     {% if projects %}
         <div class="grid grid-3">
             {% for project in projects %}
-                <a href="/project/{{ project.slug }}" class="card-link">
-                    <div class="card">
-                        <div class="card-accent card-accent-blue"></div>
+                <a href="/project/{{ project.slug }}" class="card-link" style="text-decoration: none;">
+                    <div class="card" style="height: 100%;">
+                        <div class="card-accent card-accent-{% if loop.index % 3 == 1 %}red{% elif loop.index % 3 == 2 %}blue{% else %}yellow{% endif %}"></div>
                         <h3 class="card-title">{{ project.name }}</h3>
-                        <p class="card-description">{{ project.description or 'No description' }}</p>
-                        <div class="card-meta">
-                            <span>{{ project.analyses|length }} analyses</span>
+                        <p class="card-description">
+                            {{ (project.description or project.spec_content[:150])[:150] }}{% if (project.description or project.spec_content)|length > 150 %}...{% endif %}
+                        </p>
+                        <div style="margin-top: auto; padding-top: var(--space-4); display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap;">
+                            <span class="badge badge-{% if project.analyses|length > 0 %}success{% else %}default{% endif %}">
+                                {{ project.analyses|length }} {% if project.analyses|length == 1 %}analysis{% else %}analyses{% endif %}
+                            </span>
+                            {% if project.user %}
+                                <span class="text-muted" style="font-size: 0.875rem;">
+                                    by {{ project.user.name }}
+                                </span>
+                            {% endif %}
                         </div>
                     </div>
                 </a>
@@ -27,14 +63,26 @@
     {% else %}
         <div class="empty-state">
             <div class="empty-state-icon">📊</div>
-            <h3 class="empty-state-title">No Public Projects Yet</h3>
+            <h3 class="empty-state-title">
+                {% if search %}
+                    No Projects Found
+                {% else %}
+                    No Public Projects Yet
+                {% endif %}
+            </h3>
             <p class="empty-state-description">
-                Be the first to share a product analysis with the community.
+                {% if search %}
+                    Try a different search term or clear the filters.
+                {% else %}
+                    Be the first to share a product analysis with the community.
+                {% endif %}
             </p>
-            {% if user %}
-                <a href="/project/new" class="btn btn-primary">Create Project</a>
-            {% else %}
-                <a href="/login" class="btn btn-primary">Sign In to Create</a>
+            {% if not search %}
+                {% if user %}
+                    <a href="/project/new" class="btn btn-primary">Create Project</a>
+                {% else %}
+                    <a href="/login" class="btn btn-primary">Sign In to Create</a>
+                {% endif %}
             {% endif %}
         </div>
     {% endif %}

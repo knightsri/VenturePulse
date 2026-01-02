@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.name }} - VenturePulse{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Project Header -->
+    <div class="page-header">
+        <nav class="breadcrumb mb-4">
+            <a href="{% if is_owner %}/dashboard{% else %}/browse{% endif %}">
+                {% if is_owner %}My Projects{% else %}Browse{% endif %}
+            </a>
+            <span>/</span>
+            <span>{{ project.name }}</span>
+        </nav>
+
+        <div class="flex justify-between items-start flex-wrap gap-4">
+            <div>
+                <h1>{{ project.name }}</h1>
+                <p class="text-muted">
+                    {% if project.description %}
+                        {{ project.description }}
+                    {% else %}
+                        Product viability analysis project
+                    {% endif %}
+                </p>
+                <div class="flex gap-2 mt-2">
+                    <span class="badge badge-{% if project.is_public %}info{% else %}default{% endif %}">
+                        {{ 'Public' if project.is_public else 'Private' }}
+                    </span>
+                    <span class="text-muted" style="font-size: 0.875rem;">
+                        Created {{ project.created_at.strftime('%B %d, %Y') }}
+                    </span>
+                </div>
+            </div>
+
+            {% if can_edit %}
+            <div class="flex gap-2">
+                {% if can_analyze %}
+                <a href="/project/{{ project.slug }}/analyze" class="btn btn-primary">
+                    Run Analysis
+                </a>
+                {% endif %}
+                <a href="/project/{{ project.slug }}/edit" class="btn btn-secondary">
+                    Edit
+                </a>
+                <form action="/project/{{ project.slug }}/toggle-visibility" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-outline">
+                        Make {{ 'Private' if project.is_public else 'Public' }}
+                    </button>
+                </form>
+            </div>
+            {% elif can_analyze %}
+            <a href="/project/{{ project.slug }}/analyze" class="btn btn-primary">
+                Run Analysis
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid grid-2" style="gap: var(--space-8);">
+        <!-- Analyses Section -->
+        <div>
+            <h2 class="mb-4">Analyses</h2>
+
+            {% if analyses %}
+                <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+                    {% for analysis in analyses %}
+                        <a href="/analysis/{{ analysis.id }}" class="card-link" style="text-decoration: none;">
+                            <div class="card">
+                                <div class="card-accent card-accent-{% if analysis.status == 'completed' %}blue{% elif analysis.status == 'running' %}yellow{% elif analysis.status == 'failed' %}red{% else %}default{% endif %}"></div>
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="card-title mb-1">{{ analysis.model_name }}</h4>
+                                        <div class="text-muted" style="font-size: 0.875rem;">
+                                            {{ analysis.started_at.strftime('%b %d, %Y at %H:%M') }}
+                                        </div>
+                                    </div>
+                                    <span class="badge badge-{{ analysis.status }}">
+                                        {{ analysis.status|capitalize }}
+                                    </span>
+                                </div>
+                                {% if analysis.status == 'completed' %}
+                                    <div class="flex gap-4 mt-3 text-muted" style="font-size: 0.875rem;">
+                                        {% if analysis.total_cost_usd %}
+                                            <span>${{ '%.4f'|format(analysis.total_cost_usd) }}</span>
+                                        {% endif %}
+                                        {% if analysis.total_tokens %}
+                                            <span>{{ analysis.total_tokens|default(0) }} tokens</span>
+                                        {% endif %}
+                                        {% if analysis.sections_completed %}
+                                            <span>{{ analysis.sections_completed|length }} sections</span>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">📊</div>
+                    <h3 class="empty-state-title">No Analyses Yet</h3>
+                    <p class="empty-state-description">
+                        Run an analysis to generate AI-powered insights for this project.
+                    </p>
+                    {% if can_analyze %}
+                        <a href="/project/{{ project.slug }}/analyze" class="btn btn-primary">Run Analysis</a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Spec Preview Section -->
+        <div>
+            <h2 class="mb-4">Project Specification</h2>
+            <div class="card">
+                <details open>
+                    <summary style="cursor: pointer; font-weight: var(--font-weight-semibold); margin-bottom: var(--space-4);">
+                        View Spec
+                    </summary>
+                    <pre style="white-space: pre-wrap; word-wrap: break-word; font-size: 0.875rem; max-height: 500px; overflow-y: auto; background: var(--color-gray-100); padding: var(--space-4); border: 1px solid var(--color-gray-200);">{{ project.spec_content }}</pre>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danger Zone -->
+    {% if can_edit %}
+    <div class="card" style="margin-top: var(--space-8); border-color: var(--color-danger);">
+        <h3 style="color: var(--color-danger);">Danger Zone</h3>
+        <p class="text-muted mb-4">
+            Once you delete a project, there is no going back. All analyses will be permanently removed.
+        </p>
+        <form action="/project/{{ project.slug }}/delete" method="POST"
+              onsubmit="return confirm('Are you sure you want to delete this project? This action cannot be undone.');">
+            <button type="submit" class="btn btn-danger">Delete Project</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

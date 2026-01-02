@@ -4,9 +4,8 @@ VenturePulse v2 - FastAPI Application Entry Point
 
 import logging
 from contextlib import asynccontextmanager
-from typing import Optional
 
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -14,10 +13,14 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.config import get_settings
 from app.db.database import init_db, close_db
-from app.db.models import User
-from app.auth.session import get_current_user
-from app.auth.decorators import require_auth
-from app.routes.auth import router as auth_router
+from app.routes import (
+    auth_router,
+    public_router,
+    projects_router,
+    analysis_router,
+    admin_router,
+    settings_router,
+)
 
 # Configure logging
 logging.basicConfig(
@@ -84,8 +87,13 @@ app.mount(
 # Setup Jinja2 templates
 templates = Jinja2Templates(directory=settings.BASE_DIR / "app" / "templates")
 
-# Include auth router
+# Include routers
 app.include_router(auth_router)
+app.include_router(public_router)
+app.include_router(projects_router)
+app.include_router(analysis_router)
+app.include_router(admin_router)
+app.include_router(settings_router)
 
 
 # Health check endpoint
@@ -93,71 +101,6 @@ app.include_router(auth_router)
 async def health_check():
     """Health check endpoint for Docker and load balancers."""
     return {"status": "healthy", "version": "2.0.0"}
-
-
-# =============================================================================
-# Public Routes
-# =============================================================================
-
-@app.get("/", response_class=HTMLResponse)
-async def home(request: Request):
-    """Home page."""
-    user = await get_current_user(request)
-    return templates.TemplateResponse(
-        "pages/home.html",
-        {
-            "request": request,
-            "settings": settings,
-            "user": user,
-        }
-    )
-
-
-@app.get("/browse", response_class=HTMLResponse)
-async def browse(request: Request):
-    """Browse public projects."""
-    user = await get_current_user(request)
-    return templates.TemplateResponse(
-        "pages/browse.html",
-        {
-            "request": request,
-            "settings": settings,
-            "user": user,
-            "projects": [],  # Will be populated in Phase 3
-        }
-    )
-
-
-# =============================================================================
-# Protected Routes
-# =============================================================================
-
-@app.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, user: User = Depends(require_auth)):
-    """User dashboard showing their projects."""
-    return templates.TemplateResponse(
-        "pages/dashboard.html",
-        {
-            "request": request,
-            "settings": settings,
-            "user": user,
-            "projects": [],  # Will be populated in Phase 3
-        }
-    )
-
-
-@app.get("/pending-approval", response_class=HTMLResponse)
-async def pending_approval(request: Request):
-    """Page shown to users awaiting approval."""
-    user = await get_current_user(request)
-    return templates.TemplateResponse(
-        "pages/pending-approval.html",
-        {
-            "request": request,
-            "settings": settings,
-            "user": user,
-        }
-    )
 
 
 if __name__ == "__main__":

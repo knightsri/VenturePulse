@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - VenturePulse{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px;">
+    <div class="page-header">
+        <h1>Settings</h1>
+        <p class="text-muted">Manage your account and API configuration</p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% if request.query_params.get('success') %}
+        <div class="alert alert-success mb-4">
+            {{ request.query_params.get('success')|replace('+', ' ') }}
+        </div>
+    {% endif %}
+    {% if request.query_params.get('error') %}
+        <div class="alert alert-danger mb-4">
+            {{ request.query_params.get('error')|replace('+', ' ') }}
+        </div>
+    {% endif %}
+
+    <!-- API Key Section -->
+    <div class="card mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <h2 class="mb-1">OpenRouter API Key</h2>
+                <p class="text-muted" style="font-size: var(--font-size-sm);">
+                    Required to run AI-powered analyses
+                </p>
+            </div>
+            {% if has_api_key %}
+                <span class="badge badge-success">Active</span>
+            {% else %}
+                <span class="badge badge-warning">Not Set</span>
+            {% endif %}
+        </div>
+
+        {% if has_api_key %}
+            <!-- Show masked key and option to update -->
+            <div class="card" style="background: var(--color-gray-50); margin-bottom: var(--space-4);">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div class="text-muted" style="font-size: var(--font-size-sm);">Current Key</div>
+                        <code style="font-size: var(--font-size-lg); letter-spacing: 1px;">{{ masked_api_key }}</code>
+                    </div>
+                    <form action="/settings/api-key/clear" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-outline btn-sm"
+                                onclick="return confirm('Remove your API key?');">
+                            Remove
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <details>
+                <summary style="cursor: pointer; color: var(--color-gray-600); margin-bottom: var(--space-4);">
+                    Update API Key
+                </summary>
+                <form action="/settings/api-key" method="POST">
+                    <div class="form-group">
+                        <label for="api_key" class="form-label">New API Key</label>
+                        <input type="password" id="api_key" name="api_key" class="form-input"
+                               placeholder="sk-or-v1-..." required
+                               autocomplete="off">
+                        <div class="form-hint">
+                            Your key will replace the current one
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Key</button>
+                </form>
+            </details>
+        {% else %}
+            <!-- No key set - show form to add -->
+            <div class="alert alert-info mb-4">
+                <strong>No API Key Set</strong><br>
+                You need an OpenRouter API key to run analyses. Get one at
+                <a href="https://openrouter.ai/keys" target="_blank" rel="noopener" style="color: inherit; font-weight: bold;">
+                    openrouter.ai/keys
+                </a>
+            </div>
+
+            <form action="/settings/api-key" method="POST">
+                <div class="form-group">
+                    <label for="api_key" class="form-label">API Key</label>
+                    <input type="password" id="api_key" name="api_key" class="form-input"
+                           placeholder="sk-or-v1-..." required
+                           autocomplete="off">
+                    <div class="form-hint">
+                        Your key is stored in your browser session only and is never saved to our servers
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Save API Key</button>
+            </form>
+        {% endif %}
+
+        <div class="mt-4" style="padding-top: var(--space-4); border-top: 1px solid var(--color-gray-200);">
+            <h4 style="font-size: var(--font-size-sm); color: var(--color-gray-600); margin-bottom: var(--space-2);">
+                Security Note
+            </h4>
+            <ul style="font-size: var(--font-size-sm); color: var(--color-gray-500); padding-left: var(--space-4); margin: 0;">
+                <li>Your API key is stored only in your browser session</li>
+                <li>The key is encrypted and never saved to our database</li>
+                <li>You'll need to re-enter the key if you log out or your session expires</li>
+                <li>We recommend using a key with spending limits on OpenRouter</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Account Info Section -->
+    <div class="card">
+        <h2 class="mb-4">Account Information</h2>
+
+        <div class="flex items-center gap-4 mb-4" style="padding-bottom: var(--space-4); border-bottom: 1px solid var(--color-gray-200);">
+            {% if user.avatar_url %}
+            <img src="{{ user.avatar_url }}" alt="{{ user.name }}"
+                 style="width: 64px; height: 64px; border: 2px solid var(--color-black);">
+            {% else %}
+            <div style="width: 64px; height: 64px; background: var(--color-gray-200);
+                        display: flex; align-items: center; justify-content: center;
+                        border: 2px solid var(--color-black); font-size: var(--font-size-2xl);">
+                {{ user.name[0]|upper }}
+            </div>
+            {% endif %}
+            <div>
+                <div style="font-weight: var(--font-weight-semibold); font-size: var(--font-size-lg);">
+                    {{ user.name }}
+                </div>
+                <div class="text-muted">{{ user.email }}</div>
+            </div>
+        </div>
+
+        <div class="grid grid-2" style="gap: var(--space-4);">
+            <div>
+                <div class="text-muted" style="font-size: var(--font-size-sm);">Role</div>
+                <span class="badge badge-{{ user.role }}">{{ user.role }}</span>
+            </div>
+            <div>
+                <div class="text-muted" style="font-size: var(--font-size-sm);">Provider</div>
+                <span class="badge badge-default">{{ user.provider }}</span>
+            </div>
+            <div>
+                <div class="text-muted" style="font-size: var(--font-size-sm);">Joined</div>
+                <div>{{ user.created_at.strftime('%B %d, %Y') }}</div>
+            </div>
+            <div>
+                <div class="text-muted" style="font-size: var(--font-size-sm);">Last Login</div>
+                <div>{{ user.last_login.strftime('%B %d, %Y') if user.last_login else 'Never' }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
