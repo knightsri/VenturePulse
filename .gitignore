@@ -31,3 +31,9 @@ analyses/
 
 # Claude Code project instructions (machine-specific)
 CLAUDE.md
+.claude/
+data/
+__pycache__/
+*.pyc
+.vscode/
+.idea/
