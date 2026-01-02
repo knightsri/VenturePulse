@@ -30,6 +30,7 @@ async def get_user_preferred_models(db: AsyncSession, user_id: int) -> Optional[
 async def save_user_preferred_models(db: AsyncSession, user_id: int, models: List[str]) -> bool:
     """
     Save user's preferred models to the database.
+    Note: Does NOT commit - caller should handle transaction.
     Returns True on success, False on failure.
     """
     try:
@@ -38,11 +39,10 @@ async def save_user_preferred_models(db: AsyncSession, user_id: int, models: Lis
 
         if user:
             user.preferred_models = models
-            await db.commit()
-            logger.info(f"Saved {len(models)} preferred models for user {user_id}")
+            # Don't commit here - let the caller manage the transaction
+            logger.info(f"Set {len(models)} preferred models for user {user_id}")
             return True
         return False
     except Exception as e:
         logger.error(f"Failed to save preferred models for user {user_id}: {e}")
-        await db.rollback()
         return False
