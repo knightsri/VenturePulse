@@ -1,5 +1,6 @@
-# Environment variables
-.env
+# Environment variables - only .env.example should be committed
+.env*
+!.env.example
 
 # Node modules
 node_modules/
@@ -22,15 +23,11 @@ workspace/uploads/*
 .DS_Store
 Thumbs.db
 
-# Project files
-Archive/
-
 # Analyses output folder
 analyses/
 !analyses/.gitkeep
 
-# Claude Code project instructions (machine-specific)
-CLAUDE.md
+# Claude Code local settings (machine-specific)
 .claude/
 data/
 __pycache__/

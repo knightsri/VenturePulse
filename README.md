@@ -5,11 +5,20 @@
 
 Turn weeks of market research, competitive analysis, and strategic planning into a comprehensive AI-generated report suite. Quick validation in ~25 minutes, full VC-ready analysis in ~60-90 minutes.
 
+### 🌐 Try It Now
+
+**Live Demo:** [venturepulse.shalusri.com](https://venturepulse.shalusri.com)
+
+Experience the full VenturePulse workflow—upload your product spec, select AI models, and generate comprehensive viability reports. No installation required.
+
+- **Bring your own API key:** You'll need an [OpenRouter API key](https://openrouter.ai/keys) (free tier available)
+- **Public or Private:** Choose to keep your analyses private or share them publicly for community feedback
+
 ---
 
 ## 🚀 What is VenturePulse?
 
-VenturePulse is a **prompt library + CLI/Web orchestrator** that generates McKinsey-quality product viability reports using AI. It analyzes your product idea across **19 critical dimensions** (plus Provenance), organized into four strategic phases:
+VenturePulse is a **prompt library + web application** that generates McKinsey-quality product viability reports using AI. It analyzes your product idea across **19 critical dimensions** (plus Provenance), organized into four strategic phases:
 
 ### 🔍 Foundation (Understanding the Problem)
 1. **Executive Summary** - Viability scores, verdict, key highlights, recommended next steps
@@ -69,8 +78,7 @@ VenturePulse is a **prompt library + CLI/Web orchestrator** that generates McKin
 ### Prerequisites
 
 - [OpenRouter API key](https://openrouter.ai/keys) (free tier available)
-- **For Web UI (Recommended):** Python 3.11+ or Docker
-- **For CLI:** Bash (Mac/Linux/WSL/Git Bash), `curl`, `jq`
+- Docker and Docker Compose
 
 ### Installation
 
@@ -78,45 +86,20 @@ VenturePulse is a **prompt library + CLI/Web orchestrator** that generates McKin
 # Clone the repository
 git clone https://github.com/knightsri/VenturePulse.git
 cd VenturePulse
-```
 
-### Option 1: Web UI (Recommended)
-
-```bash
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Run the Streamlit app (default port 8501)
-streamlit run app/venturepulse.py
-
-# Open http://localhost:8501 in your browser
-# Enter your OpenRouter API key in the sidebar
-```
-
-**Or with Docker:**
-```bash
-# Create .env with your API key (see .env.example)
+# Create .env with your configuration (see .env.example)
 cp .env.example .env
-# Edit .env and add your OPENROUTER_API_KEY
+# Edit .env and configure:
+#   - OPENROUTER_API_KEY (required)
+#   - OAuth credentials for Google/GitHub login (optional)
+#   - PORT (default: 8501)
 
+# Run with Docker Compose
 docker-compose up
+
 # Open http://localhost:8501 (or custom PORT from .env)
-```
-
-### Option 2: CLI
-
-```bash
-# Make scripts executable
-chmod +x scripts/*.sh
-
-# Set your API key
-export OPENROUTER_API_KEY="your_key_here"
-
-# Run analysis
-./scripts/analyze-script.sh examples/sample-project/smartplate-idea.md
-
-# View the reports
-open examples/sample-project/smartplate-idea-analysis-*/index.html
+# Sign in with Google, GitHub, or Dev mode
+# Enter your OpenRouter API key in Settings
 ```
 
 **Time estimates:**
@@ -125,101 +108,49 @@ open examples/sample-project/smartplate-idea-analysis-*/index.html
 
 ---
 
-## 🌐 Web UI Features
+## 🌐 Web App Features
 
-The Streamlit-based web interface is the recommended way to use VenturePulse.
+The Docker-based web application is the recommended way to use VenturePulse.
 
-### Features
+### Core Features
 
 - 📤 **Upload specs** - Drag & drop or paste your project specification
 - 🤖 **Multi-model analysis** - Run the same spec through multiple AI models
-- ⚡ **Sequential or Parallel** - Choose execution mode for multi-model runs
-- 🔀 **Parallel section generation** - Generate all sections simultaneously for faster analysis
+- ⚡ **Parallel section generation** - Generate all sections simultaneously for faster analysis
 - 📊 **Real-time progress** - See elapsed time, cost, and retry status
 - 🔄 **Automatic retries** - Failed sections retry with exponential backoff
 - 💰 **Cost tracking** - See per-section and total costs in Provenance
 - 🔬 **Compare results** - Side-by-side comparison of outputs from different models
 - 📚 **Analysis history** - Browse and view past analyses
-- 🔑 **API key management** - Enter via UI or environment variable
 
-### Quick Start (Docker)
+### V2 Features (Current)
 
-```bash
-# Clone and configure
-git clone https://github.com/knightsri/VenturePulse.git
-cd VenturePulse
-cp .env.example .env
-# Edit .env and add your OPENROUTER_API_KEY
-
-# Run with Docker Compose
-docker-compose up
-
-# Open http://localhost:8501 (or custom PORT from .env)
-```
-
-### Quick Start (Local Python)
-
-```bash
-# Clone and setup
-git clone https://github.com/knightsri/VenturePulse.git
-cd VenturePulse
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure (optional - can enter API key in UI)
-cp .env.example .env
-# Edit .env and add your OPENROUTER_API_KEY
-
-# Run Streamlit
-streamlit run app/venturepulse.py
-
-# Open http://localhost:8501 (or custom PORT from .env)
-```
+- 🔐 **OAuth Authentication** - Sign in with Google, GitHub, or Dev mode
+- 👥 **Multi-user support** - Each user has their own projects and analyses
+- 🌍 **Public/Private projects** - Share analyses publicly or keep them private
+- 🔑 **Per-user API keys** - Each user enters their own OpenRouter API key
+- 👍 **Section feedback** - Rate analysis quality with thumbs up/down (coming soon)
+- 📊 **Enhanced comparison** - Charts, metrics, and recommendations (coming soon)
 
 ### Multi-Model Comparison
 
-The web UI lets you:
-1. **Select multiple models** from the sidebar dropdown
-2. **Choose execution mode** - Sequential (safer) or Parallel (faster)
-3. **Compare results** in the "Compare Results" tab with:
-   - Side-by-side section comparison
-   - Timing metrics per model
-   - Section-by-section browsing
+The web app lets you:
+1. **Select multiple models** for analysis
+2. **Compare results** with side-by-side section comparison
+3. **View metrics** - timing, cost, and quality indicators per model
+
+> **Legacy Versions:** Standalone Streamlit app and CLI scripts are archived in [`Archive/`](Archive/) for reference. These may not work with current prompts.
 
 ---
 
 ## 📖 Usage
 
-### Basic Usage
-
-```bash
-./scripts/analyze.sh <project-file.md>
-```
-
-Uses the default free model (`google/gemini-2.0-flash-exp:free`)
-
-### Choose a Different Model
-
-```bash
-# Best free option (recommended for testing)
-./scripts/analyze.sh my-idea.md google/gemini-2.0-flash-exp:free
-
-# Premium quality (recommended for serious validation)
-./scripts/analyze.sh my-idea.md anthropic/claude-sonnet-4.5
-
-# Balanced quality/cost
-./scripts/analyze.sh my-idea.md google/gemini-2.5-pro
-
-# Budget option
-./scripts/analyze.sh my-idea.md deepseek/deepseek-chat
-```
-
-### See All Options
-
-```bash
-./analyze.sh --help
-```
+1. **Sign in** - Use Google, GitHub, or Dev mode
+2. **Add your API key** - Go to Settings and enter your OpenRouter API key
+3. **Create a project** - Upload or paste your product specification
+4. **Choose models** - Select one or more AI models to analyze with
+5. **Run analysis** - Choose Quick (7 sections) or Full (19 sections)
+6. **Review results** - Browse sections, compare models, export reports
 
 ---
 
@@ -258,21 +189,16 @@ VenturePulse works with 100+ models via [OpenRouter](https://openrouter.ai/model
 ```
 VenturePulse/
 ├── app/
-│   └── venturepulse.py                 # Streamlit web UI (recommended)
+│   └── main.py                         # FastAPI application entry point
 ├── prompts/
 │   ├── common-instructions.md          # Shared analysis guidelines
 │   └── sections/
 │       ├── section01-executive-summary.md
 │       ├── section02-market-landscape.md
 │       └── ... (19 total section prompts)
-├── scripts/
-│   ├── analyze-script.sh              # Main CLI orchestrator
-│   ├── call-openrouter.sh             # OpenRouter API wrapper
-│   ├── create-wrapper.sh              # HTML wrapper generation
-│   ├── generate-provenance.sh         # Metadata generation
-│   └── createindex.py                 # Index page generator
-├── templates/
-│   └── wrapper.html                   # HTML template for reports
+├── data/                               # User data (gitignored)
+│   └── reports/                        # Generated analysis reports
+├── Archive/                            # Legacy versions (CLI, Streamlit)
 ├── examples/
 │   └── sample-project/
 │       └── smartplate-idea.md         # Sample project description
@@ -319,19 +245,18 @@ VenturePulse/
 
 ### Report Structure
 
-Each analysis creates **separate HTML files** in a timestamped folder:
+Each analysis creates **separate HTML files**:
 
 ```
-my-idea-analysis-model-20241021-143052/
-├── index.html                          ⭐ Start here (CLI only)
+data/reports/{user_id}/{project_slug}/{analysis_id}/
 ├── section01-executive-summary.html
 ├── section02-market-landscape.html
 ├── section03-user-stories.html
 ├── ... (up to 19 sections)
 ├── section19-pitch-narrative.html
 ├── section20-provenance.html
-├── project-spec.md                     (Web UI)
-└── metadata.json                       (Web UI)
+├── project-spec.md
+└── metadata.json
 ```
 
 ### Key Features
@@ -421,49 +346,6 @@ Since releasing VenturePulse, it's been used for:
 
 ---
 
-## 🛠️ Advanced Usage
-
-### Debug Mode
-
-```bash
-export VENTUREPULSE_DEBUG=1
-./scripts/analyze.sh my-idea.md
-```
-
-Shows token usage, API response details, and generation progress.
-
-### Custom Output Directory
-
-```bash
-./scripts/analyze.sh my-idea.md
-# Automatically creates: my-idea-analysis-20241021-143052/
-```
-
-Timestamped folders preserve multiple analysis runs across the same-model.
-
-### Regenerate Single Section
-
-```bash
-# Regenerate just the Market Landscape report
-cd my-idea-analysis-model-20241021-143052/
-../../scripts/call-openrouter.sh "anthropic/claude-sonnet-4.5" \
-  "$(cat ../prompts/sections/section02-market-landscape.md)" \
-  "$(cat ../my-idea.md)" \
-  > market-landscape.html
-```
-
-### Compare Different Models
-
-```bash
-# Run same idea through free and premium models
-./scripts/analyze.sh my-idea.md google/gemini-2.0-flash-exp:free
-./scripts/analyze.sh my-idea.md anthropic/claude-sonnet-4.5
-
-# Compare the executive summaries
-```
-
----
-
 ## 🔧 Configuration
 
 ### Environment Variables
@@ -471,7 +353,7 @@ cd my-idea-analysis-model-20241021-143052/
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `OPENROUTER_API_KEY` | (required) | Your OpenRouter API key |
-| `PORT` | `8501` | Application port (Streamlit) |
+| `PORT` | `8501` | Application port |
 | `DEFAULT_MODEL` | `anthropic/claude-sonnet-4` | Pre-selected model in UI |
 | `MAXRETRY` | `3` | Maximum retry attempts for failed API calls |
 | `MAX_PARALLEL_SECTIONS` | `10` | Maximum concurrent section generation workers |
@@ -504,24 +386,10 @@ Enable the "Parallel Section Generation" toggle in the UI to generate all sectio
 
 ### Set Default Model
 
-**Web UI:** Set `DEFAULT_MODEL` in your `.env` file:
+Set `DEFAULT_MODEL` in your `.env` file:
 ```bash
 DEFAULT_MODEL=openai/gpt-4o
 ```
-
-**CLI:** Edit `scripts/analyze-script.sh`:
-```bash
-# Change this line:
-DEFAULT_MODEL="google/gemini-2.0-flash-exp:free"
-# To your preferred model
-```
-
-### Adjust API Parameters
-
-Edit `scripts/call-openrouter.sh`:
-- `max_tokens`: 25192 (increase for longer outputs)
-- `temperature`: 0.7 creative, 0.2 precision (varies by section)
-- `top_p`: 0.95 (nucleus sampling)
 
 ### Customize Analysis Sections
 
@@ -537,38 +405,21 @@ Edit prompt files in `prompts/sections/`:
 
 ## 🐛 Troubleshooting
 
-### "OPENROUTER_API_KEY not set"
+### Docker won't start
 ```bash
-export OPENROUTER_API_KEY="your_key_here"
+# Check if Docker is running
+docker info
 
-# For persistence, add to ~/.bashrc or ~/.zshrc:
-echo 'export OPENROUTER_API_KEY="your_key_here"' >> ~/.bashrc
-source ~/.bashrc
+# Rebuild containers
+docker-compose down
+docker-compose build --no-cache
+docker-compose up
 ```
 
-### "jq command not found"
-```bash
-# Mac
-brew install jq
-
-# Linux (Ubuntu/Debian)
-sudo apt-get install jq
-
-# Linux (Fedora/RHEL)
-sudo dnf install jq
-
-# Windows (Git Bash)
-# Download from https://jqlang.github.io/jq/download/
-```
-
-### "curl command not found"
-```bash
-# Mac (should be pre-installed)
-# If missing: xcode-select --install
-
-# Linux
-sudo apt-get install curl
-```
+### Can't log in (OAuth errors)
+- **Dev mode:** Ensure `DEV_MODE=true` in `.env` for local development
+- **Production:** Verify OAuth credentials (GOOGLE_CLIENT_ID, etc.) are correct
+- **Callback URL:** Ensure OAuth app callback URLs match your deployment
 
 ### "Model not found" or "Invalid model"
 - Check model name is exact (case-sensitive)
@@ -578,8 +429,7 @@ sudo apt-get install curl
 ### Section generation fails or returns errors
 - **Check OpenRouter credits:** Visit https://openrouter.ai/credits
 - **Try different model:** Some models have rate limits
-- **Enable debug mode:** `export VENTUREPULSE_DEBUG=1`
-- **Check project file:** Ensure it's readable text/markdown
+- **Check logs:** `docker-compose logs -f`
 
 ### Reports look broken or unstyled
 - Open in modern browser (Chrome, Firefox, Safari, Edge)
@@ -597,7 +447,7 @@ sudo apt-get install curl
 
 ### v2.1 (Current - December 2024)
 - ✅ Expanded to 19 specialized sections (from 8)
-- ✅ Streamlit web UI with multi-model comparison
+- ✅ Web UI with multi-model comparison
 - ✅ Quick (7 sections) / Full (19 sections) / Custom analysis modes
 - ✅ Sequential and parallel model execution
 - ✅ **Parallel section generation** - All sections generated simultaneously
@@ -657,6 +507,7 @@ The generated reports are **yours**—use them however you want.
 
 ## 📗 Links
 
+- **Live Demo:** https://venturepulse.shalusri.com
 - **GitHub:** https://github.com/knightsri/VenturePulse
 - **Issues/Bugs:** https://github.com/knightsri/VenturePulse/issues
 - **Discussions:** https://github.com/knightsri/VenturePulse/discussions
@@ -831,15 +682,14 @@ It's a **strategic thinking tool**, not a crystal ball.
 git clone https://github.com/knightsri/VenturePulse.git
 cd VenturePulse
 
-# 2. Set your API key
-export OPENROUTER_API_KEY="your_key_here"
+# 2. Configure
+cp .env.example .env
+# Edit .env with your OPENROUTER_API_KEY
 
-# 3. Run the example
-./analyze.sh examples/smartplate-idea.md
+# 3. Run with Docker
+docker-compose up
 
-# 4. View the reports
-cd smartplate-idea-analysis-*/
-open executive-summary.html
+# 4. Open http://localhost:8501 and sign in
 ```
 
 **Stop spending weeks on viability analysis. Start building products faster.**
