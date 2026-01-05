@@ -4,6 +4,7 @@ Handles home, browse, public project viewing, and analysis viewing.
 """
 
 import logging
+import re
 from typing import Optional
 
 from fastapi import APIRouter, Request, HTTPException
@@ -22,6 +23,61 @@ settings = get_settings()
 templates = Jinja2Templates(directory=settings.BASE_DIR / "app" / "templates")
 
 router = APIRouter(tags=["public"])
+
+
+def parse_changelog() -> list[dict]:
+    """Parse CHANGELOG.md and return list of releases."""
+    changelog_path = settings.BASE_DIR / "CHANGELOG.md"
+    if not changelog_path.exists():
+        return []
+
+    try:
+        content = changelog_path.read_text(encoding="utf-8")
+    except Exception as e:
+        logger.warning(f"Failed to read CHANGELOG.md: {e}")
+        return []
+
+    releases = []
+    current_release = None
+    current_section = None
+
+    for line in content.split("\n"):
+        # Match release header: ## [2.1.0] - 2026-01-05 - "Comparison"
+        release_match = re.match(r'^## \[(\d+\.\d+\.\d+)\] - (\d{4}-\d{2}-\d{2})(?: - "([^"]+)")?', line)
+        if release_match:
+            if current_release:
+                releases.append(current_release)
+            current_release = {
+                "version": release_match.group(1),
+                "date": release_match.group(2),
+                "name": release_match.group(3),
+                "added": [],
+                "changed": [],
+                "fixed": [],
+                "removed": [],
+            }
+            current_section = None
+            continue
+
+        # Match section header: ### Added, ### Changed, ### Fixed, ### Removed
+        section_match = re.match(r'^### (Added|Changed|Fixed|Removed)', line)
+        if section_match and current_release:
+            current_section = section_match.group(1).lower()
+            continue
+
+        # Match list item: - **Feature**: Description
+        item_match = re.match(r'^- (.+)', line)
+        if item_match and current_release and current_section:
+            item_text = item_match.group(1)
+            # Clean up markdown bold
+            item_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', item_text)
+            current_release[current_section].append(item_text)
+
+    # Don't forget the last release
+    if current_release:
+        releases.append(current_release)
+
+    return releases
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -65,6 +121,23 @@ async def home(request: Request):
                 "total_projects": total_projects,
                 "total_analyses": total_analyses,
             },
+        }
+    )
+
+
+@router.get("/release-notes", response_class=HTMLResponse)
+async def release_notes(request: Request):
+    """Display release notes parsed from CHANGELOG.md."""
+    user = await get_current_user(request)
+    releases = parse_changelog()
+
+    return templates.TemplateResponse(
+        "pages/release_notes.html",
+        {
+            "request": request,
+            "settings": settings,
+            "user": user,
+            "releases": releases,
         }
     )
 

@@ -7,6 +7,8 @@ import html
 from datetime import datetime
 from typing import Dict, List, Optional
 
+from app import __version__
+
 
 def clean_html_output(content: str) -> str:
     """Clean LLM output by removing markdown code fences."""
@@ -206,7 +208,7 @@ def generate_provenance(
                 {timing_row}
                 <tr>
                     <td style="padding: 0.75rem; font-weight: 600;">Tool Version</td>
-                    <td style="padding: 0.75rem;">VenturePulse v2.0</td>
+                    <td style="padding: 0.75rem;">VenturePulse v{__version__}</td>
                 </tr>
             </table>
         </div>

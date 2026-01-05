@@ -14,6 +14,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app import __version__, __version_date__, __version_name__
 from app.config import get_settings
 from app.auth.session import get_current_user
 from app.db.database import init_db, close_db
@@ -41,7 +42,7 @@ settings = get_settings()
 async def lifespan(app: FastAPI):
     """Application lifespan handler for startup and shutdown events."""
     # Startup
-    logger.info("Starting VenturePulse v2...")
+    logger.info(f"Starting VenturePulse v{__version__}...")
 
     # Ensure directories exist
     settings.ensure_directories()
@@ -59,13 +60,13 @@ async def lifespan(app: FastAPI):
         for error in errors:
             logger.warning(f"Configuration warning: {error}")
 
-    logger.info(f"VenturePulse v2 started on port {settings.PORT}")
+    logger.info(f"VenturePulse v{__version__} started on port {settings.PORT}")
     logger.info(f"DEV_MODE: {settings.DEV_MODE}")
 
     yield
 
     # Shutdown
-    logger.info("Shutting down VenturePulse v2...")
+    logger.info(f"Shutting down VenturePulse v{__version__}...")
     await close_db()
 
 
@@ -73,7 +74,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="VenturePulse",
     description="AI-Powered Product Viability Analysis",
-    version="2.0.0",
+    version=__version__,
     lifespan=lifespan,
 )
 
@@ -193,7 +194,7 @@ async def general_exception_handler(request: Request, exc: Exception):
 @app.get("/health")
 async def health_check():
     """Health check endpoint for Docker and load balancers."""
-    return {"status": "healthy", "version": "2.0.0"}
+    return {"status": "healthy", "version": __version__}
 
 
 if __name__ == "__main__":

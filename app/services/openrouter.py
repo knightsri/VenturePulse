@@ -9,6 +9,8 @@ import random
 from typing import Tuple, Dict, Optional
 import httpx
 
+from app import __version__
+
 logger = logging.getLogger(__name__)
 
 # Retry configuration
@@ -130,7 +132,7 @@ async def call_openrouter(
                         "Content-Type": "application/json",
                         "Authorization": f"Bearer {api_key}",
                         "HTTP-Referer": "https://github.com/knightsri/VenturePulse",
-                        "X-Title": "VenturePulse v2.0",
+                        "X-Title": f"VenturePulse v{__version__}",
                     },
                     json={
                         "model": model,

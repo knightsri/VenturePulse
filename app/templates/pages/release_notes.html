@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Release Notes - VenturePulse{% endblock %}
+
+{% block head %}
+<style>
+.release-notes {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.release-notes h1 {
+    margin-bottom: var(--space-6);
+}
+
+.current-version {
+    background: var(--color-primary-light);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.current-version-label {
+    font-size: 0.75rem;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-1);
+}
+
+.current-version-value {
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-gray-900);
+}
+
+.current-version-date {
+    font-size: 0.875rem;
+    color: var(--color-gray-600);
+    margin-top: var(--space-1);
+}
+
+.release {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.release.is-current {
+    border-color: var(--color-primary);
+    border-width: 2px;
+}
+
+.release-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.release-version {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-gray-900);
+}
+
+.release-date {
+    font-size: 0.875rem;
+    color: var(--color-gray-500);
+}
+
+.release-name {
+    background: var(--color-gray-100);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    color: var(--color-gray-600);
+}
+
+.release-section {
+    margin-bottom: var(--space-4);
+}
+
+.release-section:last-child {
+    margin-bottom: 0;
+}
+
+.release-section-title {
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-gray-700);
+    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.release-section-title::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.section-added .release-section-title::before {
+    background: var(--color-success);
+}
+
+.section-changed .release-section-title::before {
+    background: var(--color-info);
+}
+
+.section-fixed .release-section-title::before {
+    background: var(--color-warning);
+}
+
+.section-removed .release-section-title::before {
+    background: var(--color-danger);
+}
+
+.release-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.release-items li {
+    padding: var(--space-2) 0;
+    padding-left: var(--space-4);
+    border-bottom: 1px solid var(--color-gray-100);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+}
+
+.release-items li:last-child {
+    border-bottom: none;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="release-notes">
+        <h1>Release Notes</h1>
+
+        <div class="current-version">
+            <div class="current-version-label">Currently Running</div>
+            <div class="current-version-value">v{{ settings.VERSION }} "{{ settings.VERSION_NAME }}"</div>
+            <div class="current-version-date">Released {{ settings.VERSION_DATE }}</div>
+        </div>
+
+        {% for release in releases %}
+        <div class="release {% if release.version == settings.VERSION %}is-current{% endif %}">
+            <div class="release-header">
+                <span class="release-version">v{{ release.version }}</span>
+                <span class="release-date">{{ release.date }}</span>
+                {% if release.name %}
+                <span class="release-name">"{{ release.name }}"</span>
+                {% endif %}
+            </div>
+
+            {% if release.added %}
+            <div class="release-section section-added">
+                <div class="release-section-title">Added</div>
+                <ul class="release-items">
+                    {% for item in release.added %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if release.changed %}
+            <div class="release-section section-changed">
+                <div class="release-section-title">Changed</div>
+                <ul class="release-items">
+                    {% for item in release.changed %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if release.fixed %}
+            <div class="release-section section-fixed">
+                <div class="release-section-title">Fixed</div>
+                <ul class="release-items">
+                    {% for item in release.fixed %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if release.removed %}
+            <div class="release-section section-removed">
+                <div class="release-section-title">Removed</div>
+                <ul class="release-items">
+                    {% for item in release.removed %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <div class="text-center mt-6">
+            <a href="https://github.com/knightsri/VenturePulse/blob/main/CHANGELOG.md"
+               class="btn btn-secondary" target="_blank" rel="noopener">
+                View Full Changelog on GitHub
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

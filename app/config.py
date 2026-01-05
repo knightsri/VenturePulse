@@ -9,6 +9,8 @@ from pathlib import Path
 from functools import lru_cache
 from dotenv import load_dotenv
 
+from app import __version__, __version_date__, __version_name__
+
 # Load .env file
 load_dotenv()
 
@@ -58,6 +60,11 @@ class Settings:
     MAX_TOKENS: int = 25192
     TEMPERATURE: float = 0.7
     TOP_P: float = 0.95
+
+    # Version info (from app/__init__.py)
+    VERSION: str = __version__
+    VERSION_DATE: str = __version_date__
+    VERSION_NAME: str = __version_name__
 
     @property
     def database_path(self) -> Path:
