@@ -16,7 +16,7 @@ from app.config import get_settings
 from app.db.database import get_session_factory
 from app.db.models import Analysis, Project
 from app.services.analysis_engine import run_analysis
-from app.services.report import format_cost, format_time
+from app.services.report import format_cost, format_time, generate_provenance
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -261,6 +261,121 @@ def get_running_analysis_ids() -> List[int]:
     ]
 
 
+async def finalize_analysis(analysis_id: int) -> bool:
+    """
+    Finalize an analysis by generating provenance if missing.
+
+    This handles the case where all sections completed but provenance
+    wasn't generated (e.g., due to a container restart).
+
+    Returns True if finalization was successful.
+    """
+    logger.info(f"Finalizing analysis {analysis_id}...")
+
+    try:
+        async with get_session_factory()() as db:
+            result = await db.execute(
+                select(Analysis)
+                .options(selectinload(Analysis.project))
+                .where(Analysis.id == analysis_id)
+            )
+            analysis = result.scalar_one_or_none()
+
+            if not analysis:
+                logger.error(f"Analysis {analysis_id} not found")
+                return False
+
+            # Check if provenance already exists
+            output_dir = Path(settings.BASE_DIR) / analysis.report_folder_path
+            provenance_path = output_dir / "section20-provenance.html"
+
+            if provenance_path.exists():
+                logger.info(f"Provenance already exists for analysis {analysis_id}")
+                # Just mark as complete if stuck in running
+                if analysis.status == "running":
+                    analysis.status = "completed"
+                    analysis.completed_at = analysis.completed_at or datetime.utcnow()
+                    analysis.api_key_temp = None
+                    await db.commit()
+                return True
+
+            # Build cost data from analysis record
+            total_cost = analysis.total_cost_usd or 0
+            total_tokens = analysis.total_tokens or 0
+            section_costs = []
+
+            if analysis.cost_breakdown and "section_costs" in analysis.cost_breakdown:
+                section_costs = analysis.cost_breakdown["section_costs"]
+            elif analysis.sections_completed:
+                # Build section_costs from sections_completed
+                for key, data in analysis.sections_completed.items():
+                    if isinstance(data, dict) and data.get("status") == "completed":
+                        section_num = key.replace("section", "")
+                        section_costs.append({
+                            "section": section_num,
+                            "cost": data.get("cost", 0),
+                            "tokens": data.get("tokens", 0),
+                            "elapsed": data.get("elapsed", 0),
+                        })
+
+            total_retries = 0
+            if analysis.cost_breakdown and "total_retries" in analysis.cost_breakdown:
+                total_retries = analysis.cost_breakdown["total_retries"]
+
+            # Calculate total elapsed time
+            total_elapsed = 0
+            if analysis.started_at and analysis.completed_at:
+                total_elapsed = (analysis.completed_at - analysis.started_at).total_seconds()
+            elif analysis.started_at:
+                total_elapsed = (datetime.utcnow() - analysis.started_at).total_seconds()
+
+            cost_data = {
+                "total_cost": total_cost,
+                "total_tokens": total_tokens,
+                "section_costs": section_costs,
+                "total_retries": total_retries,
+            }
+
+            timing_data = {
+                "total_seconds": total_elapsed,
+                "total_formatted": format_time(total_elapsed),
+            }
+
+            # Generate provenance
+            provenance_html = generate_provenance(
+                analysis.project.name,
+                analysis.model_name,
+                cost_data=cost_data,
+                timing_data=timing_data,
+                execution_mode="Sequential",
+                parallel_workers=None,
+                failed_sections=[],
+            )
+
+            # Write provenance file
+            output_dir.mkdir(parents=True, exist_ok=True)
+            provenance_path.write_text(provenance_html, encoding="utf-8")
+
+            # Update analysis record
+            analysis.status = "completed"
+            analysis.completed_at = analysis.completed_at or datetime.utcnow()
+            analysis.api_key_temp = None
+
+            # Add provenance to sections_completed
+            sections = analysis.sections_completed or {}
+            sections["section20"] = {"status": "completed"}
+            analysis.sections_completed = sections
+
+            await db.commit()
+
+            logger.info(f"Successfully finalized analysis {analysis_id}")
+            return True
+
+    except Exception as e:
+        logger.exception(f"Failed to finalize analysis {analysis_id}: {e}")
+        return False
+
+
 async def recover_interrupted_analyses():
     """
     Resume analyses that were interrupted by a restart.
@@ -308,12 +423,9 @@ async def recover_interrupted_analyses():
                                     sections_to_run.append(value["section_num"])
 
                     if not sections_to_run:
-                        # All sections were completed, mark as completed
-                        logger.info(f"Analysis {analysis.id} has no pending sections, marking complete")
-                        analysis.status = "completed"
-                        analysis.completed_at = datetime.utcnow()
-                        analysis.api_key_temp = None
-                        await db.commit()
+                        # All sections were completed, finalize (generate provenance)
+                        logger.info(f"Analysis {analysis.id} has no pending sections, finalizing...")
+                        await finalize_analysis(analysis.id)
                         continue
 
                     logger.info(

@@ -18,7 +18,7 @@ from app.db.database import get_session_factory
 from app.db.models import User, Project, Analysis, SectionFeedback
 from app.auth.decorators import require_approved
 from app.services.apikey import has_api_key, get_masked_api_key, get_api_key
-from app.services.background import start_analysis_task, cancel_analysis_task, is_analysis_running
+from app.services.background import start_analysis_task, cancel_analysis_task, is_analysis_running, finalize_analysis
 from app.services.report import format_cost, format_time
 from app.services.preferences import get_user_preferred_models, save_user_preferred_models
 from app.services.scoring import extract_analysis_metrics, recalculate_dimension_scores, get_comparable_dimensions
@@ -344,6 +344,53 @@ async def cancel_analysis(
             await db.commit()
             logger.info(f"Cancelled analysis {analysis_id}")
 
+    return RedirectResponse(url=f"/analysis/{analysis_id}", status_code=303)
+
+
+@router.post("/analysis/{analysis_id}/finalize")
+async def finalize_analysis_route(
+    request: Request,
+    analysis_id: int,
+    user: User = Depends(require_approved),
+):
+    """
+    Finalize a stuck analysis by generating provenance.
+
+    This is useful when an analysis completed all sections but didn't
+    generate the provenance file (e.g., due to a container restart).
+    """
+    async with get_session_factory()() as db:
+        result = await db.execute(
+            select(Analysis)
+            .options(selectinload(Analysis.project))
+            .where(Analysis.id == analysis_id)
+        )
+        analysis = result.scalar_one_or_none()
+
+        if not analysis:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+
+        # Check permissions
+        is_owner = user.id == analysis.project.user_id
+        is_admin = user.is_admin
+
+        if not is_owner and not is_admin:
+            raise HTTPException(status_code=403, detail="Access denied")
+
+        # Only allow finalizing running/stuck analyses
+        if analysis.status not in ("running", "pending"):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Cannot finalize analysis with status '{analysis.status}'"
+            )
+
+    # Run finalization
+    success = await finalize_analysis(analysis_id)
+
+    if not success:
+        raise HTTPException(status_code=500, detail="Failed to finalize analysis")
+
+    logger.info(f"Finalized analysis {analysis_id} via user request")
     return RedirectResponse(url=f"/analysis/{analysis_id}", status_code=303)
 
 

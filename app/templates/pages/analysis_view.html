@@ -318,6 +318,14 @@
             {% if is_owner or is_admin %}
             <div class="flex gap-2">
                 <a href="/project/{{ project.slug }}/analyze" class="btn btn-primary btn-sm">New Analysis</a>
+                {% if analysis.status == 'running' and not is_running %}
+                <form action="/analysis/{{ analysis.id }}/finalize" method="POST"
+                      onsubmit="return confirm('Finalize this analysis? This will generate the provenance section.');">
+                    <button type="submit" class="btn btn-secondary btn-sm" title="Analysis appears stuck - click to finalize">
+                        Finalize
+                    </button>
+                </form>
+                {% endif %}
                 <form action="/analysis/{{ analysis.id }}/delete" method="POST"
                       onsubmit="return confirm('Delete this analysis? This cannot be undone.');">
                     <button type="submit" class="btn btn-outline btn-sm" style="color: var(--color-error); border-color: var(--color-error);">
