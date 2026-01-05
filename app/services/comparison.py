@@ -125,7 +125,7 @@ def analyze_cost_vs_quality(
 
     # Calculate overall quality score (average of all dimensions)
     def overall_quality(a: AnalysisMetrics) -> float:
-        scores = list(a.dimension_scores.values())
+        scores = [s for s in a.dimension_scores.values() if s is not None]
         return sum(scores) / len(scores) if scores else 0
 
     # Best value: highest quality/cost ratio
@@ -269,7 +269,7 @@ def create_scatter_chart(analyses: list[AnalysisMetrics]) -> str:
         return "{}"
 
     def overall_quality(a: AnalysisMetrics) -> float:
-        scores = list(a.dimension_scores.values())
+        scores = [s for s in a.dimension_scores.values() if s is not None]
         return sum(scores) / len(scores) if scores else 0
 
     fig = go.Figure()
