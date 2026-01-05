@@ -11,6 +11,7 @@ from typing import Dict, List
 
 from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
+from sqlalchemy.orm.attributes import flag_modified
 
 from app.config import get_settings
 from app.db.database import get_session_factory
@@ -110,10 +111,14 @@ async def execute_analysis(
                                 sections[section_key] = {
                                     "status": status,
                                     "message": message,
+                                    "section_num": section_key.replace("section", ""),
                                     "updated_at": datetime.utcnow().isoformat(),
                                 }
                                 analysis_record.sections_completed = sections
+                                # Flag JSON column as modified for SQLAlchemy detection
+                                flag_modified(analysis_record, "sections_completed")
                                 await progress_db.commit()
+                                logger.debug(f"Updated section {section_key} status to {status}")
                 except Exception as e:
                     logger.warning(f"Failed to update progress: {e}")
 
@@ -408,19 +413,44 @@ async def recover_interrupted_analyses():
 
             for analysis in interrupted:
                 try:
-                    # Get sections to run from sections_completed
+                    # Check which section files actually exist on disk
+                    output_dir = Path(settings.BASE_DIR) / analysis.report_folder_path
+                    sections_on_disk = set()
+                    if output_dir.exists():
+                        for f in output_dir.glob("section*.html"):
+                            # Extract section number from filename like "section01-executive-summary.html"
+                            match = f.stem.split("-")[0]  # "section01"
+                            if match.startswith("section"):
+                                sections_on_disk.add(match.replace("section", ""))
+
+                    # Update sections_completed based on files on disk
+                    sections = analysis.sections_completed or {}
+                    updated = False
+                    for key, value in list(sections.items()):
+                        if key.startswith("section") and key != "section20":
+                            section_num = key.replace("section", "")
+                            if section_num in sections_on_disk:
+                                # File exists, mark as completed
+                                if isinstance(value, dict) and value.get("status") != "completed":
+                                    sections[key]["status"] = "completed"
+                                    updated = True
+                                    logger.info(f"Analysis {analysis.id}: Section {section_num} file exists, marking complete")
+
+                    if updated:
+                        analysis.sections_completed = sections
+                        flag_modified(analysis, "sections_completed")
+                        await db.commit()
+
+                    # Get sections to run - only those not completed AND not on disk
                     sections_to_run = []
                     if analysis.sections_completed:
                         for key, value in analysis.sections_completed.items():
                             if key.startswith("section") and key != "section20":
-                                # Extract section number
                                 section_num = key.replace("section", "")
-                                # Only re-run if not completed
-                                if isinstance(value, dict) and value.get("status") != "completed":
-                                    sections_to_run.append(section_num)
-                                elif isinstance(value, dict) and "section_num" in value:
-                                    # Pending section
-                                    sections_to_run.append(value["section_num"])
+                                # Only re-run if not completed AND file doesn't exist
+                                if section_num not in sections_on_disk:
+                                    if isinstance(value, dict) and value.get("status") != "completed":
+                                        sections_to_run.append(section_num)
 
                     if not sections_to_run:
                         # All sections were completed, finalize (generate provenance)
