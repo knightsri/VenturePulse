@@ -15,12 +15,14 @@ from sqlalchemy.orm import selectinload
 
 from app.config import get_settings
 from app.db.database import get_session_factory
-from app.db.models import User, Project, Analysis
+from app.db.models import User, Project, Analysis, SectionFeedback
 from app.auth.decorators import require_approved
 from app.services.apikey import has_api_key, get_masked_api_key, get_api_key
 from app.services.background import start_analysis_task, cancel_analysis_task, is_analysis_running
 from app.services.report import format_cost, format_time
 from app.services.preferences import get_user_preferred_models, save_user_preferred_models
+from app.services.scoring import extract_analysis_metrics, recalculate_dimension_scores, get_comparable_dimensions
+from app.services.comparison import compare_analyses
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -534,6 +536,354 @@ async def view_analysis(
                 "format_time": format_time,
             }
         )
+
+
+# ============================================================================
+# Section Feedback Endpoints
+# ============================================================================
+
+@router.post("/api/analysis/{analysis_id}/sections/{section_key}/feedback")
+async def submit_section_feedback(
+    request: Request,
+    analysis_id: int,
+    section_key: str,
+    rating: int = Form(...),
+):
+    """
+    Submit or update a rating for a section.
+
+    Args:
+        analysis_id: The analysis ID
+        section_key: Section key (e.g., "section01-executive-summary")
+        rating: 1 for thumbs up, -1 for thumbs down
+    """
+    from app.auth.decorators import get_current_user
+
+    user = await get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    # Validate rating
+    if rating not in (1, -1):
+        raise HTTPException(status_code=400, detail="Rating must be 1 or -1")
+
+    async with get_session_factory()() as db:
+        # Get analysis with project
+        result = await db.execute(
+            select(Analysis)
+            .options(selectinload(Analysis.project))
+            .where(Analysis.id == analysis_id)
+        )
+        analysis = result.scalar_one_or_none()
+
+        if not analysis:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+
+        # Check access: must be public project, owner, or admin to rate
+        is_owner = user.id == analysis.project.user_id
+        is_admin = user.is_admin
+
+        if not analysis.project.is_public and not is_owner and not is_admin:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+
+        # Check if feedback already exists
+        result = await db.execute(
+            select(SectionFeedback).where(
+                SectionFeedback.analysis_id == analysis_id,
+                SectionFeedback.user_id == user.id,
+                SectionFeedback.section_key == section_key,
+            )
+        )
+        existing = result.scalar_one_or_none()
+
+        if existing:
+            # Update existing rating
+            existing.rating = rating
+            await db.commit()
+        else:
+            # Create new feedback
+            feedback = SectionFeedback(
+                analysis_id=analysis_id,
+                user_id=user.id,
+                section_key=section_key,
+                rating=rating,
+            )
+            db.add(feedback)
+            await db.commit()
+
+        # Determine if this user is the project owner (author)
+        is_author = user.id == analysis.project.user_id
+
+        return JSONResponse({
+            "success": True,
+            "is_author": is_author,
+            "rating": rating,
+        })
+
+
+@router.delete("/api/analysis/{analysis_id}/sections/{section_key}/feedback")
+async def delete_section_feedback(
+    request: Request,
+    analysis_id: int,
+    section_key: str,
+):
+    """
+    Remove a rating for a section.
+    """
+    from app.auth.decorators import get_current_user
+
+    user = await get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    async with get_session_factory()() as db:
+        result = await db.execute(
+            select(SectionFeedback).where(
+                SectionFeedback.analysis_id == analysis_id,
+                SectionFeedback.user_id == user.id,
+                SectionFeedback.section_key == section_key,
+            )
+        )
+        feedback = result.scalar_one_or_none()
+
+        if feedback:
+            await db.delete(feedback)
+            await db.commit()
+
+        return JSONResponse({"success": True})
+
+
+@router.get("/api/analysis/{analysis_id}/feedback")
+async def get_analysis_feedback(
+    request: Request,
+    analysis_id: int,
+):
+    """
+    Get all feedback for an analysis.
+    Returns the current user's ratings and a summary.
+    """
+    from app.auth.decorators import get_current_user
+
+    user = await get_current_user(request)
+
+    async with get_session_factory()() as db:
+        # Get analysis with project
+        result = await db.execute(
+            select(Analysis)
+            .options(selectinload(Analysis.project))
+            .where(Analysis.id == analysis_id)
+        )
+        analysis = result.scalar_one_or_none()
+
+        if not analysis:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+
+        # Check access
+        is_owner = user and user.id == analysis.project.user_id
+        is_admin = user and user.is_admin
+
+        if not analysis.project.is_public and not is_owner and not is_admin:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+
+        project_owner_id = analysis.project.user_id
+
+        # Get all feedbacks for this analysis
+        result = await db.execute(
+            select(SectionFeedback).where(SectionFeedback.analysis_id == analysis_id)
+        )
+        all_feedbacks = result.scalars().all()
+
+        # Separate author vs viewer feedbacks
+        author_feedbacks = [f for f in all_feedbacks if f.user_id == project_owner_id]
+        viewer_feedbacks = [f for f in all_feedbacks if f.user_id != project_owner_id]
+
+        # Get current user's ratings
+        user_ratings = {}
+        if user:
+            for f in all_feedbacks:
+                if f.user_id == user.id:
+                    user_ratings[f.section_key] = f.rating
+
+        # Calculate summary stats
+        author_thumbs_up = sum(1 for f in author_feedbacks if f.rating == 1)
+        author_thumbs_down = sum(1 for f in author_feedbacks if f.rating == -1)
+        author_total = len(author_feedbacks)
+        author_rating = round((author_thumbs_up / author_total) * 10, 1) if author_total > 0 else None
+
+        return JSONResponse({
+            "user_ratings": user_ratings,
+            "is_owner": is_owner,
+            "summary": {
+                "author_thumbs_up": author_thumbs_up,
+                "author_thumbs_down": author_thumbs_down,
+                "author_total": author_total,
+                "author_rating": author_rating,
+                "viewer_count": len(set(f.user_id for f in viewer_feedbacks)),
+            }
+        })
+
+
+# ============================================================================
+# Comparison API Endpoints
+# ============================================================================
+
+@router.get("/api/projects/{project_id}/comparison")
+async def get_project_comparison(
+    request: Request,
+    project_id: int,
+    analysis_ids: str,  # Comma-separated list of analysis IDs
+):
+    """
+    Get comparison data for multiple analyses in a project.
+
+    Args:
+        project_id: The project ID
+        analysis_ids: Comma-separated list of analysis IDs (e.g., "1,2,3")
+
+    Returns:
+        JSON with comparison metrics, recommendations, and chart data
+    """
+    from app.auth.decorators import get_current_user
+
+    user = await get_current_user(request)
+
+    # Parse analysis IDs
+    try:
+        ids = [int(x.strip()) for x in analysis_ids.split(",") if x.strip()]
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid analysis_ids format")
+
+    if len(ids) < 2:
+        raise HTTPException(status_code=400, detail="At least 2 analyses required for comparison")
+
+    if len(ids) > 8:
+        raise HTTPException(status_code=400, detail="Maximum 8 analyses for comparison")
+
+    async with get_session_factory()() as db:
+        # Get project
+        result = await db.execute(
+            select(Project).where(Project.id == project_id)
+        )
+        project = result.scalar_one_or_none()
+
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+
+        # Check access
+        is_owner = user and user.id == project.user_id
+        is_admin = user and user.is_admin
+
+        if not project.is_public and not is_owner and not is_admin:
+            raise HTTPException(status_code=404, detail="Project not found")
+
+        # Get all requested analyses
+        result = await db.execute(
+            select(Analysis)
+            .options(selectinload(Analysis.feedbacks))
+            .where(
+                Analysis.id.in_(ids),
+                Analysis.project_id == project_id,
+                Analysis.status == "completed"
+            )
+        )
+        analyses = result.scalars().all()
+
+        if len(analyses) < 2:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Found only {len(analyses)} completed analyses. Need at least 2 for comparison."
+            )
+
+        # Extract metrics from each analysis
+        project_owner_id = project.user_id
+        analyses_metrics = []
+
+        for analysis in analyses:
+            # Get author feedbacks (from project owner)
+            author_feedbacks = [
+                {"section_key": f.section_key, "rating": f.rating}
+                for f in analysis.feedbacks
+                if f.user_id == project_owner_id
+            ]
+
+            # Count viewers who rated (non-owner)
+            viewer_ids = set(
+                f.user_id for f in analysis.feedbacks
+                if f.user_id != project_owner_id
+            )
+            viewer_count = len(viewer_ids)
+
+            # Get report folder
+            report_folder = None
+            if analysis.report_folder_path:
+                report_folder = str(settings.BASE_DIR / analysis.report_folder_path)
+
+            metrics = extract_analysis_metrics(
+                analysis_id=analysis.id,
+                model_name=analysis.model_name,
+                report_folder=report_folder,
+                total_cost_usd=analysis.total_cost_usd or 0.0,
+                total_tokens=analysis.total_tokens or 0,
+                started_at=analysis.started_at,
+                completed_at=analysis.completed_at,
+                author_feedbacks=author_feedbacks,
+                viewer_count=viewer_count,
+            )
+            analyses_metrics.append(metrics)
+
+        # Check which dimensions can be fairly compared
+        comparable_dims, skipped_dims, sections_differ = get_comparable_dimensions(analyses_metrics)
+
+        # Recalculate dimension scores with proper normalization (only for comparable dimensions)
+        analyses_metrics = recalculate_dimension_scores(analyses_metrics, only_dimensions=comparable_dims)
+
+        # Generate comparison with warning info
+        comparison = compare_analyses(
+            analyses_metrics,
+            comparable_dimensions=comparable_dims,
+            skipped_dimensions=skipped_dims,
+            sections_differ=sections_differ
+        )
+
+        # Format response
+        return JSONResponse({
+            "project_id": project_id,
+            "analysis_count": len(analyses_metrics),
+            "analyses": [
+                {
+                    "id": m.analysis_id,
+                    "model_name": m.model_name,
+                    "total_cost_usd": m.total_cost_usd,
+                    "total_tokens": m.total_tokens,
+                    "generation_time_seconds": m.generation_time_seconds,
+                    "dimension_scores": {k: v for k, v in m.dimension_scores.items() if v is not None},
+                    "author_rating": m.author_rating,
+                    "author_sections_rated": m.author_sections_rated,
+                    "viewer_count": m.viewer_count,
+                    "section_count": len(m.available_sections),
+                }
+                for m in analyses_metrics
+            ],
+            "comparison": {
+                "averages": comparison.averages,
+                "spreads": comparison.spreads,
+                "consensus_areas": comparison.consensus_areas,
+                "disagreement_areas": comparison.disagreement_areas,
+                "recommendation": comparison.recommendation,
+                "best_value_model": comparison.best_value_model,
+                "highest_quality_model": comparison.highest_quality_model,
+                "lowest_cost_model": comparison.lowest_cost_model,
+                "authors_choice_model": comparison.owners_pick_model,
+                "sections_differ": comparison.sections_differ,
+                "skipped_dimensions": comparison.skipped_dimensions,
+                "warning_message": comparison.warning_message,
+            },
+            "charts": {
+                "radar": comparison.radar_chart_json,
+                "scatter": comparison.scatter_chart_json,
+                "bar": comparison.bar_chart_json,
+            }
+        })
 
 
 # Export section configuration for use by other modules

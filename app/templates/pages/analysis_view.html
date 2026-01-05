@@ -156,6 +156,76 @@
         border: none;
         min-height: 600px;
     }
+
+    /* Feedback UI Styles */
+    .feedback-bar {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-4);
+        background: var(--color-gray-50);
+        border: 1px solid var(--color-gray-200);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--space-4);
+    }
+
+    .feedback-label {
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-600);
+        flex-shrink: 0;
+    }
+
+    .feedback-buttons {
+        display: flex;
+        gap: var(--space-2);
+    }
+
+    .feedback-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 2px solid var(--color-gray-300);
+        border-radius: var(--radius-md);
+        background: var(--color-white);
+        cursor: pointer;
+        font-size: 1.25rem;
+        transition: all 0.15s ease;
+    }
+
+    .feedback-btn:hover {
+        border-color: var(--color-gray-400);
+        background: var(--color-gray-50);
+    }
+
+    .feedback-btn.selected-up {
+        border-color: var(--color-success);
+        background: var(--color-success-light);
+    }
+
+    .feedback-btn.selected-down {
+        border-color: var(--color-danger);
+        background: var(--color-danger-light);
+    }
+
+    .feedback-status {
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-500);
+        margin-left: auto;
+    }
+
+    .feedback-status.saving {
+        color: var(--color-primary);
+    }
+
+    .feedback-summary {
+        font-size: var(--font-size-sm);
+        color: var(--color-gray-600);
+        margin-left: var(--space-4);
+        padding-left: var(--space-4);
+        border-left: 1px solid var(--color-gray-200);
+    }
 </style>
 {% endblock %}
 
@@ -286,6 +356,31 @@
         <!-- Section Content -->
         <main class="section-content">
             {% if section_content %}
+                <!-- Feedback Bar (only show for logged in users) -->
+                {% if user and selected_section and selected_section.num != "20" %}
+                <div class="feedback-bar" id="feedback-bar">
+                    <span class="feedback-label">Rate this section:</span>
+                    <div class="feedback-buttons">
+                        <button type="button"
+                                class="feedback-btn"
+                                id="thumbs-up-btn"
+                                onclick="submitFeedback(1)"
+                                title="Thumbs up">
+                            <span>+</span>
+                        </button>
+                        <button type="button"
+                                class="feedback-btn"
+                                id="thumbs-down-btn"
+                                onclick="submitFeedback(-1)"
+                                title="Thumbs down">
+                            <span>-</span>
+                        </button>
+                    </div>
+                    <span class="feedback-status" id="feedback-status"></span>
+                    <span class="feedback-summary" id="feedback-summary"></span>
+                </div>
+                {% endif %}
+
                 <div id="section-content">
                     {{ section_content|safe }}
                 </div>
@@ -429,6 +524,121 @@ pollInterval = setInterval(checkProgress, 2000);
 
 // Initial check immediately
 checkProgress();
+</script>
+{% endif %}
+
+{% if user and selected_section and selected_section.num != "20" %}
+<script>
+// Feedback functionality
+const feedbackAnalysisId = {{ analysis.id }};
+const currentSectionKey = "section{{ selected_section.num }}-{{ selected_section.slug }}";
+let currentRating = null;
+
+// Load existing feedback on page load
+async function loadFeedback() {
+    try {
+        const response = await fetch(`/api/analysis/${feedbackAnalysisId}/feedback`);
+        if (response.ok) {
+            const data = await response.json();
+
+            // Set current rating if exists
+            if (data.user_ratings && data.user_ratings[currentSectionKey] !== undefined) {
+                currentRating = data.user_ratings[currentSectionKey];
+                updateFeedbackUI();
+            }
+
+            // Show summary for project owner
+            if (data.is_owner && data.summary) {
+                const summary = data.summary;
+                const summaryEl = document.getElementById('feedback-summary');
+                if (summaryEl && summary.author_total > 0) {
+                    summaryEl.textContent = `Your ratings: ${summary.author_thumbs_up} up / ${summary.author_thumbs_down} down`;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error loading feedback:', error);
+    }
+}
+
+// Submit feedback
+async function submitFeedback(rating) {
+    const statusEl = document.getElementById('feedback-status');
+
+    // If clicking the same rating, remove it (toggle off)
+    if (currentRating === rating) {
+        statusEl.textContent = 'Removing...';
+        statusEl.className = 'feedback-status saving';
+
+        try {
+            const response = await fetch(`/api/analysis/${feedbackAnalysisId}/sections/${currentSectionKey}/feedback`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                currentRating = null;
+                updateFeedbackUI();
+                statusEl.textContent = 'Removed';
+                setTimeout(() => { statusEl.textContent = ''; }, 1500);
+            } else {
+                statusEl.textContent = 'Error';
+            }
+        } catch (error) {
+            console.error('Error removing feedback:', error);
+            statusEl.textContent = 'Error';
+        }
+        return;
+    }
+
+    // Submit new rating
+    statusEl.textContent = 'Saving...';
+    statusEl.className = 'feedback-status saving';
+
+    try {
+        const formData = new FormData();
+        formData.append('rating', rating);
+
+        const response = await fetch(`/api/analysis/${feedbackAnalysisId}/sections/${currentSectionKey}/feedback`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            currentRating = rating;
+            updateFeedbackUI();
+            statusEl.textContent = 'Saved';
+            statusEl.className = 'feedback-status';
+            setTimeout(() => { statusEl.textContent = ''; }, 1500);
+        } else {
+            const error = await response.json();
+            statusEl.textContent = error.detail || 'Error';
+            statusEl.className = 'feedback-status';
+        }
+    } catch (error) {
+        console.error('Error submitting feedback:', error);
+        statusEl.textContent = 'Error';
+        statusEl.className = 'feedback-status';
+    }
+}
+
+// Update UI to reflect current rating
+function updateFeedbackUI() {
+    const upBtn = document.getElementById('thumbs-up-btn');
+    const downBtn = document.getElementById('thumbs-down-btn');
+
+    upBtn.classList.remove('selected-up');
+    downBtn.classList.remove('selected-down');
+
+    if (currentRating === 1) {
+        upBtn.classList.add('selected-up');
+    } else if (currentRating === -1) {
+        downBtn.classList.add('selected-down');
+    }
+}
+
+// Load feedback on page ready
+document.addEventListener('DOMContentLoaded', loadFeedback);
 </script>
 {% endif %}
 {% endblock %}

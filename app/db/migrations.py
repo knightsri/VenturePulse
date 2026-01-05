@@ -35,6 +35,7 @@ async def run_migrations() -> None:
     # Run migrations
     await migration_001_add_preferred_models()
     await migration_002_add_api_key_temp()
+    await migration_003_create_section_feedbacks()
 
     logger.info("Migrations complete")
 
@@ -77,3 +78,37 @@ async def migration_002_add_api_key_temp() -> None:
                 "ALTER TABLE analyses ADD COLUMN api_key_temp VARCHAR(500)"
             ))
             logger.info("Migration 002: Added api_key_temp to analyses table")
+
+
+async def migration_003_create_section_feedbacks() -> None:
+    """Create section_feedbacks table for user ratings on analysis sections."""
+    engine = get_engine()
+    async with engine.begin() as conn:
+        # Check if table exists first (SQLite)
+        result = await conn.execute(text(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='section_feedbacks'"
+        ))
+        if result.scalar() == 0:
+            await conn.execute(text("""
+                CREATE TABLE section_feedbacks (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    analysis_id INTEGER NOT NULL REFERENCES analyses(id) ON DELETE CASCADE,
+                    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    section_key VARCHAR(100) NOT NULL,
+                    rating INTEGER NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                    UNIQUE(analysis_id, user_id, section_key)
+                )
+            """))
+            # Create indexes for faster lookups
+            await conn.execute(text(
+                "CREATE INDEX ix_section_feedbacks_analysis_id ON section_feedbacks(analysis_id)"
+            ))
+            await conn.execute(text(
+                "CREATE INDEX ix_section_feedbacks_user_id ON section_feedbacks(user_id)"
+            ))
+            await conn.execute(text(
+                "CREATE INDEX ix_section_feedbacks_section_key ON section_feedbacks(section_key)"
+            ))
+            logger.info("Migration 003: Created section_feedbacks table")

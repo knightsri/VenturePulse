@@ -73,40 +73,56 @@
     <div class="grid grid-2" style="gap: var(--space-8);">
         <!-- Analyses Section -->
         <div>
-            <h2 class="mb-4">Analyses</h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2>Analyses</h2>
+                {% if completed_count >= 2 %}
+                <button id="compare-btn" class="btn btn-secondary btn-sm" onclick="openComparison()" disabled>
+                    Compare Selected (0)
+                </button>
+                {% endif %}
+            </div>
 
             {% if analyses %}
                 <div style="display: flex; flex-direction: column; gap: var(--space-4);">
                     {% for analysis in analyses %}
-                        <a href="/analysis/{{ analysis.id }}" class="card-link" style="text-decoration: none;">
-                            <div class="card">
-                                <div class="card-accent card-accent-{% if analysis.status == 'completed' %}blue{% elif analysis.status == 'running' %}yellow{% elif analysis.status == 'failed' %}red{% else %}default{% endif %}"></div>
-                                <div class="flex justify-between items-start">
+                        <div class="card analysis-card" style="position: relative;">
+                            <div class="card-accent card-accent-{% if analysis.status == 'completed' %}blue{% elif analysis.status == 'running' %}yellow{% elif analysis.status == 'failed' %}red{% else %}default{% endif %}"></div>
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start gap-3">
+                                    {% if analysis.status == 'completed' %}
+                                    <input type="checkbox"
+                                           class="compare-checkbox"
+                                           value="{{ analysis.id }}"
+                                           onchange="updateCompareSelection()"
+                                           style="margin-top: 4px; width: 18px; height: 18px; cursor: pointer;">
+                                    {% endif %}
                                     <div>
-                                        <h4 class="card-title mb-1">{{ analysis.model_name }}</h4>
+                                        <a href="/analysis/{{ analysis.id }}" class="card-title-link">
+                                            <h4 class="card-title mb-1">{{ analysis.model_name }}</h4>
+                                        </a>
                                         <div class="text-muted" style="font-size: 0.875rem;">
                                             {{ analysis.started_at.strftime('%b %d, %Y at %H:%M') }}
                                         </div>
                                     </div>
-                                    <span class="badge badge-{{ analysis.status }}">
-                                        {{ analysis.status|capitalize }}
-                                    </span>
                                 </div>
-                                {% if analysis.status == 'completed' %}
-                                    <div class="flex gap-4 mt-3 text-muted" style="font-size: 0.875rem;">
-                                        {% if analysis.total_cost_usd %}
-                                            <span>${{ '%.4f'|format(analysis.total_cost_usd) }}</span>
-                                        {% endif %}
-                                        {% if analysis.total_tokens %}
-                                            <span>{{ analysis.total_tokens|default(0) }} tokens</span>
-                                        {% endif %}
-                                        {% if analysis.sections_completed %}
-                                            <span>{{ analysis.sections_completed|length }} sections</span>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
+                                <span class="badge badge-{{ analysis.status }}">
+                                    {{ analysis.status|capitalize }}
+                                </span>
                             </div>
-                        </a>
+                            {% if analysis.status == 'completed' %}
+                                <div class="flex gap-4 mt-3 text-muted" style="font-size: 0.875rem; margin-left: 30px;">
+                                    {% if analysis.total_cost_usd %}
+                                        <span>${{ '%.4f'|format(analysis.total_cost_usd) }}</span>
+                                    {% endif %}
+                                    {% if analysis.total_tokens %}
+                                        <span>{{ analysis.total_tokens|default(0) }} tokens</span>
+                                    {% endif %}
+                                    {% if analysis.sections_completed %}
+                                        <span>{{ analysis.sections_completed|length }} sections</span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
             {% else %}
@@ -151,4 +167,40 @@
     </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const projectId = {{ project.id }};
+
+function updateCompareSelection() {
+    const checkboxes = document.querySelectorAll('.compare-checkbox:checked');
+    const count = checkboxes.length;
+    const compareBtn = document.getElementById('compare-btn');
+
+    if (compareBtn) {
+        compareBtn.textContent = `Compare Selected (${count})`;
+        compareBtn.disabled = count < 2;
+    }
+}
+
+function openComparison() {
+    const checkboxes = document.querySelectorAll('.compare-checkbox:checked');
+    const ids = Array.from(checkboxes).map(cb => cb.value).join(',');
+
+    if (ids) {
+        window.location.href = `/project/{{ project.slug }}/compare?analysis_ids=${ids}`;
+    }
+}
+</script>
+
+<style>
+.card-title-link {
+    color: inherit;
+    text-decoration: none;
+}
+.card-title-link:hover .card-title {
+    color: var(--color-primary);
+}
+</style>
 {% endblock %}

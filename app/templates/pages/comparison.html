@@ -1,0 +1,516 @@
+{% extends "base.html" %}
+
+{% block title %}Compare Analyses - {{ project.name }} - VenturePulse{% endblock %}
+
+{% block head %}
+<!-- Plotly.js for charts -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+.comparison-header {
+    margin-bottom: var(--space-6);
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.summary-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    text-align: center;
+}
+
+.summary-card-icon {
+    font-size: 2rem;
+    margin-bottom: var(--space-2);
+}
+
+.summary-card-label {
+    font-size: 0.75rem;
+    color: var(--color-gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-1);
+}
+
+.summary-card-value {
+    font-size: 1rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-gray-900);
+    word-break: break-word;
+}
+
+.recommendation-box {
+    background: var(--color-info-light);
+    border: 1px solid var(--color-info);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.recommendation-box h3 {
+    color: var(--color-info);
+    margin-bottom: var(--space-2);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.recommendation-text {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+@media (max-width: 1024px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.chart-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+}
+
+.chart-card h3 {
+    margin-bottom: var(--space-4);
+    font-size: 1rem;
+}
+
+.chart-container {
+    width: 100%;
+    min-height: 350px;
+}
+
+.full-width-chart {
+    grid-column: 1 / -1;
+}
+
+.analyses-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.analyses-table th,
+.analyses-table td {
+    padding: var(--space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--color-gray-200);
+}
+
+.analyses-table th {
+    background: var(--color-gray-100);
+    font-weight: var(--font-weight-semibold);
+    white-space: nowrap;
+}
+
+.analyses-table tr:hover {
+    background: var(--color-gray-50);
+}
+
+.model-name {
+    font-weight: var(--font-weight-medium);
+}
+
+.score-cell {
+    text-align: center;
+}
+
+.score-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: var(--font-weight-medium);
+}
+
+.score-high {
+    background: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.score-medium {
+    background: var(--color-warning-light);
+    color: var(--color-warning);
+}
+
+.score-low {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.loading-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-8);
+    color: var(--color-gray-600);
+}
+
+.loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--color-gray-200);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: var(--space-2);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.consensus-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    font-size: 0.625rem;
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    margin-left: var(--space-1);
+}
+
+.consensus-agree {
+    background: var(--color-success-light);
+    color: var(--color-success);
+}
+
+.consensus-disagree {
+    background: var(--color-danger-light);
+    color: var(--color-danger);
+}
+
+.warning-box {
+    background: var(--color-warning-light);
+    border: 1px solid var(--color-warning);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+    display: none;
+}
+
+.warning-box.visible {
+    display: block;
+}
+
+.warning-box h3 {
+    color: var(--color-warning);
+    margin-bottom: var(--space-2);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.warning-text {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-gray-800);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="comparison-header">
+        <nav class="breadcrumb mb-4">
+            <a href="/project/{{ project.slug }}">{{ project.name }}</a>
+            <span>/</span>
+            <span>Compare</span>
+        </nav>
+
+        <div class="flex justify-between items-center">
+            <div>
+                <h1>Model Comparison</h1>
+                <p class="text-muted">
+                    Comparing {{ analyses|length }} analyses for {{ project.name }}
+                </p>
+            </div>
+            <a href="/project/{{ project.slug }}" class="btn btn-secondary">
+                Back to Project
+            </a>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state">
+        <div class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <span>Loading comparison data...</span>
+        </div>
+    </div>
+
+    <!-- Comparison Content (hidden until loaded) -->
+    <div id="comparison-content" style="display: none;">
+        <!-- Summary Cards -->
+        <div class="summary-cards" id="summary-cards">
+            <div class="summary-card">
+                <div class="summary-card-icon">💰</div>
+                <div class="summary-card-label">Best Value</div>
+                <div class="summary-card-value" id="best-value-model">-</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-icon">⭐</div>
+                <div class="summary-card-label">Highest Quality</div>
+                <div class="summary-card-value" id="highest-quality-model">-</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-icon">💵</div>
+                <div class="summary-card-label">Lowest Cost</div>
+                <div class="summary-card-value" id="lowest-cost-model">-</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-icon">👤</div>
+                <div class="summary-card-label">Author's Choice</div>
+                <div class="summary-card-value" id="authors-choice-model">-</div>
+            </div>
+        </div>
+
+        <!-- Warning Box (shown when sections differ) -->
+        <div class="warning-box" id="warning-box">
+            <h3>Comparison Notice</h3>
+            <p class="warning-text" id="warning-text"></p>
+        </div>
+
+        <!-- Recommendation -->
+        <div class="recommendation-box" id="recommendation-box">
+            <h3>Recommendation</h3>
+            <p class="recommendation-text" id="recommendation-text">Loading...</p>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <!-- Radar Chart -->
+            <div class="chart-card">
+                <h3>Dimension Comparison</h3>
+                <div id="radar-chart" class="chart-container"></div>
+            </div>
+
+            <!-- Scatter Chart -->
+            <div class="chart-card">
+                <h3>Cost vs Quality</h3>
+                <div id="scatter-chart" class="chart-container"></div>
+            </div>
+
+            <!-- Bar Chart (Full Width) -->
+            <div class="chart-card full-width-chart">
+                <h3>Average Scores by Dimension</h3>
+                <div id="bar-chart" class="chart-container"></div>
+            </div>
+        </div>
+
+        <!-- Detailed Comparison Table -->
+        <div class="card">
+            <h3 class="mb-4">Detailed Comparison</h3>
+            <div style="overflow-x: auto;">
+                <table class="analyses-table" id="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>Cost</th>
+                            <th>Tokens</th>
+                            <th class="score-cell">Market</th>
+                            <th class="score-cell">Technical</th>
+                            <th class="score-cell">Competitive</th>
+                            <th class="score-cell">Business</th>
+                            <th class="score-cell">Execution</th>
+                            <th class="score-cell">Owner Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comparison-table-body">
+                        <!-- Filled by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error State (hidden by default) -->
+    <div id="error-state" style="display: none;">
+        <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <h3 class="empty-state-title">Error Loading Comparison</h3>
+            <p class="empty-state-description" id="error-message">
+                Unable to load comparison data.
+            </p>
+            <a href="/project/{{ project.slug }}" class="btn btn-primary">Back to Project</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const projectId = {{ project.id }};
+const analysisIds = "{{ analysis_ids }}";
+
+// Format model name (show just the model part after /)
+function formatModelName(name) {
+    return name.split('/').pop();
+}
+
+// Format currency
+function formatCost(cost) {
+    return '$' + cost.toFixed(4);
+}
+
+// Format number with commas
+function formatNumber(num) {
+    return num.toLocaleString();
+}
+
+// Get score class based on value
+function getScoreClass(score) {
+    if (score >= 7) return 'score-high';
+    if (score >= 5) return 'score-medium';
+    return 'score-low';
+}
+
+// Load and render comparison data
+async function loadComparison() {
+    try {
+        const response = await fetch(`/api/projects/${projectId}/comparison?analysis_ids=${analysisIds}`);
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Failed to load comparison');
+        }
+
+        const data = await response.json();
+        renderComparison(data);
+    } catch (error) {
+        console.error('Error loading comparison:', error);
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('error-state').style.display = 'block';
+        document.getElementById('error-message').textContent = error.message;
+    }
+}
+
+// Render comparison data
+function renderComparison(data) {
+    const comparison = data.comparison;
+    const analyses = data.analyses;
+
+    // Summary cards
+    document.getElementById('best-value-model').textContent =
+        comparison.best_value_model ? formatModelName(comparison.best_value_model) : 'N/A';
+    document.getElementById('highest-quality-model').textContent =
+        comparison.highest_quality_model ? formatModelName(comparison.highest_quality_model) : 'N/A';
+    document.getElementById('lowest-cost-model').textContent =
+        comparison.lowest_cost_model ? formatModelName(comparison.lowest_cost_model) : 'N/A';
+    document.getElementById('authors-choice-model').textContent =
+        comparison.authors_choice_model ? formatModelName(comparison.authors_choice_model) : 'Not rated';
+
+    // Show warning if sections differ
+    if (comparison.warning_message) {
+        const warningBox = document.getElementById('warning-box');
+        document.getElementById('warning-text').textContent = comparison.warning_message;
+        warningBox.classList.add('visible');
+    }
+
+    // Recommendation
+    document.getElementById('recommendation-text').textContent =
+        comparison.recommendation || 'Compare the analyses below to evaluate model outputs.';
+
+    // Render charts
+    renderCharts(data.charts);
+
+    // Render table
+    renderTable(analyses, comparison);
+
+    // Show content
+    document.getElementById('loading-state').style.display = 'none';
+    document.getElementById('comparison-content').style.display = 'block';
+}
+
+// Render Plotly charts
+function renderCharts(charts) {
+    const config = {
+        responsive: true,
+        displayModeBar: false
+    };
+
+    // Radar chart
+    if (charts.radar && charts.radar !== '{}') {
+        const radarData = JSON.parse(charts.radar);
+        Plotly.newPlot('radar-chart', radarData.data, radarData.layout, config);
+    }
+
+    // Scatter chart
+    if (charts.scatter && charts.scatter !== '{}') {
+        const scatterData = JSON.parse(charts.scatter);
+        Plotly.newPlot('scatter-chart', scatterData.data, scatterData.layout, config);
+    }
+
+    // Bar chart
+    if (charts.bar && charts.bar !== '{}') {
+        const barData = JSON.parse(charts.bar);
+        Plotly.newPlot('bar-chart', barData.data, barData.layout, config);
+    }
+}
+
+// Render comparison table
+function renderTable(analyses, comparison) {
+    const tbody = document.getElementById('comparison-table-body');
+    const consensusAreas = new Set(comparison.consensus_areas);
+    const disagreementAreas = new Set(comparison.disagreement_areas);
+
+    // Helper to render a score cell (handles null for skipped dimensions)
+    function renderScoreCell(score) {
+        if (score === null || score === undefined) {
+            return '<span class="text-muted">N/A</span>';
+        }
+        return `<span class="score-badge ${getScoreClass(score)}">${score.toFixed(1)}</span>`;
+    }
+
+    tbody.innerHTML = analyses.map(analysis => {
+        const scores = analysis.dimension_scores;
+        return `
+            <tr>
+                <td class="model-name">
+                    <a href="/analysis/${analysis.id}">${formatModelName(analysis.model_name)}</a>
+                </td>
+                <td>${formatCost(analysis.total_cost_usd)}</td>
+                <td>${formatNumber(analysis.total_tokens)}</td>
+                <td class="score-cell">${renderScoreCell(scores.market)}</td>
+                <td class="score-cell">${renderScoreCell(scores.technical)}</td>
+                <td class="score-cell">${renderScoreCell(scores.competitive)}</td>
+                <td class="score-cell">${renderScoreCell(scores.business)}</td>
+                <td class="score-cell">${renderScoreCell(scores.execution)}</td>
+                <td class="score-cell">
+                    ${analysis.author_rating !== null
+                        ? `<span class="score-badge ${getScoreClass(analysis.author_rating)}">${analysis.author_rating.toFixed(1)}</span>`
+                        : '<span class="text-muted">-</span>'}
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Load on page ready
+document.addEventListener('DOMContentLoaded', loadComparison);
+
+// Handle window resize for charts
+window.addEventListener('resize', () => {
+    Plotly.Plots.resize('radar-chart');
+    Plotly.Plots.resize('scatter-chart');
+    Plotly.Plots.resize('bar-chart');
+});
+</script>
+{% endblock %}

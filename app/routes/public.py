@@ -159,6 +159,9 @@ async def view_project(request: Request, slug: str):
             reverse=True
         )
 
+        # Count completed analyses for comparison feature
+        completed_count = sum(1 for a in analyses if a.status == "completed")
+
     return templates.TemplateResponse(
         "pages/project_view.html",
         {
@@ -167,10 +170,80 @@ async def view_project(request: Request, slug: str):
             "user": user,
             "project": project,
             "analyses": analyses,
+            "completed_count": completed_count,
             "is_owner": is_owner,
             "is_admin": is_admin,
             "can_edit": is_owner or is_admin,
             "can_analyze": user and user.is_approved,
+        }
+    )
+
+
+@router.get("/project/{slug}/compare", response_class=HTMLResponse)
+async def compare_analyses_page(
+    request: Request,
+    slug: str,
+    analysis_ids: str,  # Comma-separated list of analysis IDs
+):
+    """
+    Show comparison page for multiple analyses.
+
+    Args:
+        slug: Project slug
+        analysis_ids: Comma-separated list of analysis IDs to compare
+    """
+    user = await get_current_user(request)
+
+    # Parse analysis IDs
+    try:
+        ids = [int(x.strip()) for x in analysis_ids.split(",") if x.strip()]
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid analysis_ids format")
+
+    if len(ids) < 2:
+        raise HTTPException(status_code=400, detail="At least 2 analyses required for comparison")
+
+    async with get_session_factory()() as db:
+        result = await db.execute(
+            select(Project)
+            .options(selectinload(Project.analyses))
+            .where(Project.slug == slug)
+        )
+        project = result.scalar_one_or_none()
+
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+
+        # Check access
+        is_owner = user and user.id == project.user_id
+        is_admin = user and user.is_admin
+
+        if not project.is_public and not is_owner and not is_admin:
+            raise HTTPException(status_code=404, detail="Project not found")
+
+        # Get selected analyses (only completed ones)
+        selected_analyses = [
+            a for a in project.analyses
+            if a.id in ids and a.status == "completed"
+        ]
+
+        if len(selected_analyses) < 2:
+            raise HTTPException(
+                status_code=400,
+                detail="Need at least 2 completed analyses to compare"
+            )
+
+    return templates.TemplateResponse(
+        "pages/comparison.html",
+        {
+            "request": request,
+            "settings": settings,
+            "user": user,
+            "project": project,
+            "analyses": selected_analyses,
+            "analysis_ids": ",".join(str(a.id) for a in selected_analyses),
+            "is_owner": is_owner,
+            "is_admin": is_admin,
         }
     )
 

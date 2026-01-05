@@ -1,6 +1,6 @@
 """
 SQLAlchemy models for VenturePulse v2.
-Defines User, Project, Analysis, and Session tables.
+Defines User, Project, Analysis, Session, and SectionFeedback tables.
 """
 
 from datetime import datetime
@@ -15,6 +15,7 @@ from sqlalchemy import (
     JSON,
     String,
     Text,
+    UniqueConstraint,
     func,
 )
 from sqlalchemy.orm import (
@@ -135,6 +136,9 @@ class Analysis(Base):
 
     # Relationships
     project: Mapped["Project"] = relationship("Project", back_populates="analyses")
+    feedbacks: Mapped[list["SectionFeedback"]] = relationship(
+        "SectionFeedback", back_populates="analysis", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"<Analysis {self.id} ({self.status})>"
@@ -184,3 +188,59 @@ class Session(Base):
     def is_expired(self) -> bool:
         """Check if session is expired."""
         return datetime.utcnow() > self.expires_at
+
+
+class SectionFeedback(Base):
+    """
+    Section feedback model for tracking user ratings on analysis sections.
+
+    Key principle: Project Owner = Author
+    - Only project owner's ratings count as "author" ratings in comparisons
+    - Other users' ratings are tracked but shown as supplementary info
+    """
+
+    __tablename__ = "section_feedbacks"
+    __table_args__ = (
+        UniqueConstraint(
+            "analysis_id", "user_id", "section_key",
+            name="uq_analysis_user_section"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    analysis_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("analyses.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    user_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    section_key: Mapped[str] = mapped_column(
+        String(100), nullable=False, index=True
+    )  # e.g., "section01-executive-summary"
+    rating: Mapped[int] = mapped_column(
+        Integer, nullable=False
+    )  # 1 = thumbs up, -1 = thumbs down
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+    # Relationships
+    analysis: Mapped["Analysis"] = relationship("Analysis", back_populates="feedbacks")
+    user: Mapped["User"] = relationship("User")
+
+    def __repr__(self) -> str:
+        rating_str = "👍" if self.rating == 1 else "👎"
+        return f"<SectionFeedback {self.section_key} {rating_str} by user {self.user_id}>"
+
+    @property
+    def is_thumbs_up(self) -> bool:
+        """Check if rating is thumbs up."""
+        return self.rating == 1
+
+    @property
+    def is_thumbs_down(self) -> bool:
+        """Check if rating is thumbs down."""
+        return self.rating == -1

@@ -36,6 +36,14 @@
     --color-error: #C62828;
     --color-warning: #F9A825;
     --color-info: #1565C0;
+    --color-danger: #C62828;
+
+    /* Semantic Light Colors (for backgrounds) */
+    --color-success-light: #E8F5E9;
+    --color-error-light: #FFEBEE;
+    --color-warning-light: #FFF8E1;
+    --color-info-light: #E3F2FD;
+    --color-danger-light: #FFEBEE;
 
     /* Typography */
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
