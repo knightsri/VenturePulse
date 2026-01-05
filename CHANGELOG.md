@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Migrated from CLI-only Bash scripts to full web application
 - Improved section organization with logical groupings
 
-## [1.0.0] - 2025-12-15 - "CLI"
+## [1.0.0] - 2025-10-21 - "CLI"
 
 ### Added
 - Initial CLI version using Bash scripts
