@@ -36,6 +36,7 @@ async def run_migrations() -> None:
     await migration_001_add_preferred_models()
     await migration_002_add_api_key_temp()
     await migration_003_create_section_feedbacks()
+    await migration_004_create_shareable_links()
 
     logger.info("Migrations complete")
 
@@ -112,3 +113,60 @@ async def migration_003_create_section_feedbacks() -> None:
                 "CREATE INDEX ix_section_feedbacks_section_key ON section_feedbacks(section_key)"
             ))
             logger.info("Migration 003: Created section_feedbacks table")
+
+
+async def migration_004_create_shareable_links() -> None:
+    """Create shareable_links and share_link_visitors tables for link sharing feature."""
+    engine = get_engine()
+    async with engine.begin() as conn:
+        # Check if shareable_links table exists (SQLite)
+        result = await conn.execute(text(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='shareable_links'"
+        ))
+        if result.scalar() == 0:
+            # Create shareable_links table
+            await conn.execute(text("""
+                CREATE TABLE shareable_links (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+                    key VARCHAR(42) UNIQUE NOT NULL,
+                    created_by_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                    expires_at TIMESTAMP NOT NULL,
+                    visit_count INTEGER DEFAULT 0 NOT NULL
+                )
+            """))
+            # Create indexes
+            await conn.execute(text(
+                "CREATE INDEX ix_shareable_links_project_id ON shareable_links(project_id)"
+            ))
+            await conn.execute(text(
+                "CREATE UNIQUE INDEX ix_shareable_links_key ON shareable_links(key)"
+            ))
+            logger.info("Migration 004: Created shareable_links table")
+
+        # Check if share_link_visitors table exists
+        result = await conn.execute(text(
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='share_link_visitors'"
+        ))
+        if result.scalar() == 0:
+            # Create share_link_visitors table
+            await conn.execute(text("""
+                CREATE TABLE share_link_visitors (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    shareable_link_id INTEGER NOT NULL REFERENCES shareable_links(id) ON DELETE CASCADE,
+                    visitor_hash VARCHAR(64) NOT NULL,
+                    first_visit_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                    last_visit_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                    visit_count INTEGER DEFAULT 1 NOT NULL,
+                    UNIQUE(shareable_link_id, visitor_hash)
+                )
+            """))
+            # Create indexes
+            await conn.execute(text(
+                "CREATE INDEX ix_share_link_visitors_link_id ON share_link_visitors(shareable_link_id)"
+            ))
+            await conn.execute(text(
+                "CREATE INDEX ix_share_link_visitors_hash ON share_link_visitors(visitor_hash)"
+            ))
+            logger.info("Migration 004: Created share_link_visitors table")

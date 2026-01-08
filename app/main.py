@@ -26,6 +26,7 @@ from app.routes import (
     analysis_router,
     admin_router,
     settings_router,
+    share_router,
 )
 
 # Configure logging
@@ -104,6 +105,7 @@ templates = Jinja2Templates(directory=settings.BASE_DIR / "app" / "templates")
 app.include_router(auth_router)
 app.include_router(projects_router)  # Has /project/new - must be before public_router
 app.include_router(analysis_router)  # Has /analysis/{id} specific routes
+app.include_router(share_router)     # Has /project/{slug}/share - must be before public_router
 app.include_router(public_router)    # Has /project/{slug} catch-all
 app.include_router(admin_router)
 app.include_router(settings_router)

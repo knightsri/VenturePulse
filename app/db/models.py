@@ -1,6 +1,6 @@
 """
 SQLAlchemy models for VenturePulse v2.
-Defines User, Project, Analysis, Session, and SectionFeedback tables.
+Defines User, Project, Analysis, Session, SectionFeedback, ShareableLink, and ShareLinkVisitor tables.
 """
 
 from datetime import datetime
@@ -102,6 +102,9 @@ class Project(Base):
     user: Mapped["User"] = relationship("User", back_populates="projects")
     analyses: Mapped[list["Analysis"]] = relationship(
         "Analysis", back_populates="project", cascade="all, delete-orphan"
+    )
+    shareable_links: Mapped[list["ShareableLink"]] = relationship(
+        "ShareableLink", back_populates="project", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
@@ -244,3 +247,81 @@ class SectionFeedback(Base):
     def is_thumbs_down(self) -> bool:
         """Check if rating is thumbs down."""
         return self.rating == -1
+
+
+class ShareableLink(Base):
+    """
+    Shareable link model for private project access.
+    Allows project owners to share temporary access to private projects.
+    Multiple links can be created per project with different expiration dates.
+    """
+
+    __tablename__ = "shareable_links"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    project_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    key: Mapped[str] = mapped_column(String(42), unique=True, index=True, nullable=False)
+    created_by_user_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), nullable=False
+    )
+    expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    visit_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+
+    # Relationships
+    project: Mapped["Project"] = relationship("Project", back_populates="shareable_links")
+    created_by: Mapped["User"] = relationship("User")
+    visitors: Mapped[list["ShareLinkVisitor"]] = relationship(
+        "ShareLinkVisitor", back_populates="shareable_link", cascade="all, delete-orphan"
+    )
+
+    def __repr__(self) -> str:
+        return f"<ShareableLink {self.key[:8]}... (project_id={self.project_id})>"
+
+    @property
+    def is_expired(self) -> bool:
+        """Check if link is expired."""
+        return datetime.utcnow() > self.expires_at
+
+    @property
+    def unique_visitor_count(self) -> int:
+        """Get count of unique visitors."""
+        return len(self.visitors)
+
+
+class ShareLinkVisitor(Base):
+    """
+    Tracks unique visitors to shareable links.
+    Uses hash of IP + User-Agent for privacy-preserving visitor tracking.
+    """
+
+    __tablename__ = "share_link_visitors"
+    __table_args__ = (
+        UniqueConstraint(
+            "shareable_link_id", "visitor_hash",
+            name="uq_link_visitor"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    shareable_link_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("shareable_links.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    visitor_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)  # SHA-256
+    first_visit_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), nullable=False
+    )
+    last_visit_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), nullable=False
+    )
+    visit_count: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+
+    # Relationships
+    shareable_link: Mapped["ShareableLink"] = relationship("ShareableLink", back_populates="visitors")
+
+    def __repr__(self) -> str:
+        return f"<ShareLinkVisitor {self.visitor_hash[:8]}... (link_id={self.shareable_link_id})>"

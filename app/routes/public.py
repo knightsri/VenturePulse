@@ -15,8 +15,9 @@ from sqlalchemy.orm import selectinload
 
 from app.config import get_settings
 from app.db.database import get_session_factory
-from app.db.models import User, Project, Analysis
+from app.db.models import User, Project, Analysis, ShareableLink, ShareLinkVisitor
 from app.auth.session import get_current_user
+from app.routes.share import validate_allowkey, record_visitor, compute_visitor_hash
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -215,10 +216,11 @@ async def browse(
 
 
 @router.get("/project/{slug}", response_class=HTMLResponse)
-async def view_project(request: Request, slug: str):
+async def view_project(request: Request, slug: str, allowkey: Optional[str] = None):
     """
     View public project details.
     Shows project info and list of analyses.
+    Supports allowkey query parameter for shared access to private projects.
     """
     user = await get_current_user(request)
 
@@ -234,11 +236,28 @@ async def view_project(request: Request, slug: str):
         if not project:
             raise HTTPException(status_code=404, detail="Project not found")
 
-        # Check access: public or owner or admin
+        # Check access: public or owner or admin or valid allowkey
         is_owner = user and user.id == project.user_id
         is_admin = user and user.is_admin
+        has_allowkey_access = False
 
+        # Check for allowkey access (for private projects)
         if not project.is_public and not is_owner and not is_admin:
+            # Try session allowkey first, then query param
+            session_allowkey = request.session.get(f"allowkey_{project.id}")
+            key_to_validate = allowkey or session_allowkey
+
+            if key_to_validate:
+                link = await validate_allowkey(db, project.id, key_to_validate)
+                if link:
+                    has_allowkey_access = True
+                    # Store in session for subsequent requests
+                    request.session[f"allowkey_{project.id}"] = link.key
+                    # Record visitor
+                    visitor_hash = compute_visitor_hash(request)
+                    await record_visitor(db, link, visitor_hash)
+
+        if not project.is_public and not is_owner and not is_admin and not has_allowkey_access:
             raise HTTPException(status_code=404, detail="Project not found")
 
         # Get analyses for this project, sorted by most recent
@@ -273,13 +292,16 @@ async def compare_analyses_page(
     request: Request,
     slug: str,
     analysis_ids: str,  # Comma-separated list of analysis IDs
+    allowkey: Optional[str] = None,
 ):
     """
     Show comparison page for multiple analyses.
+    Supports allowkey query parameter for shared access.
 
     Args:
         slug: Project slug
         analysis_ids: Comma-separated list of analysis IDs to compare
+        allowkey: Optional shareable link key
     """
     user = await get_current_user(request)
 
@@ -306,8 +328,19 @@ async def compare_analyses_page(
         # Check access
         is_owner = user and user.id == project.user_id
         is_admin = user and user.is_admin
+        has_allowkey_access = False
 
+        # Check for allowkey access (for private projects)
         if not project.is_public and not is_owner and not is_admin:
+            session_allowkey = request.session.get(f"allowkey_{project.id}")
+            key_to_validate = allowkey or session_allowkey
+
+            if key_to_validate:
+                link = await validate_allowkey(db, project.id, key_to_validate)
+                if link:
+                    has_allowkey_access = True
+
+        if not project.is_public and not is_owner and not is_admin and not has_allowkey_access:
             raise HTTPException(status_code=404, detail="Project not found")
 
         # Get selected analyses (only completed ones)
@@ -346,10 +379,12 @@ async def view_analysis_section(
     request: Request,
     analysis_id: int,
     section_key: str,
+    allowkey: Optional[str] = None,
 ):
     """
     View a specific section of an analysis report.
     Returns the section HTML content.
+    Supports allowkey query parameter for shared access.
     """
     user = await get_current_user(request)
 
@@ -369,8 +404,19 @@ async def view_analysis_section(
         # Check access
         is_owner = user and user.id == project.user_id
         is_admin = user and user.is_admin
+        has_allowkey_access = False
 
+        # Check for allowkey access (for private projects)
         if not project.is_public and not is_owner and not is_admin:
+            session_allowkey = request.session.get(f"allowkey_{project.id}")
+            key_to_validate = allowkey or session_allowkey
+
+            if key_to_validate:
+                link = await validate_allowkey(db, project.id, key_to_validate)
+                if link:
+                    has_allowkey_access = True
+
+        if not project.is_public and not is_owner and not is_admin and not has_allowkey_access:
             raise HTTPException(status_code=404, detail="Analysis not found")
 
         # Read section content

@@ -5,6 +5,19 @@ All notable changes to VenturePulse will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-01-08 - "Link Sharing"
+
+### Added
+- **Shareable links feature**: Create time-limited links to share private projects with anyone
+- **Multiple links per project**: Create different links with different expiration dates (1-90 days)
+- **Unique visitor tracking**: Track number of unique visitors and total visits per link
+- **Link management UI**: View active/expired links, copy links, extend expiration, deactivate links
+- **Session-based allowkey access**: Once validated, allowkey is stored in session for seamless navigation
+- **Admin pending badge**: Admin button shows count of pending user approvals
+
+### Changed
+- Project view page now includes "Share" button for project owners
+
 ## [2.1.1] - 2026-01-08
 
 ### Added

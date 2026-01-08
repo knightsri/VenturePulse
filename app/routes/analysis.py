@@ -15,8 +15,9 @@ from sqlalchemy.orm import selectinload
 
 from app.config import get_settings
 from app.db.database import get_session_factory
-from app.db.models import User, Project, Analysis, SectionFeedback
+from app.db.models import User, Project, Analysis, SectionFeedback, ShareableLink
 from app.auth.decorators import require_approved
+from app.routes.share import validate_allowkey
 from app.services.apikey import has_api_key, get_masked_api_key, get_api_key
 from app.services.background import start_analysis_task, cancel_analysis_task, is_analysis_running, finalize_analysis
 from app.services.report import format_cost, format_time
@@ -444,10 +445,12 @@ async def view_analysis(
     request: Request,
     analysis_id: int,
     section: Optional[str] = None,
+    allowkey: Optional[str] = None,
 ):
     """
     View an analysis report.
     Shows progress for running analyses, results for completed ones.
+    Supports allowkey query parameter for shared access.
     """
     from app.auth.decorators import get_current_user
 
@@ -466,11 +469,22 @@ async def view_analysis(
 
         project = analysis.project
 
-        # Check access: public project, owner, or admin
+        # Check access: public project, owner, admin, or valid allowkey
         is_owner = user and user.id == project.user_id
         is_admin = user and user.is_admin
+        has_allowkey_access = False
 
+        # Check for allowkey access (for private projects)
         if not project.is_public and not is_owner and not is_admin:
+            session_allowkey = request.session.get(f"allowkey_{project.id}")
+            key_to_validate = allowkey or session_allowkey
+
+            if key_to_validate:
+                link = await validate_allowkey(db, project.id, key_to_validate)
+                if link:
+                    has_allowkey_access = True
+
+        if not project.is_public and not is_owner and not is_admin and not has_allowkey_access:
             raise HTTPException(status_code=404, detail="Analysis not found")
 
         # Get sections info

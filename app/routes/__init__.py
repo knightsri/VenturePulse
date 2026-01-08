@@ -9,6 +9,7 @@ from app.routes.projects import router as projects_router
 from app.routes.analysis import router as analysis_router
 from app.routes.admin import router as admin_router
 from app.routes.settings import router as settings_router
+from app.routes.share import router as share_router
 
 __all__ = [
     "auth_router",
@@ -17,4 +18,5 @@ __all__ = [
     "analysis_router",
     "admin_router",
     "settings_router",
+    "share_router",
 ]

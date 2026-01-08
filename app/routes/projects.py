@@ -63,11 +63,18 @@ async def ensure_unique_slug(db, slug: str, exclude_id: Optional[int] = None) ->
 
 
 @router.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request, user: User = Depends(require_auth)):
+async def dashboard(request: Request):
     """
     User dashboard showing their projects.
     For pending users or users with no projects, also show public projects.
+    Unauthenticated users are redirected to /browse.
     """
+    from app.auth.session import get_current_user
+
+    user = await get_current_user(request)
+    if user is None:
+        # Redirect unauthenticated users to browse page
+        return RedirectResponse(url="/browse", status_code=302)
     async with get_session_factory()() as db:
         # Get user's own projects
         result = await db.execute(
@@ -97,6 +104,14 @@ async def dashboard(request: Request, user: User = Depends(require_auth)):
             )
             public_projects = result.scalars().all()
 
+        # Get pending user count for admin badge
+        pending_count = 0
+        if user.is_admin:
+            result = await db.execute(
+                select(func.count(User.id)).where(User.role == "pending")
+            )
+            pending_count = result.scalar() or 0
+
     return templates.TemplateResponse(
         "pages/dashboard.html",
         {
@@ -108,6 +123,7 @@ async def dashboard(request: Request, user: User = Depends(require_auth)):
             "total_count": user_total_count,
             "public_count": user_public_count,
             "private_count": user_private_count,
+            "pending_count": pending_count,
         }
     )
 

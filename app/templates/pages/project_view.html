@@ -56,6 +56,9 @@
                 <a href="/project/{{ project.slug }}/edit" class="btn btn-secondary">
                     Edit
                 </a>
+                <a href="/project/{{ project.slug }}/share" class="btn btn-secondary">
+                    Share
+                </a>
                 <form action="/project/{{ project.slug }}/toggle-visibility" method="POST" style="display: inline;">
                     <button type="submit" class="btn btn-outline">
                         Make {{ 'Private' if project.is_public else 'Public' }}

@@ -15,6 +15,9 @@ from app.db.models import (
     Project,
     Analysis,
     Session,
+    SectionFeedback,
+    ShareableLink,
+    ShareLinkVisitor,
 )
 
 __all__ = [
@@ -27,4 +30,7 @@ __all__ = [
     "Project",
     "Analysis",
     "Session",
+    "SectionFeedback",
+    "ShareableLink",
+    "ShareLinkVisitor",
 ]

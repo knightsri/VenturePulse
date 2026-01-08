@@ -35,7 +35,7 @@
                 {% if user %}
                     <li><a href="/dashboard" class="navbar-link">Dashboard</a></li>
                     {% if user.is_admin %}
-                        <li><a href="/admin" class="navbar-link">Admin</a></li>
+                        <li><a href="/admin" class="navbar-link">Admin{% if pending_count %} ({{ pending_count }} pending){% endif %}</a></li>
                     {% endif %}
                     <li>
                         <div class="navbar-user">

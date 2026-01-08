@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Share {{ project.name }} - VenturePulse{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <!-- Flash Messages -->
+    {% if request.query_params.get('success') %}
+        <div class="alert alert-success mb-4">
+            {{ request.query_params.get('success')|replace('+', ' ') }}
+        </div>
+    {% endif %}
+    {% if request.query_params.get('error') %}
+        <div class="alert alert-danger mb-4">
+            {{ request.query_params.get('error')|replace('+', ' ') }}
+        </div>
+    {% endif %}
+
+    <!-- Header -->
+    <div class="page-header">
+        <nav class="breadcrumb mb-4">
+            <a href="/dashboard">My Projects</a>
+            <span>/</span>
+            <a href="/project/{{ project.slug }}">{{ project.name }}</a>
+            <span>/</span>
+            <span>Share</span>
+        </nav>
+
+        <div class="flex justify-between items-start flex-wrap gap-4">
+            <div>
+                <h1>Share Links</h1>
+                <p class="text-muted">
+                    Create shareable links to give temporary access to your {% if not project.is_public %}private {% endif %}project
+                </p>
+            </div>
+            <a href="/project/{{ project.slug }}" class="btn btn-secondary">
+                Back to Project
+            </a>
+        </div>
+    </div>
+
+    <!-- Create New Link -->
+    <div class="card mb-8">
+        <h2 class="mb-4">Create New Link</h2>
+        <form action="/project/{{ project.slug }}/share/create" method="POST" class="flex gap-4 items-end flex-wrap">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="days" class="form-label">Expires After</label>
+                <div class="flex items-center gap-2">
+                    <input type="number" id="days" name="days" class="form-input"
+                           value="7" min="1" max="90" style="width: 80px;">
+                    <span class="text-muted">days</span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Link</button>
+        </form>
+        <div class="form-hint mt-2">Links can be extended before they expire. Maximum 90 days per extension.</div>
+    </div>
+
+    <!-- Active Links -->
+    <div class="card mb-8">
+        <h2 class="mb-4">Active Links ({{ active_links|length }})</h2>
+        {% if active_links %}
+            <div class="table-container" style="overflow-x: auto;">
+                <table class="table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Link Key</th>
+                            <th>Expires</th>
+                            <th>Visitors</th>
+                            <th>Visits</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for link in active_links %}
+                        <tr>
+                            <td>
+                                <code style="font-size: 0.85em;">{{ link.key[:8] }}...{{ link.key[-4:] }}</code>
+                            </td>
+                            <td>
+                                {{ link.expires_at.strftime('%b %d, %Y %H:%M') }}
+                                <br>
+                                {% set days_left = ((link.expires_at - now).total_seconds() / 86400)|int %}
+                                {% if days_left > 1 %}
+                                    <small class="text-muted">{{ days_left }} days left</small>
+                                {% elif days_left == 1 %}
+                                    <small style="color: var(--color-warning);">1 day left</small>
+                                {% else %}
+                                    <small style="color: var(--color-error);">Expires soon</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ link.visitors|length }}</td>
+                            <td>{{ link.visit_count }}</td>
+                            <td>
+                                <div class="flex gap-2 flex-wrap">
+                                    <button type="button" class="btn btn-secondary btn-sm"
+                                            onclick="copyLink('{{ link.key }}')"
+                                            title="Copy link to clipboard">
+                                        Copy
+                                    </button>
+                                    <form action="/project/{{ project.slug }}/share/{{ link.id }}/extend"
+                                          method="POST" style="display: inline;">
+                                        <input type="hidden" name="days" value="7">
+                                        <button type="submit" class="btn btn-outline btn-sm" title="Extend by 7 days from today">
+                                            +7 Days
+                                        </button>
+                                    </form>
+                                    <form action="/project/{{ project.slug }}/share/{{ link.id }}/delete"
+                                          method="POST" style="display: inline;"
+                                          onsubmit="return confirm('Deactivate this link? Visitors will lose access immediately.');">
+                                        <button type="submit" class="btn btn-outline btn-sm"
+                                                style="color: var(--color-error); border-color: var(--color-error);"
+                                                title="Deactivate link">
+                                            Deactivate
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No active links. Create one above to share this project.</p>
+        {% endif %}
+    </div>
+
+    <!-- Expired Links -->
+    {% if expired_links %}
+    <div class="card" style="border-color: var(--color-gray-400);">
+        <h2 class="mb-4" style="color: var(--color-gray-600);">Expired Links ({{ expired_links|length }})</h2>
+        <div class="table-container" style="overflow-x: auto;">
+            <table class="table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>Link Key</th>
+                        <th>Expired</th>
+                        <th>Visitors</th>
+                        <th>Visits</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for link in expired_links %}
+                    <tr style="opacity: 0.6;">
+                        <td>
+                            <code style="font-size: 0.85em;">{{ link.key[:8] }}...{{ link.key[-4:] }}</code>
+                        </td>
+                        <td>{{ link.expires_at.strftime('%b %d, %Y %H:%M') }}</td>
+                        <td>{{ link.visitors|length }}</td>
+                        <td>{{ link.visit_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="text-muted mt-4" style="font-size: 0.9em;">
+            Expired links cannot be reactivated. Create a new link if needed.
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyLink(key) {
+    const url = `${window.location.origin}/project/{{ project.slug }}?allowkey=${key}`;
+    navigator.clipboard.writeText(url).then(() => {
+        alert('Link copied to clipboard!');
+    }).catch(err => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = url;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('Link copied to clipboard!');
+    });
+}
+</script>
+{% endblock %}
