@@ -155,6 +155,19 @@ async def browse(
     user = await get_current_user(request)
 
     async with get_session_factory()() as db:
+        # Get project counts for display
+        public_count_result = await db.execute(
+            select(func.count()).select_from(Project).where(Project.is_public == True)
+        )
+        public_count = public_count_result.scalar()
+
+        private_count_result = await db.execute(
+            select(func.count()).select_from(Project).where(Project.is_public == False)
+        )
+        private_count = private_count_result.scalar()
+
+        total_count = public_count + private_count
+
         # Build query
         query = (
             select(Project)
@@ -194,6 +207,9 @@ async def browse(
             "projects": projects,
             "search": search or "",
             "sort": sort,
+            "total_count": total_count,
+            "public_count": public_count,
+            "private_count": private_count,
         }
     )
 

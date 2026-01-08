@@ -7,7 +7,7 @@
     <div class="page-header">
         <div class="flex justify-between items-center">
             <div>
-                <h1>My Projects</h1>
+                <h1>My Projects: {{ total_count }} (Public: {{ public_count }}, Private: {{ private_count }})</h1>
                 <p class="text-muted">Manage your product viability analyses</p>
             </div>
             {% if user.is_approved %}

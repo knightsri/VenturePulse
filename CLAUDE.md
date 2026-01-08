@@ -140,6 +140,13 @@ Each analysis creates files in `data/reports/{user_id}/{project_slug}/{analysis_
 1. Create `prompts/sections/section{NN}-{slug}.md`
 2. Update section lists in analysis engine
 
+### Version Updates
+**IMPORTANT:** Version must be updated in TWO places and kept in sync:
+1. `app/__init__.py` - Update `__version__`, `__version_date__`, and optionally `__version_name__`
+2. `CHANGELOG.md` - Add new version entry with date and changes
+
+The version from `app/__init__.py` is displayed in the site footer (bottom right corner).
+
 ## Dependencies
 
 - Python 3.11+

@@ -13,7 +13,7 @@ from typing import Optional
 from fastapi import APIRouter, Request, HTTPException, Depends, Form, UploadFile, File
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, func
 from sqlalchemy.orm import selectinload
 
 from app.config import get_settings
@@ -78,6 +78,11 @@ async def dashboard(request: Request, user: User = Depends(require_auth)):
         )
         projects = result.scalars().all()
 
+        # Get user's project counts (public/private)
+        user_public_count = sum(1 for p in projects if p.is_public)
+        user_private_count = sum(1 for p in projects if not p.is_public)
+        user_total_count = len(projects)
+
         # For pending users or users with no projects, fetch public projects
         public_projects = []
         if not user.is_approved or not projects:
@@ -100,6 +105,9 @@ async def dashboard(request: Request, user: User = Depends(require_auth)):
             "user": user,
             "projects": projects,
             "public_projects": public_projects,
+            "total_count": user_total_count,
+            "public_count": user_public_count,
+            "private_count": user_private_count,
         }
     )
 
