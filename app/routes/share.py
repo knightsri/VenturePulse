@@ -96,6 +96,54 @@ async def record_visitor(
     await db.commit()
 
 
+async def get_allowed_project_ids(
+    db: AsyncSession,
+    request: Request,
+    exclude_user_id: Optional[int] = None
+) -> list[int]:
+    """
+    Get list of project IDs that the user has valid allowkey access to.
+    Extracts allowkeys from session, validates them, and returns valid project IDs.
+
+    Args:
+        db: Database session
+        request: Request object (to access session)
+        exclude_user_id: If provided, exclude projects owned by this user
+
+    Returns:
+        List of project IDs with valid allowkey access
+    """
+    allowed_ids = []
+
+    # Find all session keys matching allowkey_{project_id} pattern
+    for key in list(request.session.keys()):
+        if key.startswith("allowkey_"):
+            try:
+                project_id = int(key.replace("allowkey_", ""))
+                allowkey = request.session.get(key)
+
+                if allowkey:
+                    # Validate the allowkey is still active
+                    link = await validate_allowkey(db, project_id, allowkey)
+                    if link:
+                        # Check if we should exclude this project (user's own)
+                        if exclude_user_id:
+                            result = await db.execute(
+                                select(Project.user_id).where(Project.id == project_id)
+                            )
+                            owner_id = result.scalar_one_or_none()
+                            if owner_id == exclude_user_id:
+                                continue
+                        allowed_ids.append(project_id)
+                    else:
+                        # Allowkey expired, remove from session
+                        del request.session[key]
+            except (ValueError, TypeError):
+                continue
+
+    return allowed_ids
+
+
 @router.get("/project/{slug}/share", response_class=HTMLResponse)
 async def share_management_page(
     request: Request,
@@ -118,6 +166,13 @@ async def share_management_page(
         # Owner-only access
         if project.user_id != user.id:
             raise HTTPException(status_code=403, detail="Access denied")
+
+        # Only allow share management for private projects
+        if project.is_public:
+            return RedirectResponse(
+                url=f"/project/{slug}?error=Share+links+only+available+for+private+projects",
+                status_code=303
+            )
 
         # Get all links for this project
         result = await db.execute(
@@ -177,6 +232,13 @@ async def create_share_link(
 
         if project.user_id != user.id:
             raise HTTPException(status_code=403, detail="Access denied")
+
+        # Only allow share links for private projects
+        if project.is_public:
+            return RedirectResponse(
+                url=f"/project/{slug}?error=Share+links+only+available+for+private+projects",
+                status_code=303
+            )
 
         # Generate unique key
         key = generate_share_key()

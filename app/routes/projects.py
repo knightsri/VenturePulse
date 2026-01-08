@@ -21,6 +21,7 @@ from app.db.database import get_session_factory
 from app.db.models import User, Project, Analysis
 from app.auth.session import get_current_user
 from app.auth.decorators import require_auth, require_approved
+from app.routes.share import get_allowed_project_ids
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -66,6 +67,7 @@ async def ensure_unique_slug(db, slug: str, exclude_id: Optional[int] = None) ->
 async def dashboard(request: Request):
     """
     User dashboard showing their projects.
+    Also shows private projects shared with them via allowkey.
     For pending users or users with no projects, also show public projects.
     Unauthenticated users are redirected to /browse.
     """
@@ -83,12 +85,25 @@ async def dashboard(request: Request):
             .where(Project.user_id == user.id)
             .order_by(desc(Project.updated_at))
         )
-        projects = result.scalars().all()
+        projects = list(result.scalars().all())
 
         # Get user's project counts (public/private)
         user_public_count = sum(1 for p in projects if p.is_public)
         user_private_count = sum(1 for p in projects if not p.is_public)
         user_total_count = len(projects)
+
+        # Get projects shared with user via allowkey (excluding their own)
+        shared_projects = []
+        allowed_project_ids = await get_allowed_project_ids(db, request, exclude_user_id=user.id)
+        if allowed_project_ids:
+            result = await db.execute(
+                select(Project)
+                .options(selectinload(Project.user))
+                .options(selectinload(Project.analyses))
+                .where(Project.id.in_(allowed_project_ids))
+                .order_by(desc(Project.updated_at))
+            )
+            shared_projects = list(result.scalars().all())
 
         # For pending users or users with no projects, fetch public projects
         public_projects = []
@@ -102,7 +117,7 @@ async def dashboard(request: Request):
                 .order_by(desc(Project.created_at))
                 .limit(6)
             )
-            public_projects = result.scalars().all()
+            public_projects = list(result.scalars().all())
 
         # Get pending user count for admin badge
         pending_count = 0
@@ -119,6 +134,7 @@ async def dashboard(request: Request):
             "settings": settings,
             "user": user,
             "projects": projects,
+            "shared_projects": shared_projects,
             "public_projects": public_projects,
             "total_count": user_total_count,
             "public_count": user_public_count,

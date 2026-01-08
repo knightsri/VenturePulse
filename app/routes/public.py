@@ -17,7 +17,7 @@ from app.config import get_settings
 from app.db.database import get_session_factory
 from app.db.models import User, Project, Analysis, ShareableLink, ShareLinkVisitor
 from app.auth.session import get_current_user
-from app.routes.share import validate_allowkey, record_visitor, compute_visitor_hash
+from app.routes.share import validate_allowkey, record_visitor, compute_visitor_hash, get_allowed_project_ids
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -151,6 +151,7 @@ async def browse(
 ):
     """
     Browse public projects gallery.
+    Also shows private projects the user has allowkey access to.
     Supports filtering by search and sorting.
     """
     user = await get_current_user(request)
@@ -169,7 +170,10 @@ async def browse(
 
         total_count = public_count + private_count
 
-        # Build query
+        # Get allowed private project IDs from session
+        allowed_project_ids = await get_allowed_project_ids(db, request)
+
+        # Build query for public projects
         query = (
             select(Project)
             .options(selectinload(Project.user))
@@ -191,13 +195,39 @@ async def browse(
         elif sort == "name":
             query = query.order_by(Project.name)
         elif sort == "analyses":
-            # Sort by number of completed analyses (requires subquery)
             query = query.order_by(desc(Project.updated_at))
         else:
             query = query.order_by(desc(Project.created_at))
 
         result = await db.execute(query)
-        projects = result.scalars().all()
+        public_projects = list(result.scalars().all())
+
+        # Get allowed private projects
+        shared_projects = []
+        if allowed_project_ids:
+            shared_query = (
+                select(Project)
+                .options(selectinload(Project.user))
+                .options(selectinload(Project.analyses))
+                .where(Project.id.in_(allowed_project_ids))
+            )
+            # Apply same search filter if present
+            if search:
+                search_filter = f"%{search}%"
+                shared_query = shared_query.where(
+                    (Project.name.ilike(search_filter)) |
+                    (Project.description.ilike(search_filter))
+                )
+            result = await db.execute(shared_query)
+            shared_projects = list(result.scalars().all())
+
+        # Mark shared projects and combine lists
+        shared_project_ids = set(allowed_project_ids)
+        for project in shared_projects:
+            project._is_shared_with_me = True
+
+        # Combine: shared projects first, then public
+        projects = shared_projects + public_projects
 
     return templates.TemplateResponse(
         "pages/browse.html",
@@ -206,6 +236,7 @@ async def browse(
             "settings": settings,
             "user": user,
             "projects": projects,
+            "shared_project_ids": shared_project_ids,
             "search": search or "",
             "sort": sort,
             "total_count": total_count,

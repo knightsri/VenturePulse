@@ -79,6 +79,33 @@
         {% endif %}
     {% endif %}
 
+    <!-- Shared With Me Section -->
+    {% if shared_projects %}
+    <div style="margin-top: var(--space-8);">
+        <h2 class="mb-4">Shared With Me</h2>
+        <div class="grid grid-3">
+            {% for project in shared_projects %}
+                <a href="/project/{{ project.slug }}" class="card-link">
+                    <div class="card">
+                        <div class="card-accent card-accent-yellow"></div>
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="card-title mb-0">{{ project.name }}</h3>
+                            <span class="badge badge-info">Shared</span>
+                        </div>
+                        <p class="card-description">{{ project.description or 'No description' }}</p>
+                        <div class="card-meta">
+                            <span>{{ project.analyses|length if project.analyses else 0 }} analyses</span>
+                            {% if project.user %}
+                                <span>by {{ project.user.name }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Public Projects Section (for pending users or users with no projects) -->
     {% if not user.is_approved or not projects %}
         {% if public_projects %}

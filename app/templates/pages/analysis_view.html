@@ -233,7 +233,9 @@
 <div class="container">
     <!-- Breadcrumb -->
     <nav class="breadcrumb mb-4">
-        <a href="/dashboard">My Projects</a>
+        <a href="{% if user %}/dashboard{% else %}/browse{% endif %}">
+            {% if user %}My Projects{% else %}Browse{% endif %}
+        </a>
         <span>/</span>
         <a href="/project/{{ project.slug }}">{{ project.name }}</a>
         <span>/</span>

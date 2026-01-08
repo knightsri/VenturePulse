@@ -19,8 +19,8 @@
     <!-- Project Header -->
     <div class="page-header">
         <nav class="breadcrumb mb-4">
-            <a href="{% if is_owner %}/dashboard{% else %}/browse{% endif %}">
-                {% if is_owner %}My Projects{% else %}Browse{% endif %}
+            <a href="{% if user %}/dashboard{% else %}/browse{% endif %}">
+                {% if user %}My Projects{% else %}Browse{% endif %}
             </a>
             <span>/</span>
             <span>{{ project.name }}</span>
@@ -56,9 +56,11 @@
                 <a href="/project/{{ project.slug }}/edit" class="btn btn-secondary">
                     Edit
                 </a>
+                {% if not project.is_public %}
                 <a href="/project/{{ project.slug }}/share" class="btn btn-secondary">
                     Share
                 </a>
+                {% endif %}
                 <form action="/project/{{ project.slug }}/toggle-visibility" method="POST" style="display: inline;">
                     <button type="submit" class="btn btn-outline">
                         Make {{ 'Private' if project.is_public else 'Public' }}

@@ -39,10 +39,16 @@
     {% if projects %}
         <div class="grid grid-3">
             {% for project in projects %}
+                {% set is_shared = project.id in shared_project_ids %}
                 <a href="/project/{{ project.slug }}" class="card-link" style="text-decoration: none;">
                     <div class="card" style="height: 100%;">
-                        <div class="card-accent card-accent-{% if loop.index % 3 == 1 %}red{% elif loop.index % 3 == 2 %}blue{% else %}yellow{% endif %}"></div>
-                        <h3 class="card-title">{{ project.name }}</h3>
+                        <div class="card-accent card-accent-{% if is_shared %}yellow{% elif loop.index % 3 == 1 %}red{% elif loop.index % 3 == 2 %}blue{% else %}yellow{% endif %}"></div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="card-title mb-0">{{ project.name }}</h3>
+                            {% if is_shared %}
+                                <span class="badge badge-info">Shared</span>
+                            {% endif %}
+                        </div>
                         <p class="card-description">
                             {{ (project.description or project.spec_content[:150])[:150] }}{% if (project.description or project.spec_content)|length > 150 %}...{% endif %}
                         </p>

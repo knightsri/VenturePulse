@@ -230,6 +230,10 @@
     <!-- Header -->
     <div class="comparison-header">
         <nav class="breadcrumb mb-4">
+            <a href="{% if user %}/dashboard{% else %}/browse{% endif %}">
+                {% if user %}My Projects{% else %}Browse{% endif %}
+            </a>
+            <span>/</span>
             <a href="/project/{{ project.slug }}">{{ project.name }}</a>
             <span>/</span>
             <span>Compare</span>
