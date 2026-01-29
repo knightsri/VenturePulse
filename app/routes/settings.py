@@ -4,6 +4,7 @@ Handles user settings including API key management.
 """
 
 import logging
+from urllib.parse import quote
 
 from fastapi import APIRouter, Request, Depends, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -50,6 +51,7 @@ async def update_api_key(
     request: Request,
     user: User = Depends(require_auth),
     api_key: str = Form(...),
+    return_url: str = Form(None),
 ):
     """
     Set or update the OpenRouter API key.
@@ -59,22 +61,26 @@ async def update_api_key(
     api_key = api_key.strip()
 
     if not api_key:
-        return RedirectResponse(
-            url="/settings?error=API+key+cannot+be+empty",
-            status_code=303
-        )
+        redirect_url = "/settings?error=API+key+cannot+be+empty"
+        if return_url:
+            redirect_url += f"&return_url={quote(return_url, safe='')}"
+        return RedirectResponse(url=redirect_url, status_code=303)
 
     if len(api_key) < 20:
-        return RedirectResponse(
-            url="/settings?error=Invalid+API+key+format",
-            status_code=303
-        )
+        redirect_url = "/settings?error=Invalid+API+key+format"
+        if return_url:
+            redirect_url += f"&return_url={quote(return_url, safe='')}"
+        return RedirectResponse(url=redirect_url, status_code=303)
 
     # Store the key in the session
     set_api_key(request, api_key)
 
     logger.info(f"API key updated for user {user.email}")
 
+    # Redirect to return_url if provided, otherwise to settings
+    if return_url:
+        return RedirectResponse(url=return_url, status_code=303)
+    
     return RedirectResponse(
         url="/settings?success=API+key+saved+successfully",
         status_code=303

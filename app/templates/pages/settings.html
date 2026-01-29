@@ -59,6 +59,9 @@
                     Update API Key
                 </summary>
                 <form action="/settings/api-key" method="POST">
+                    {% if request.query_params.get('return_url') %}
+                    <input type="hidden" name="return_url" value="{{ request.query_params.get('return_url') }}">
+                    {% endif %}
                     <div class="form-group">
                         <label for="api_key" class="form-label">New API Key</label>
                         <input type="password" id="api_key" name="api_key" class="form-input"
@@ -82,6 +85,9 @@
             </div>
 
             <form action="/settings/api-key" method="POST">
+                {% if request.query_params.get('return_url') %}
+                <input type="hidden" name="return_url" value="{{ request.query_params.get('return_url') }}">
+                {% endif %}
                 <div class="form-group">
                     <label for="api_key" class="form-label">API Key</label>
                     <input type="password" id="api_key" name="api_key" class="form-input"

@@ -7,6 +7,7 @@ import asyncio
 import logging
 from datetime import datetime
 from typing import Optional, List
+from urllib.parse import quote
 
 from fastapi import APIRouter, Request, HTTPException, Depends, Form, BackgroundTasks
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
@@ -387,13 +388,17 @@ async def retry_section_route(
         if section_num not in valid_section_nums:
             raise HTTPException(status_code=400, detail=f"Invalid section number: {section_num}")
 
-        # Get API key from session
-        api_key = get_api_key(request)
-        if not api_key:
+        # Check if API key is configured
+        if not has_api_key(request):
+            # Redirect to settings page with return URL
+            return_url = f"/analysis/{analysis_id}?section={section_num}"
             return RedirectResponse(
-                url=f"/analysis/{analysis_id}?error=API+key+required+to+retry+section",
+                url=f"/settings?error=API+key+required+to+retry+sections&return_url={quote(return_url, safe='')}",
                 status_code=303
             )
+        
+        # Get API key from session
+        api_key = get_api_key(request)
 
         # Check if analysis is currently running
         if is_analysis_running(analysis_id):
