@@ -33,26 +33,31 @@ router = APIRouter(tags=["analysis"])
 
 
 # Section definitions - Full 19-section analysis framework
+# Temperature guide:
+#   0.2 = Precision (factual data, financials, legal, metrics) - use seed for reproducibility
+#   0.3 = Grounded (methodologies, real-world practices, realistic planning)
+#   0.5 = Balanced (journey mapping, go-to-market, expansion strategies)
+#   0.7 = Creative (personas, narratives, storytelling)
 SECTIONS = [
-    {"num": "01", "name": "Executive Summary", "slug": "executive-summary", "group": "Foundation"},
-    {"num": "02", "name": "Market Landscape", "slug": "market-landscape", "group": "Foundation"},
-    {"num": "03", "name": "User Stories", "slug": "user-stories", "group": "Foundation"},
-    {"num": "04", "name": "Comparable Companies", "slug": "comparable-companies", "group": "Foundation"},
-    {"num": "05", "name": "User Research", "slug": "user-research-validation", "group": "Foundation"},
-    {"num": "06", "name": "Validation Experiments", "slug": "validation-experiments", "group": "Foundation"},
-    {"num": "07", "name": "Technical Feasibility", "slug": "technical-feasibility", "group": "Strategy"},
-    {"num": "08", "name": "Competitive Advantage", "slug": "competitive-advantage", "group": "Strategy"},
-    {"num": "09", "name": "Business Model", "slug": "business-model", "group": "Strategy"},
-    {"num": "10", "name": "Legal & Compliance", "slug": "legal-ip-compliance", "group": "Strategy"},
-    {"num": "11", "name": "MVP Roadmap", "slug": "mvp-roadmap", "group": "Execution"},
-    {"num": "12", "name": "Customer Journey", "slug": "customer-journey", "group": "Execution"},
-    {"num": "13", "name": "Go-to-Market", "slug": "go-to-market", "group": "Execution"},
-    {"num": "14", "name": "Partnerships", "slug": "partnerships-ecosystem", "group": "Execution"},
-    {"num": "15", "name": "Expansion Plan", "slug": "expansion-plan", "group": "Execution"},
-    {"num": "16", "name": "Success Metrics", "slug": "success-metrics", "group": "Future"},
-    {"num": "17", "name": "Funding Strategy", "slug": "funding-investment", "group": "Future"},
-    {"num": "18", "name": "Exit Strategy", "slug": "exit-strategy", "group": "Future"},
-    {"num": "19", "name": "Pitch Narrative", "slug": "pitch-narrative", "group": "Future"},
+    {"num": "01", "name": "Executive Summary", "slug": "executive-summary", "group": "Foundation", "temperature": 0.2, "seed": 42},  # Scores/verdict must be consistent
+    {"num": "02", "name": "Market Landscape", "slug": "market-landscape", "group": "Foundation", "temperature": 0.2, "seed": 42},  # Real competitors, market data
+    {"num": "03", "name": "User Stories", "slug": "user-stories", "group": "Foundation", "temperature": 0.7},  # Fictional personas - creative
+    {"num": "04", "name": "Comparable Companies", "slug": "comparable-companies", "group": "Foundation", "temperature": 0.2, "seed": 42},  # Real companies, factual
+    {"num": "05", "name": "User Research", "slug": "user-research-validation", "group": "Foundation", "temperature": 0.3},  # Grounded methodologies
+    {"num": "06", "name": "Validation Experiments", "slug": "validation-experiments", "group": "Foundation", "temperature": 0.3},  # Real experiment design
+    {"num": "07", "name": "Technical Feasibility", "slug": "technical-feasibility", "group": "Strategy", "temperature": 0.2, "seed": 42},  # Real tech stack, APIs
+    {"num": "08", "name": "Competitive Advantage", "slug": "competitive-advantage", "group": "Strategy", "temperature": 0.3, "seed": 42},  # Grounded positioning
+    {"num": "09", "name": "Business Model", "slug": "business-model", "group": "Strategy", "temperature": 0.2, "seed": 42},  # Pricing, unit economics
+    {"num": "10", "name": "Legal & Compliance", "slug": "legal-ip-compliance", "group": "Strategy", "temperature": 0.2, "seed": 42},  # Regulations are factual
+    {"num": "11", "name": "MVP Roadmap", "slug": "mvp-roadmap", "group": "Execution", "temperature": 0.3},  # Realistic timelines
+    {"num": "12", "name": "Customer Journey", "slug": "customer-journey", "group": "Execution", "temperature": 0.5},  # Balanced creativity
+    {"num": "13", "name": "Go-to-Market", "slug": "go-to-market", "group": "Execution", "temperature": 0.5},  # Creative but grounded ICP
+    {"num": "14", "name": "Partnerships", "slug": "partnerships-ecosystem", "group": "Execution", "temperature": 0.3},  # Real partner suggestions
+    {"num": "15", "name": "Expansion Plan", "slug": "expansion-plan", "group": "Execution", "temperature": 0.5},  # Realistic market expansion
+    {"num": "16", "name": "Success Metrics", "slug": "success-metrics", "group": "Future", "temperature": 0.2, "seed": 42},  # Precise KPIs
+    {"num": "17", "name": "Funding Strategy", "slug": "funding-investment", "group": "Future", "temperature": 0.2, "seed": 42},  # Factual valuations
+    {"num": "18", "name": "Exit Strategy", "slug": "exit-strategy", "group": "Future", "temperature": 0.2, "seed": 42},  # Factual multiples
+    {"num": "19", "name": "Pitch Narrative", "slug": "pitch-narrative", "group": "Future", "temperature": 0.7},  # Storytelling - creative
 ]
 
 # Section groups for organized navigation

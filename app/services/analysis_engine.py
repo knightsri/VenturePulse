@@ -85,8 +85,14 @@ async def generate_section(
 
 Generate the HTML for this section now."""
 
+    # Get section-specific temperature and seed settings
+    temperature = section.get("temperature")  # None uses default in openrouter.py
+    seed = section.get("seed")  # None means no seed (non-deterministic)
+
     # Call API with retry logic
-    success, content, elapsed, usage_info = await call_openrouter(api_key, model, full_prompt)
+    success, content, elapsed, usage_info = await call_openrouter(
+        api_key, model, full_prompt, temperature=temperature, seed=seed
+    )
 
     result = {
         "section_key": section_key,

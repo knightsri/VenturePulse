@@ -353,7 +353,7 @@ Since releasing VenturePulse, it's been used for:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `OPENROUTER_API_KEY` | (required) | Your OpenRouter API key |
-| `PORT` | `8501` | Application port |
+| `PORT` | `8080` | Application port |
 | `DEFAULT_MODEL` | `anthropic/claude-sonnet-4` | Pre-selected model in UI |
 | `MAXRETRY` | `3` | Maximum retry attempts for failed API calls |
 | `MAX_PARALLEL_SECTIONS` | `10` | Maximum concurrent section generation workers |
@@ -400,6 +400,21 @@ Edit prompt files in `prompts/sections/`:
 - Change output format
 
 **This is encouraged!** Fork and customize for your industry/domain.
+
+### Section Temperature Settings
+
+Each section has optimized temperature and seed settings to balance accuracy vs. creativity:
+
+| Temperature | Purpose | Sections |
+|-------------|---------|----------|
+| **0.2** (Precision) | Factual data, no hallucination | Executive Summary, Market Landscape, Comparable Companies, Technical Feasibility, Business Model, Legal & Compliance, Success Metrics, Funding Strategy, Exit Strategy |
+| **0.3** (Grounded) | Real methodologies, realistic planning | User Research, Validation Experiments, Competitive Advantage, MVP Roadmap, Partnerships |
+| **0.5** (Balanced) | Creative but realistic strategies | Customer Journey, Go-to-Market, Expansion Plan |
+| **0.7** (Creative) | Personas, storytelling, ideation | User Stories, Pitch Narrative |
+
+**Seed for reproducibility:** Precision sections (0.2) use a fixed seed (42) so running the same analysis twice produces consistent results. This is critical for market data, competitor analysis, and financial projections.
+
+To modify these settings, edit the `SECTIONS` configuration in `app/routes/analysis.py`.
 
 ---
 

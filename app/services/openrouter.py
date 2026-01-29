@@ -21,7 +21,8 @@ RETRY_JITTER_MAX = 2  # Maximum random jitter in seconds
 # API configuration
 API_TIMEOUT = 600  # 10 minutes for slower models
 MAX_TOKENS = 25192
-TEMPERATURE = 0.7
+DEFAULT_TEMPERATURE = 0.7  # Default for creative sections
+PRECISION_TEMPERATURE = 0.2  # For factual/analytical sections
 TOP_P = 0.95
 
 
@@ -66,6 +67,29 @@ def calculate_retry_delay(attempt: int) -> float:
     return base_delay + jitter
 
 
+def _build_request_payload(
+    model: str,
+    prompt: str,
+    temperature: Optional[float],
+    seed: Optional[int],
+) -> Dict:
+    """Build the JSON payload for OpenRouter API request."""
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": MAX_TOKENS,
+        "temperature": temperature if temperature is not None else DEFAULT_TEMPERATURE,
+        "top_p": TOP_P,
+        "usage": {"include": True},  # Request cost/usage info in response
+    }
+
+    # Add seed for reproducibility if specified
+    if seed is not None:
+        payload["seed"] = seed
+
+    return payload
+
+
 async def fetch_generation_cost(api_key: str, generation_id: str) -> Optional[Dict]:
     """Fetch cost/usage info for a generation via separate API call."""
     try:
@@ -93,6 +117,8 @@ async def call_openrouter(
     api_key: str,
     model: str,
     prompt: str,
+    temperature: Optional[float] = None,
+    seed: Optional[int] = None,
 ) -> Tuple[bool, str, float, Dict]:
     """
     Call OpenRouter API with retry logic.
@@ -101,6 +127,11 @@ async def call_openrouter(
         api_key: OpenRouter API key
         model: Model name (e.g., "anthropic/claude-sonnet-4")
         prompt: The prompt to send
+        temperature: Sampling temperature (0.0-1.0). Lower = more deterministic.
+                    Use ~0.2 for factual sections, ~0.7 for creative sections.
+                    Defaults to DEFAULT_TEMPERATURE (0.7) if not specified.
+        seed: Random seed for reproducibility. When set, same inputs produce
+              same outputs. Recommended for sections requiring consistency.
 
     Returns:
         Tuple of (success, content, elapsed_seconds, usage_info)
@@ -134,14 +165,7 @@ async def call_openrouter(
                         "HTTP-Referer": "https://github.com/knightsri/VenturePulse",
                         "X-Title": f"VenturePulse v{__version__}",
                     },
-                    json={
-                        "model": model,
-                        "messages": [{"role": "user", "content": prompt}],
-                        "max_tokens": MAX_TOKENS,
-                        "temperature": TEMPERATURE,
-                        "top_p": TOP_P,
-                        "usage": {"include": True},  # Request cost/usage info in response
-                    },
+                    json=_build_request_payload(model, prompt, temperature, seed),
                 )
 
                 data = response.json()

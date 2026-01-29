@@ -5,6 +5,29 @@ All notable changes to VenturePulse will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-01-28 - "Precision"
+
+### Added
+- **Per-section temperature control**: Each analysis section now has optimized temperature settings to reduce hallucination
+- **Seed parameter for reproducibility**: Factual sections use fixed seed (42) for consistent, reproducible outputs
+- **Four temperature tiers**:
+  - 0.2 (Precision): Market data, competitors, financials, legal, metrics - with seed
+  - 0.3 (Grounded): Research methodologies, experiment design, realistic planning
+  - 0.5 (Balanced): Customer journey, go-to-market, expansion strategies
+  - 0.7 (Creative): User personas, pitch narratives, storytelling
+
+### Changed
+- `openrouter.py`: Now accepts optional `temperature` and `seed` parameters per API call
+- `analysis_engine.py`: Passes section-specific settings to OpenRouter API
+- Sections 01, 02, 04, 07, 09, 10, 16, 17, 18 now use low temperature (0.2) with seed for factual accuracy
+- Sections 05, 06, 08, 11, 14 use grounded temperature (0.3) for realistic methodologies
+- Sections 12, 13, 15 use balanced temperature (0.5) for creative but realistic strategies
+- Sections 03, 19 use creative temperature (0.7) for personas and storytelling
+
+### Fixed
+- Reduced risk of hallucinated competitor names, market sizes, and company data
+- Improved consistency in financial projections and legal requirements
+
 ## [2.2.0] - 2026-01-08 - "Link Sharing"
 
 ### Added

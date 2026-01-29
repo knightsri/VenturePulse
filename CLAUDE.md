@@ -4,93 +4,146 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-**VenturePulse** is an AI-powered product viability analysis tool that generates comprehensive reports using LLM APIs through OpenRouter. Deployed as a Docker web application.
+**VenturePulse** is an AI-powered product viability analysis tool that generates comprehensive reports using LLM APIs through OpenRouter. FastAPI web application with OAuth authentication, deployed via Docker.
 
 **Live Demo:** https://venturepulse.shalusri.com
 
-## Quick Start
+## Development Commands
 
 ```bash
-# Configure environment
-cp .env.example .env
-# Edit .env: OPENROUTER_API_KEY, OAuth credentials, PORT
+# Docker (recommended)
+docker-compose up                    # Start app on PORT (default 8080)
+docker-compose up --build            # Rebuild and start
+docker-compose build --no-cache      # Force fresh build
+docker-compose logs -f               # View logs
 
-# Run with Docker Compose
-docker-compose up
+# Local development (without Docker)
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
 
-# Open http://localhost:8501
-# Sign in with Google, GitHub, or Dev mode
+# Generate SECRET_KEY
+python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-## Core Architecture
-
-### V2 Web Application (`app/`)
-
-FastAPI-based application with OAuth authentication:
-
-```
-app/
-├── main.py                 # FastAPI entry point
-├── config.py               # Settings and configuration
-├── auth/
-│   ├── oauth.py            # Google/GitHub OAuth setup
-│   ├── session.py          # Session management
-│   └── decorators.py       # Auth decorators
-├── db/
-│   ├── database.py         # SQLite/PostgreSQL connection
-│   ├── models.py           # SQLAlchemy models (User, Project, Analysis, Session)
-│   └── migrations.py       # Database migrations
-├── routes/
-│   ├── auth.py             # Login/logout endpoints
-│   ├── projects.py         # Project CRUD
-│   ├── analysis.py         # Analysis management
-│   ├── admin.py            # Admin dashboard
-│   ├── settings.py         # User settings
-│   └── public.py           # Public routes
-├── services/
-│   ├── openrouter.py       # OpenRouter API client
-│   ├── analysis_engine.py  # Analysis orchestration
-│   ├── report.py           # Report generation
-│   └── background.py       # Background tasks
-├── templates/              # Jinja2 HTML templates
-└── static/                 # CSS, JS, images
-```
-
-### Database Models (`app/db/models.py`)
-- **User** - OAuth users (Google/GitHub), roles (admin/approved/pending)
-- **Project** - User projects with specs, public/private visibility
-- **Analysis** - Analysis runs with model, status, cost tracking
-- **Session** - Authentication sessions
-
-### Prompt Structure (`prompts/`)
-- **`common-instructions.md`** - Shared guidelines
-- **`sections/section{NN}-{slug}.md`** - 19 specialized prompts
+**Note:** No test suite exists yet. Tests are a contribution opportunity.
 
 ## Configuration
 
-### Environment Variables (`.env`)
+Copy `.env.example` to `.env` and configure:
+
 ```bash
 # Required
 OPENROUTER_API_KEY=sk-or-v1-...
 
-# OAuth (optional for Dev mode)
+# OAuth (optional if DEV_MODE=true)
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 GITHUB_CLIENT_ID=...
 GITHUB_CLIENT_SECRET=...
 
 # App settings
-PORT=8501
+PORT=8080
+DEV_MODE=false              # Set true for local dev without OAuth
+BASE_URL=http://localhost:8080
+SECRET_KEY=...              # Generate with command above
 DEFAULT_MODEL=anthropic/claude-sonnet-4
 MAXRETRY=3
 MAX_PARALLEL_SECTIONS=10
-SECRET_KEY=your-secret-key
 ```
 
-### Authentication Modes
-- **Google OAuth** - Production login
-- **GitHub OAuth** - Production login
-- **Dev Mode** - Local development without OAuth setup
+## Architecture
+
+### Application Flow
+
+1. User authenticates via OAuth (Google/GitHub) or Dev mode
+2. User sets their OpenRouter API key in Settings (stored in session cookie)
+3. User creates a project with a product spec
+4. User runs analysis selecting model(s) and sections
+5. Background task calls OpenRouter API for each section
+6. Results saved as HTML files + metadata.json
+
+### Key Architectural Decisions
+
+**Router Order Matters** (`app/main.py:102-111`): Specific routes must come before parameterized routes:
+- `/project/new` (projects_router) before `/project/{slug}` (public_router)
+- `/project/{slug}/share` (share_router) before `/project/{slug}` (public_router)
+
+**API Key Storage**: Per-user keys stored in encrypted session cookie, NOT in database. `api_key_temp` field in Analysis model is only for recovery after container restarts (cleared on completion).
+
+**Background Tasks**: Analyses run in asyncio background tasks (`app/services/background.py`). On startup, `recover_interrupted_analyses()` resumes any analyses interrupted by restarts.
+
+### Section Framework
+
+19 sections organized into 4 groups (defined in `app/routes/analysis.py:36-64`):
+
+| Group | Sections | Numbers |
+|-------|----------|---------|
+| Foundation | Executive Summary, Market Landscape, User Stories, Comparable Companies, User Research, Validation Experiments | 01-06 |
+| Strategy | Technical Feasibility, Competitive Advantage, Business Model, Legal & Compliance | 07-10 |
+| Execution | MVP Roadmap, Customer Journey, Go-to-Market, Partnerships, Expansion Plan | 11-15 |
+| Future | Success Metrics, Funding Strategy, Exit Strategy, Pitch Narrative | 16-19 |
+
+**Quick Analysis** uses 7 core sections: 01, 02, 07, 09, 11, 13, 16
+
+Section 20 (Provenance) is auto-generated with cost/timing metadata.
+
+### Database Models (`app/db/models.py`)
+
+- **User** - OAuth identity, role (admin/approved/pending), preferred_models JSON
+- **Project** - Name, slug (unique), spec_content, is_public
+- **Analysis** - project_id, model_name, status, sections_completed JSON, cost tracking
+- **Session** - Token-based auth sessions with expiry
+- **SectionFeedback** - User ratings on sections (thumbs up/down)
+- **ShareableLink** - Temporary access tokens for private projects
+- **ShareLinkVisitor** - Privacy-preserving visitor tracking
+
+### File Structure
+
+```
+app/
+├── main.py                 # FastAPI app, lifespan, middleware, exception handlers
+├── config.py               # Settings class with env vars
+├── __init__.py             # Version info (__version__, __version_date__, __version_name__)
+├── auth/                   # OAuth setup, session management, decorators
+├── db/                     # SQLAlchemy models, migrations, database init
+├── routes/                 # API endpoints by domain
+├── services/               # Business logic (analysis_engine, openrouter, background)
+├── templates/              # Jinja2 HTML templates
+└── static/                 # CSS, JS, images
+
+prompts/
+├── common-instructions.md  # Shared prompt context
+└── sections/               # section{NN}-{slug}.md files (19 prompts)
+
+data/                       # Runtime data (gitignored)
+├── venturepulse.db         # SQLite database
+├── reports/{user_id}/{project_slug}/{analysis_id}/  # Generated HTML reports
+└── specs/                  # Project spec files
+```
+
+## Adding Features
+
+### New API Endpoint
+1. Add route in `app/routes/` (or new file)
+2. Register router in `app/main.py` (watch ordering!)
+3. Add template in `app/templates/` if needed
+
+### New Database Model
+1. Add model class in `app/db/models.py`
+2. Add migration in `app/db/migrations.py`
+3. Migrations run automatically on startup via `init_db()`
+
+### New Analysis Section
+1. Create `prompts/sections/section{NN}-{slug}.md`
+2. Add to `SECTIONS` list in `app/routes/analysis.py`
+3. Update `QUICK_SECTIONS` if it should be in quick analysis
+
+### Version Updates
+**IMPORTANT:** Update in TWO places:
+1. `app/__init__.py` - `__version__`, `__version_date__`, `__version_name__`
+2. `CHANGELOG.md` - New entry with date and changes
+
+Version displays in site footer.
 
 ## Key Endpoints
 
@@ -103,12 +156,13 @@ SECRET_KEY=your-secret-key
 ### Projects
 - `GET /projects` - List user's projects
 - `POST /projects` - Create project
-- `GET /projects/{slug}` - View project
-- `DELETE /projects/{slug}` - Delete project
+- `GET /project/{slug}` - View project
+- `DELETE /project/{slug}` - Delete project
 
 ### Analysis
-- `POST /projects/{slug}/analyze` - Start analysis
-- `GET /api/analysis/{id}/status` - Check status
+- `GET /project/{slug}/analyze` - Analysis config form
+- `POST /project/{slug}/analyze` - Start analysis
+- `GET /api/analysis/{id}/status` - Check status (JSON)
 - `GET /api/analysis/{id}/section/{key}` - Get section HTML
 
 ### Admin
@@ -120,53 +174,23 @@ SECRET_KEY=your-secret-key
 Each analysis creates files in `data/reports/{user_id}/{project_slug}/{analysis_id}/`:
 ```
 ├── section{NN}-{slug}.html    # Individual report sections
+├── section20-provenance.html  # Auto-generated metadata/cost report
 ├── project-spec.md            # Copy of input
-└── metadata.json              # Analysis metadata
+└── metadata.json              # Analysis metadata, timing, costs
 ```
-
-## Adding New Features
-
-### New API Endpoint
-1. Add route in `app/routes/`
-2. Register in `app/main.py`
-3. Add template if needed in `app/templates/`
-
-### New Database Model
-1. Add model in `app/db/models.py`
-2. Create migration in `app/db/migrations.py`
-3. Run migrations on startup
-
-### New Section
-1. Create `prompts/sections/section{NN}-{slug}.md`
-2. Update section lists in analysis engine
-
-### Version Updates
-**IMPORTANT:** Version must be updated in TWO places and kept in sync:
-1. `app/__init__.py` - Update `__version__`, `__version_date__`, and optionally `__version_name__`
-2. `CHANGELOG.md` - Add new version entry with date and changes
-
-The version from `app/__init__.py` is displayed in the site footer (bottom right corner).
-
-## Dependencies
-
-- Python 3.11+
-- FastAPI, Uvicorn, SQLAlchemy
-- Authlib (OAuth), Jinja2
-- Docker and Docker Compose
-- See `requirements.txt`
 
 ## Key Features
 
 | Feature | Description |
 |---------|-------------|
 | Authentication | OAuth (Google/GitHub) or Dev mode |
-| User Management | Full user system with roles |
+| User Management | Full user system with roles (admin/approved/pending) |
 | Data Storage | SQLite (default) or PostgreSQL |
 | Multi-user | Yes, with project ownership |
-| Public/Private | Projects can be shared or private |
-| Sections | 7 (Quick) / 19 (Full) / Custom |
-| Multi-model | Built-in comparison |
-| Cost Tracking | Per-section + total in Provenance |
+| Public/Private | Projects can be shared or private; shareable links for private projects |
+| Sections | 7 (Quick) / 19 (Full) / Custom selection |
+| Multi-model | Run same analysis with multiple models, built-in comparison |
+| Cost Tracking | Per-section + total costs in Provenance report |
 
 ## Legacy Versions
 
