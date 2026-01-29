@@ -34,3 +34,6 @@ __pycache__/
 *.pyc
 .vscode/
 .idea/
+
+# Feature specs (private IP)
+docs/FEATURE-*.md
