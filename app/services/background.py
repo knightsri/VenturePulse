@@ -381,6 +381,204 @@ async def finalize_analysis(analysis_id: int) -> bool:
         return False
 
 
+async def retry_section(
+    analysis_id: int,
+    api_key: str,
+    section_num: str,
+):
+    """
+    Retry a single failed section for an existing analysis.
+    
+    Args:
+        analysis_id: ID of the analysis record
+        api_key: OpenRouter API key from user session
+        section_num: Section number to retry (e.g., "14")
+    """
+    logger.info(f"Retrying section {section_num} for analysis {analysis_id}")
+    
+    SECTIONS, get_section_by_num = get_sections_config()
+    
+    try:
+        async with get_session_factory()() as db:
+            # Load analysis and project
+            result = await db.execute(
+                select(Analysis)
+                .options(selectinload(Analysis.project).selectinload(Project.user))
+                .where(Analysis.id == analysis_id)
+            )
+            analysis = result.scalar_one_or_none()
+            
+            if not analysis:
+                logger.error(f"Analysis {analysis_id} not found")
+                return
+            
+            project = analysis.project
+            
+            # Get section config
+            section = get_section_by_num(section_num)
+            if not section:
+                logger.error(f"Section {section_num} not found")
+                return
+            
+            # Get existing sections and costs
+            existing_sections = analysis.sections_completed or {}
+            existing_total_cost = analysis.total_cost_usd or 0.0
+            existing_total_tokens = analysis.total_tokens or 0
+            
+            # Get old cost for this section (to subtract later)
+            section_key = f"section{section_num}"
+            old_section_data = existing_sections.get(section_key, {})
+            old_cost = old_section_data.get("cost", 0.0)
+            old_tokens = old_section_data.get("tokens", 0)
+            
+            # Create output directory
+            output_dir = Path(settings.BASE_DIR) / analysis.report_folder_path
+            output_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Delete old section file if it exists
+            section_file = output_dir / f"section{section_num}-{section['slug']}.html"
+            if section_file.exists():
+                section_file.unlink()
+            
+            # Load common instructions
+            from app.services.analysis_engine import load_common_instructions, generate_section
+            common_instructions = load_common_instructions()
+            
+            # Generate the section
+            logger.info(f"Generating section {section_num}. {section['name']}...")
+            result = await generate_section(
+                api_key=api_key,
+                model=analysis.model_name,
+                section=section,
+                common_instructions=common_instructions,
+                project_data=project.spec_content,
+                output_dir=output_dir,
+            )
+            
+            # Update sections_completed
+            updated_sections = existing_sections.copy()
+            if result["success"]:
+                updated_sections[section_key] = {
+                    "status": "completed",
+                    "section_num": section_num,
+                    "elapsed": result.get("elapsed", 0),
+                    "cost": result.get("cost", 0.0),
+                    "tokens": result.get("tokens", 0),
+                    "error": None,
+                }
+            else:
+                updated_sections[section_key] = {
+                    "status": "failed",
+                    "section_num": section_num,
+                    "elapsed": result.get("elapsed", 0),
+                    "cost": 0.0,
+                    "tokens": 0,
+                    "error": result.get("error", "Unknown error"),
+                }
+            
+            # Update costs: subtract old, add new
+            new_section_cost = result.get("cost", 0.0) if result["success"] else 0.0
+            new_section_tokens = result.get("tokens", 0) if result["success"] else 0
+            updated_total_cost = existing_total_cost - old_cost + new_section_cost
+            updated_total_tokens = existing_total_tokens - old_tokens + new_section_tokens
+            
+            # Build section_costs list for provenance
+            section_costs = []
+            for key, data in updated_sections.items():
+                if key.startswith("section") and key != "section20":
+                    if isinstance(data, dict) and data.get("status") == "completed":
+                        section_num_str = data.get("section_num", "")
+                        section_info = get_section_by_num(section_num_str)
+                        section_name = section_info["name"] if section_info else "Unknown"
+                        section_costs.append({
+                            "name": f"{section_num_str}. {section_name}",
+                            "cost": data.get("cost", 0.0),
+                            "tokens": data.get("tokens", 0),
+                            "retries": 0,
+                        })
+            # Sort by section number
+            section_costs.sort(key=lambda x: int(x["name"].split(".")[0]) if x["name"][0].isdigit() else 999)
+            
+            # Build failed sections list
+            failed_sections = []
+            for key, data in updated_sections.items():
+                if key.startswith("section") and key != "section20":
+                    if isinstance(data, dict) and data.get("status") == "failed":
+                        section_num_failed = data.get("section_num", "")
+                        section_name = get_section_by_num(section_num_failed)["name"] if get_section_by_num(section_num_failed) else "Unknown"
+                        failed_sections.append({
+                            "section": f"{section_num_failed}. {section_name}",
+                            "error": data.get("error", "Unknown error"),
+                            "retries": 0,
+                        })
+            
+            # Calculate total elapsed time
+            total_elapsed = 0
+            if analysis.started_at:
+                if analysis.completed_at:
+                    total_elapsed = (analysis.completed_at - analysis.started_at).total_seconds()
+                else:
+                    total_elapsed = (datetime.utcnow() - analysis.started_at).total_seconds()
+            
+            # Regenerate provenance
+            cost_data = {
+                "total_cost": updated_total_cost,
+                "total_tokens": updated_total_tokens,
+                "section_costs": section_costs,
+                "total_retries": 0,
+            }
+            
+            timing_data = {
+                "total_seconds": total_elapsed,
+                "total_formatted": format_time(total_elapsed),
+            }
+            
+            provenance_html = generate_provenance(
+                project.name,
+                analysis.model_name,
+                cost_data=cost_data,
+                timing_data=timing_data,
+                execution_mode="Sequential",
+                parallel_workers=None,
+                failed_sections=failed_sections,
+            )
+            
+            # Write provenance file
+            provenance_path = output_dir / "section20-provenance.html"
+            provenance_path.write_text(provenance_html, encoding="utf-8")
+            
+            # Update analysis record
+            analysis.sections_completed = updated_sections
+            analysis.total_cost_usd = updated_total_cost
+            analysis.total_tokens = updated_total_tokens
+            analysis.cost_breakdown = {
+                "section_costs": section_costs,
+                "total_retries": 0,
+            }
+            
+            # Update status based on whether there are any failed sections
+            if failed_sections:
+                analysis.status = "completed"  # Partial success
+            else:
+                analysis.status = "completed"
+            
+            # Ensure section20 is marked as completed
+            updated_sections["section20"] = {"status": "completed"}
+            analysis.sections_completed = updated_sections
+            
+            await db.commit()
+            
+            logger.info(
+                f"Section {section_num} retry completed for analysis {analysis_id}: "
+                f"success={result['success']}, "
+                f"cost={format_cost(new_section_cost)}"
+            )
+            
+    except Exception as e:
+        logger.exception(f"Failed to retry section {section_num} for analysis {analysis_id}: {e}")
+        raise
+
+
 async def recover_interrupted_analyses():
     """
     Resume analyses that were interrupted by a restart.

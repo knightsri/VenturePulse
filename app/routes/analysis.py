@@ -3,6 +3,7 @@ Analysis routes for VenturePulse v2.
 Handles analysis configuration, execution, and viewing.
 """
 
+import asyncio
 import logging
 from datetime import datetime
 from typing import Optional, List
@@ -19,7 +20,7 @@ from app.db.models import User, Project, Analysis, SectionFeedback, ShareableLin
 from app.auth.decorators import require_approved
 from app.routes.share import validate_allowkey
 from app.services.apikey import has_api_key, get_masked_api_key, get_api_key
-from app.services.background import start_analysis_task, cancel_analysis_task, is_analysis_running, finalize_analysis
+from app.services.background import start_analysis_task, cancel_analysis_task, is_analysis_running, finalize_analysis, retry_section
 from app.services.report import format_cost, format_time
 from app.services.preferences import get_user_preferred_models, save_user_preferred_models
 from app.services.scoring import extract_analysis_metrics, recalculate_dimension_scores, get_comparable_dimensions
@@ -351,6 +352,73 @@ async def cancel_analysis(
             logger.info(f"Cancelled analysis {analysis_id}")
 
     return RedirectResponse(url=f"/analysis/{analysis_id}", status_code=303)
+
+
+@router.post("/analysis/{analysis_id}/retry-section/{section_num}")
+async def retry_section_route(
+    request: Request,
+    analysis_id: int,
+    section_num: str,
+    user: User = Depends(require_approved),
+):
+    """
+    Retry a single failed section for an analysis.
+    """
+    async with get_session_factory()() as db:
+        result = await db.execute(
+            select(Analysis)
+            .options(selectinload(Analysis.project))
+            .where(Analysis.id == analysis_id)
+        )
+        analysis = result.scalar_one_or_none()
+
+        if not analysis:
+            raise HTTPException(status_code=404, detail="Analysis not found")
+
+        # Check permissions
+        is_owner = user.id == analysis.project.user_id
+        is_admin = user.is_admin
+
+        if not is_owner and not is_admin:
+            raise HTTPException(status_code=403, detail="Access denied")
+
+        # Validate section number
+        valid_section_nums = {s["num"] for s in SECTIONS}
+        if section_num not in valid_section_nums:
+            raise HTTPException(status_code=400, detail=f"Invalid section number: {section_num}")
+
+        # Get API key from session
+        api_key = get_api_key(request)
+        if not api_key:
+            return RedirectResponse(
+                url=f"/analysis/{analysis_id}?error=API+key+required+to+retry+section",
+                status_code=303
+            )
+
+        # Check if analysis is currently running
+        if is_analysis_running(analysis_id):
+            return RedirectResponse(
+                url=f"/analysis/{analysis_id}?error=Analysis+is+currently+running",
+                status_code=303
+            )
+
+        # Start retry task in background
+        try:
+            task = asyncio.create_task(
+                retry_section(analysis_id, api_key, section_num)
+            )
+            logger.info(f"Started retry task for section {section_num} of analysis {analysis_id}")
+        except Exception as e:
+            logger.error(f"Failed to start retry task: {e}")
+            return RedirectResponse(
+                url=f"/analysis/{analysis_id}?error=Failed+to+start+retry+task",
+                status_code=303
+            )
+
+    return RedirectResponse(
+        url=f"/analysis/{analysis_id}?section={section_num}&message=Retrying+section+{section_num}",
+        status_code=303
+    )
 
 
 @router.post("/analysis/{analysis_id}/finalize")

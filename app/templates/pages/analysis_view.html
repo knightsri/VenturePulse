@@ -351,12 +351,26 @@
                 <div class="section-group">
                     <div class="section-group-title">{{ group_name }}</div>
                     {% for sec in grouped_sections[group_name] %}
-                    <a href="/analysis/{{ analysis.id }}?section={{ sec.num }}"
-                       class="section-link {% if selected_section and selected_section.num == sec.num %}active{% endif %} {% if not sec.file %}disabled{% endif %}"
-                       data-section="{{ sec.num }}">
-                        <span class="section-status {{ sec.status }}"></span>
-                        <span>{{ sec.num }}. {{ sec.name }}</span>
-                    </a>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <a href="/analysis/{{ analysis.id }}?section={{ sec.num }}"
+                           class="section-link {% if selected_section and selected_section.num == sec.num %}active{% endif %} {% if not sec.file %}disabled{% endif %}"
+                           data-section="{{ sec.num }}"
+                           style="flex: 1;">
+                            <span class="section-status {{ sec.status }}"></span>
+                            <span>{{ sec.num }}. {{ sec.name }}</span>
+                        </a>
+                        {% if (is_owner or is_admin) and sec.status == 'failed' %}
+                        <form action="/analysis/{{ analysis.id }}/retry-section/{{ sec.num }}" method="POST" style="margin: 0;"
+                              onsubmit="return confirm('Retry section {{ sec.num }}. {{ sec.name }}?');">
+                            <button type="submit" 
+                                    class="btn btn-sm" 
+                                    style="padding: 0.25rem 0.5rem; font-size: 0.75rem; min-width: auto;"
+                                    title="Retry this section">
+                                ↻
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
                     {% endfor %}
                 </div>
                 {% endif %}
@@ -402,9 +416,27 @@
                 </div>
             {% else %}
                 <div class="empty-state">
-                    <div style="font-size: 3rem; margin-bottom: var(--space-4);">...</div>
-                    <h3>No Content Available</h3>
-                    <p>Select a completed section from the navigation to view its content.</p>
+                    {% if selected_section and selected_section.status == 'failed' %}
+                        <div style="font-size: 3rem; margin-bottom: var(--space-4);">⚠️</div>
+                        <h3>Section Failed</h3>
+                        <p>This section failed to generate.
+                        {% set section_key = 'section' + selected_section.num %}
+                        {% if analysis.sections_completed and analysis.sections_completed.get(section_key) and analysis.sections_completed[section_key].error %}
+                            Error: {{ analysis.sections_completed[section_key].error }}
+                        {% endif %}
+                        </p>
+                        {% if (is_owner or is_admin) %}
+                        <form action="/analysis/{{ analysis.id }}/retry-section/{{ selected_section.num }}" method="POST" style="margin-top: var(--space-4);">
+                            <button type="submit" class="btn btn-primary">
+                                ↻ Retry Section {{ selected_section.num }}
+                            </button>
+                        </form>
+                        {% endif %}
+                    {% else %}
+                        <div style="font-size: 3rem; margin-bottom: var(--space-4);">...</div>
+                        <h3>No Content Available</h3>
+                        <p>Select a completed section from the navigation to view its content.</p>
+                    {% endif %}
                 </div>
             {% endif %}
         </main>
