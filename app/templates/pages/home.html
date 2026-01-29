@@ -20,22 +20,22 @@
 
         <div class="hero-actions">
             {% if user %}
-                <a href="/dashboard" class="btn btn-primary btn-lg">Go to Dashboard</a>
-                <a href="/browse" class="btn btn-secondary btn-lg" style="border-color: white; color: white;">
-                    Browse Projects
-                </a>
+            <a href="/dashboard" class="btn btn-primary btn-lg">Go to Dashboard</a>
+            <a href="/browse" class="btn btn-secondary btn-lg" style="border-color: white; color: white;">
+                Browse Projects
+            </a>
             {% else %}
-                <a href="/login" class="btn btn-primary btn-lg">Get Started</a>
-                <a href="/browse" class="btn btn-secondary btn-lg" style="border-color: white; color: white;">
-                    Browse Projects
-                </a>
+            <a href="/login" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="/browse" class="btn btn-secondary btn-lg" style="border-color: white; color: white;">
+                Browse Projects
+            </a>
             {% endif %}
         </div>
     </div>
 </section>
 
 <!-- How It Works -->
-<section class="container" style="padding: var(--space-16) var(--space-4);">
+<section class="container section-padding" style="padding-left: var(--space-4); padding-right: var(--space-4);">
     <h2 class="text-center mb-8">How It Works</h2>
 
     <div class="grid grid-3">
@@ -69,29 +69,30 @@
 </section>
 
 <!-- Features -->
-<section style="background-color: var(--color-gray-100); padding: var(--space-16) 0;">
+<section style="background-color: var(--color-gray-100);" class="section-padding">
     <div class="container">
         <h2 class="text-center mb-8">Analysis Sections</h2>
 
         <div class="grid grid-4">
             {% set sections = [
-                ('Foundation', ['Executive Summary', 'Market Landscape', 'User Stories', 'Comparable Companies']),
-                ('Strategy', ['User Research', 'Validation Experiments', 'Technical Feasibility', 'Competitive Advantage', 'Business Model']),
-                ('Execution', ['Legal & IP', 'MVP Roadmap', 'Customer Journey', 'Go-to-Market', 'Partnerships']),
-                ('Future', ['Expansion Plan', 'Success Metrics', 'Funding Strategy', 'Exit Strategy', 'Pitch Narrative'])
+            ('Foundation', ['Executive Summary', 'Market Landscape', 'User Stories', 'Comparable Companies']),
+            ('Strategy', ['User Research', 'Validation Experiments', 'Technical Feasibility', 'Competitive Advantage',
+            'Business Model']),
+            ('Execution', ['Legal & IP', 'MVP Roadmap', 'Customer Journey', 'Go-to-Market', 'Partnerships']),
+            ('Future', ['Expansion Plan', 'Success Metrics', 'Funding Strategy', 'Exit Strategy', 'Pitch Narrative'])
             ] %}
 
             {% for group_name, items in sections %}
-                <div class="card">
-                    <h4 class="card-title">{{ group_name }}</h4>
-                    <ul style="list-style: none; padding: 0;">
-                        {% for item in items %}
-                            <li style="padding: var(--space-2) 0; border-bottom: 1px solid var(--color-gray-200);">
-                                {{ item }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
+            <div class="card">
+                <h4 class="card-title">{{ group_name }}</h4>
+                <ul style="list-style: none; padding: 0;">
+                    {% for item in items %}
+                    <li style="padding: var(--space-2) 0; border-bottom: 1px solid var(--color-gray-200);">
+                        {{ item }}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
             {% endfor %}
         </div>
     </div>
@@ -99,28 +100,32 @@
 
 <!-- Featured Projects -->
 {% if featured_projects %}
-<section class="container" style="padding: var(--space-16) var(--space-4);">
+<section class="container section-padding" style="padding-left: var(--space-4); padding-right: var(--space-4);">
     <h2 class="text-center mb-8">Featured Projects</h2>
 
     <div class="grid grid-2">
         {% for project in featured_projects %}
-            <div class="card">
-                <div class="card-accent card-accent-{% if loop.index % 3 == 1 %}red{% elif loop.index % 3 == 2 %}blue{% else %}yellow{% endif %}"></div>
-                <h3 class="card-title">
-                    <a href="/project/{{ project.slug }}" style="color: inherit; text-decoration: none;">
-                        {{ project.name }}
-                    </a>
-                </h3>
-                <p class="card-description">
-                    {{ (project.description or project.spec_content[:200] + '...')[:200] }}{% if (project.description or project.spec_content)|length > 200 %}...{% endif %}
-                </p>
-                <div style="margin-top: var(--space-4); display: flex; gap: var(--space-2); align-items: center;">
-                    <span class="badge badge-success">{{ project.analyses|length }} {% if project.analyses|length == 1 %}analysis{% else %}analyses{% endif %}</span>
-                    {% if project.is_public %}
-                        <span class="badge badge-info">Public</span>
-                    {% endif %}
-                </div>
+        <div class="card">
+            <div
+                class="card-accent card-accent-{% if loop.index % 3 == 1 %}red{% elif loop.index % 3 == 2 %}blue{% else %}yellow{% endif %}">
             </div>
+            <h3 class="card-title">
+                <a href="/project/{{ project.slug }}" style="color: inherit; text-decoration: none;">
+                    {{ project.name }}
+                </a>
+            </h3>
+            <p class="card-description">
+                {{ (project.description or project.spec_content[:200] + '...')[:200] }}{% if (project.description or
+                project.spec_content)|length > 200 %}...{% endif %}
+            </p>
+            <div style="margin-top: var(--space-4); display: flex; gap: var(--space-2); align-items: center;">
+                <span class="badge badge-success">{{ project.analyses|length }} {% if project.analyses|length == 1
+                    %}analysis{% else %}analyses{% endif %}</span>
+                {% if project.is_public %}
+                <span class="badge badge-info">Public</span>
+                {% endif %}
+            </div>
+        </div>
         {% endfor %}
     </div>
 
@@ -136,11 +141,13 @@
     <div class="container">
         <div class="grid grid-2 text-center">
             <div>
-                <div style="font-size: 3rem; font-weight: bold; color: var(--color-primary);">{{ stats.total_projects }}</div>
+                <div style="font-size: 3rem; font-weight: bold; color: var(--color-primary);">{{ stats.total_projects }}
+                </div>
                 <div style="color: var(--color-gray-400);">Public Projects</div>
             </div>
             <div>
-                <div style="font-size: 3rem; font-weight: bold; color: var(--color-secondary);">{{ stats.total_analyses }}</div>
+                <div style="font-size: 3rem; font-weight: bold; color: var(--color-secondary);">{{ stats.total_analyses
+                    }}</div>
                 <div style="color: var(--color-gray-400);">Analyses Completed</div>
             </div>
         </div>
@@ -149,16 +156,17 @@
 {% endif %}
 
 <!-- CTA Section -->
-<section class="container text-center" style="padding: var(--space-16) var(--space-4);">
+<section class="container text-center section-padding"
+    style="padding-left: var(--space-4); padding-right: var(--space-4);">
     <h2 class="mb-4">Ready to Validate Your Idea?</h2>
     <p class="text-muted mb-8" style="max-width: 500px; margin-left: auto; margin-right: auto;">
         Get comprehensive AI-powered analysis of your product concept in minutes, not weeks.
     </p>
 
     {% if user %}
-        <a href="/project/new" class="btn btn-primary btn-lg">Create New Project</a>
+    <a href="/project/new" class="btn btn-primary btn-lg">Create New Project</a>
     {% else %}
-        <a href="/login" class="btn btn-primary btn-lg">Sign Up Free</a>
+    <a href="/login" class="btn btn-primary btn-lg">Sign Up Free</a>
     {% endif %}
 </section>
 {% endblock %}
